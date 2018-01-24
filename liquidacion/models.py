@@ -78,9 +78,30 @@ class Ciudad(models.Model):
     pais = models.ForeignKey('Pais', models.DO_NOTHING, on_delete=models.CASCADE)
 
 
-class Categoria_Salarial(models.Model):
+class CategoriaSalarial(models.Model):
     id = models.AutoField(primary_key=True)
-    codigo = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
+    codigo = models.CharField(max_length=50, blank=True, default='')
+    tipo = models.CharField(max_length=50, blank=True, default='')
+    cargo = models.CharField(max_length=50, blank=True, default='')
+    asignacion = models.IntegerField()
+
+
+class EstadoCivil(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, blank=True, default='')
+
+
+class GradoUniversitario(models.Model):
+    idpais = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, blank=True, default='')
+
+
+class Vacaciones(models.Model):
+    id = models.AutoField(primary_key=True)
+    inicio = models.DateField()
+    fin = models.DateField()
+    cantidadmeses = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    cantidaddias = models.IntegerField()
+    monto = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     # -----------------------------------Relationships-----------------------------------------#
-    jefe = models.OneToOneField('Funcionario', models.DO_NOTHING, on_delete=models.CASCADE)
-    departamento = models.OneToOneField('Departamento', models.DO_NOTHING, on_delete=models.CASCADE)
+    director = models.OneToOneField('Funcionario', models.DO_NOTHING, on_delete=models.CASCADE)

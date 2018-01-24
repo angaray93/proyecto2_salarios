@@ -103,3 +103,88 @@ class Vacaciones(models.Model):
     cantidadmeses = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     cantidaddias = models.IntegerField()
     monto = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+
+class Constante(models.Model):
+    id = models.AutoField(primary_key=True)
+    fechainicio = models.DateField()
+    fechafin = models.DateField()
+    monto = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
+    # -----------------------------------Relationships-----------------------------------------#
+    funcionario = models.ForeignKey('Funcionario', models.DO_NOTHING, on_delete=models.CASCADE)
+    tipo = models.ForeignKey('ConstanteType', models.DO_NOTHING, on_delete=models.CASCADE)
+
+
+class ConstanteType(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, blank=True, default='')
+    tipo = models.CharField(max_length=1, blank=True, default='')
+
+
+class MovimientoType(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, blank=True, default='')
+
+
+class MovimientoMotivo(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, blank=True, default='')
+
+
+class DocumentoRespaldatorio(models.Model):
+    id = models.AutoField(primary_key=True)
+    codigo = models.CharField(max_length=50, blank=True, default='')
+    fechaemision = models.DateField()
+    quienfirma = models.CharField(max_length=50, blank=True, default='')
+    # -----------------------------------Relationships-----------------------------------------#
+    tipo = models.ForeignKey('DocumentoType', models.DO_NOTHING, on_delete=models.CASCADE)
+    autoridadfirmante = models.ForeignKey('AutoridadFirmante', models.DO_NOTHING, on_delete=models.CASCADE)
+
+
+class DocumentoType(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, blank=True, default='')
+    # -----------------------------------Relationships-----------------------------------------#
+    director = models.ForeignKey('Funcionario', models.DO_NOTHING, on_delete=models.CASCADE)
+
+
+class AutoridadFirmante(models.Model):
+    id = models.AutoField(primary_key=True)
+    cargo = models.CharField(max_length=50, blank=True, default='')
+
+
+class Liquidacion(models.Model):
+    id = models.AutoField(primary_key=True)
+    fechacreacion = models.DateField()
+    ultimamodificacion = models.DateField()
+    mes = models.IntegerField()
+    total_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
+    total_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
+    total_liquidacion = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
+    inicio_periodo = models.DateField()
+    fin_periodo = models.DateField()
+    #-----------------------------------Relationships-----------------------------------------#
+    funcionario = models.ForeignKey('Funcionario', models.DO_NOTHING, on_delete=models.CASCADE)
+    estado_actual = models.ForeignKey('State', models.DO_NOTHING, on_delete=models.CASCADE)
+    tipo = models.ForeignKey('LiquidacionType', models.DO_NOTHING, on_delete=models.CASCADE)
+    propietario = models.ForeignKey('User', models.DO_NOTHING, on_delete=models.CASCADE)
+
+
+class LiquidacionType(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, blank=True, default='')
+
+
+class DetalleLiquidacion(models.Model):
+    id = models.AutoField(primary_key=True)
+    cantidad = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
+    monto = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
+    #-----------------------------------Relationships-----------------------------------------#
+    parametro = models.ForeignKey('Funcionario', models.DO_NOTHING, on_delete=models.CASCADE)
+    liquidacion = models.ForeignKey('State', models.DO_NOTHING, on_delete=models.CASCADE)
+
+
+class Variable(models.Model):
+    id = models.AutoField(primary_key=True)
+    motivo = models.CharField(max_length=50, blank=True, default='')
+    tipo = models.CharField(max_length=1, blank=True, default='')

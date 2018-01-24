@@ -103,5 +103,3 @@ class Vacaciones(models.Model):
     cantidadmeses = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     cantidaddias = models.IntegerField()
     monto = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    # -----------------------------------Relationships-----------------------------------------#
-    director = models.OneToOneField('Funcionario', models.DO_NOTHING, on_delete=models.CASCADE)

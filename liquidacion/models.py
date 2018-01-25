@@ -18,6 +18,7 @@ class Funcionario(models.Model):
     # constante
     # vacaciones
 
+
 class Movimiento(models.Model):
     id_movimiento = models.AutoField(primary_key=True)
     fechainicio = models.DateField()
@@ -163,6 +164,7 @@ class Liquidacion(models.Model):
     total_liquidacion = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
     inicio_periodo = models.DateField()
     fin_periodo = models.DateField()
+    haberes = models.ManyToManyField('Haber', through='Liquidacionhaber', through_fields=('liquidacion', 'haber'))
     #-----------------------------------Relationships-----------------------------------------#
     funcionario = models.ForeignKey('Funcionario', models.DO_NOTHING, on_delete=models.CASCADE)
     estado_actual = models.ForeignKey('State', models.DO_NOTHING, on_delete=models.CASCADE)
@@ -188,3 +190,22 @@ class Variable(models.Model):
     id = models.AutoField(primary_key=True)
     motivo = models.CharField(max_length=50, blank=True, default='')
     tipo = models.CharField(max_length=1, blank=True, default='')
+
+
+class Parametro(models.Model):
+    id = models.AutoField(primary_key=True)
+    codigo = models.CharField(max_length=50, blank=True, default='')
+    descripcion = models.CharField(max_length=50, blank=True, default='')
+
+
+class Haber(models.Model):
+    id_haber = models.AutoField(primary_key=True)
+    descripcion = models.CharField(max_length=50, blank=True, default='')
+    # -----------------------------------Relationships-----------------------------------------#
+    # movimiento = models.OneToOneField('Movimiento', models.DO_NOTHING, on_delete=models.CASCADE)
+
+
+class Liquidacionhaber(models.Model):
+    id = models.AutoField(primary_key=True)
+    haber = models.ForeignKey(Haber, on_delete=models.CASCADE)
+    liquidacion = models.ForeignKey(Liquidacion, on_delete=models.CASCADE)

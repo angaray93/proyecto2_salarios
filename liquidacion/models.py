@@ -12,11 +12,18 @@ class Funcionario(models.Model):
     telefono = models.CharField(max_length=50, default='')
     cantHijos = models.IntegerField()
     #-----------------------------------Relationships-----------------------------------------#
-    usuario = models.OneToOneField( User, on_delete=models.CASCADE, related_name='fk_funcionario_usuario')
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='fk_funcionario_usuario')
     grado = models.ForeignKey('GradoUniversitario', on_delete=models.CASCADE, related_name='fk_funcionario_usuario' )
     estadocivil = models.ForeignKey('EstadoCivil', on_delete=models.CASCADE, related_name='fk_funcionario_gradouniversitario')
     ciudadnacimiento = models.ForeignKey('Ciudad', on_delete=models.CASCADE, related_name='fk_funcionario_ciudad')
     vacaciones = models.ForeignKey('Vacaciones', on_delete=models.CASCADE, related_name='fk_funcionario_vacaciones')
+
+    class Meta:
+        ordering = ["apellidos"]
+        verbose_name_plural = "Funcionarios"
+
+    def __str__(self):
+        return '%s %s' % (self.nombres, self.apellidos)
 
 
 class Movimiento(models.Model):
@@ -86,6 +93,13 @@ class CategoriaSalarial(models.Model):
     tipo = models.CharField(max_length=30, default='')
     cargo = models.CharField(max_length=50, default='')
     asignacion = models.IntegerField()
+
+    class Meta:
+        ordering = ["codigo"]
+        verbose_name_plural = "Categorias Salariales"
+
+    def __str__(self):
+        return '%s ' % self.codigo
 
 
 class EstadoCivil(models.Model):

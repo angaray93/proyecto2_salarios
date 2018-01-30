@@ -51,12 +51,26 @@ class Objeto_De_Gasto(models.Model):
     concepto = models.CharField(max_length=100, default='')
     numero = models.IntegerField()
 
+    class Meta:
+        ordering = ["numero"]
+        verbose_name_plural = "Objetos de Gasto"
+
+    def __str__(self):
+        return '%s %s' % (self.numero, self.concepto)
+
 
 class Departamento(models.Model):
     iddepartamento = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, blank=True, default='')
     # -----------------------------------Relationships-----------------------------------------#
     director = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_departamento_funcionario')
+
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Departamentos"
+
+    def __str__(self):
+        return '%s' % (self.nombre)
 
 
 class Division(models.Model):
@@ -65,6 +79,13 @@ class Division(models.Model):
     # -----------------------------------Relationships-----------------------------------------#
     jefe = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_division_funcionario')
     departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE, related_name='fk_division_departamento')
+
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Divisiones"
+
+    def __str__(self):
+        return '%s %s %s' % (self.nombre,' - ', self.departamento)
 
 
 class Aguinaldo(models.Model):
@@ -79,12 +100,26 @@ class Pais(models.Model):
     idpais = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='')
 
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Paises"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
+
 
 class Ciudad(models.Model):
     idciudad = models.AutoField(primary_key=True)
     nombreciudad = models.CharField(max_length=50, default='')
     # -----------------------------------Relationships-----------------------------------------#
     pais = models.ForeignKey('Pais', on_delete=models.CASCADE, related_name='fk_ciudad_pais')
+
+    class Meta:
+        ordering = ["nombreciudad"]
+        verbose_name_plural = "Ciudades"
+
+    def __str__(self):
+        return '%s %s %s' % (self.nombreciudad, ' - ', self.pais)
 
 
 class CategoriaSalarial(models.Model):
@@ -106,10 +141,24 @@ class EstadoCivil(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='')
 
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Estados Civiles"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
+
 
 class GradoUniversitario(models.Model):
     idpais = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='')
+
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Grado Universitario"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
 
 
 class Vacaciones(models.Model):
@@ -138,15 +187,36 @@ class ConstanteType(models.Model):
     nombre = models.CharField(max_length=50, default='')
     tipo = models.CharField(max_length=1, default='')
 
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Tipos de Constante"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
+
 
 class MovimientoType(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='')
 
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Tipos de Movimiento"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
+
 
 class MovimientoMotivo(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='')
+
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Motivos de Movimiento"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
 
 
 class DocumentoRespaldatorio(models.Model):
@@ -158,15 +228,35 @@ class DocumentoRespaldatorio(models.Model):
     tipo = models.ForeignKey('DocumentoType', on_delete=models.CASCADE, related_name='fk_documentorespaldatorio_tipo')
     autoridadfirmante = models.ForeignKey('AutoridadFirmante', on_delete=models.CASCADE, related_name='fk_documentorespaldatorio_autoridadfirmante')
 
+    class Meta:
+        verbose_name_plural = "Documentos Respaldatorios"
+
+    def __str__(self):
+        return '%s ' % (self.codigo)
+
 
 class DocumentoType(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='')
 
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Tipos de Documento"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
+
 
 class AutoridadFirmante(models.Model):
     id = models.AutoField(primary_key=True)
-    cargo = models.CharField(max_length=50, blank=True, default='')
+    cargo = models.CharField(max_length=50)
+
+    class Meta:
+        ordering = ["cargo"]
+        verbose_name_plural = "Autoridades Firmantes"
+
+    def __str__(self):
+        return '%s ' % (self.cargo)
 
 
 class Liquidacion(models.Model):
@@ -191,6 +281,13 @@ class LiquidacionType(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='')
 
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Tipos de Liquidacion"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
+
 
 class DetalleLiquidacion(models.Model):
     id = models.AutoField(primary_key=True)
@@ -207,11 +304,25 @@ class Variable(models.Model):
     motivo = models.CharField(max_length=50, blank=True, default='')
     tipo = models.CharField(max_length=1, blank=True, default='')
 
+    class Meta:
+        ordering = ["motivo"]
+        verbose_name_plural = "Variables"
+
+    def __str__(self):
+        return '%s ' % (self.motivo)
+
 
 class Parametro(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=50, blank=True, default='')
     descripcion = models.CharField(max_length=50, blank=True, default='')
+
+    class Meta:
+        ordering = ["descripcion"]
+        verbose_name_plural = "Parametros"
+
+    def __str__(self):
+        return '%s ' % (self.descripcion)
 
 
 class Haber(models.Model):
@@ -232,7 +343,21 @@ class State(models.Model):
     nombre = models.CharField(max_length=50, blank=True, default='')
     tipo = models.ForeignKey('StateType', on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Estados de Liquidacion Salarial"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
+
 
 class StateType(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, blank=True, default='')
+
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Tipos de Estado de Liquidacion"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)

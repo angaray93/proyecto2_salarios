@@ -1,6 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+ConstanteType_OPTIONS = (
+    ('D', 'Debito'),
+    ('C', 'Credito'),
+)
+
+
 class Funcionario(models.Model):
     idFuncionario = models.AutoField(primary_key=True)
     cedula = models.CharField(max_length=50, default='')
@@ -185,7 +192,7 @@ class Constante(models.Model):
 class ConstanteType(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='')
-    tipo = models.CharField(max_length=1, default='')
+    tipo = models.CharField(max_length=1, choices=ConstanteType_OPTIONS)
 
     class Meta:
         ordering = ["nombre"]
@@ -301,8 +308,8 @@ class DetalleLiquidacion(models.Model):
 
 class Variable(models.Model):
     id = models.AutoField(primary_key=True)
-    motivo = models.CharField(max_length=50, blank=True, default='')
-    tipo = models.CharField(max_length=1, blank=True, default='')
+    motivo = models.CharField(max_length=50, default='')
+    tipo = models.CharField(max_length=1, choices=ConstanteType_OPTIONS)
 
     class Meta:
         ordering = ["motivo"]

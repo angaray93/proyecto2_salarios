@@ -57,21 +57,21 @@ class CiudadAdmin(admin.ModelAdmin):
 admin.site.register(Ciudad, CiudadAdmin)
 
 class EstadoCivilAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = EstadoCivilForm
     list_display = ('nombre',)
     search_fields = ('nombre',)
 
 admin.site.register(EstadoCivil, EstadoCivilAdmin)
 
 class GradoUniversitarioAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = GradoUniversitarioForm
     list_display = ('nombre',)
     search_fields = ('nombre',)
 
 admin.site.register(GradoUniversitario, GradoUniversitarioAdmin)
 
 class ConstanteTypeAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = ConstanteTypeForm
     list_display = ('nombre', 'tipo',)
     search_fields = ('nombre', 'tipo',)
 
@@ -79,7 +79,7 @@ admin.site.register(ConstanteType, ConstanteTypeAdmin)
 
 
 class MovimientoTypeAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = MovimientoTypeForm
     list_display = ('nombre',)
     search_fields = ('nombre',)
 
@@ -87,7 +87,7 @@ admin.site.register(MovimientoType, MovimientoTypeAdmin)
 
 
 class MovimientoMotivoAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = MovimientoMotivoForm
     list_display = ('nombre',)
     search_fields = ('nombre',)
 
@@ -103,7 +103,7 @@ admin.site.register(DocumentoRespaldatorio, DocumentoRespaldatorioAdmin)
 
 
 class DocumentoTypeAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = DocumentoTypeForm
     list_display = ('nombre',)
     search_fields = ('nombre',)
 
@@ -119,7 +119,7 @@ admin.site.register(AutoridadFirmante, AutoridadFirmanteAdmin)
 
 
 class LiquidacionTypeAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = LiquidacionTypeForm
     list_display = ('nombre',)
     search_fields = ('nombre',)
 
@@ -127,7 +127,7 @@ admin.site.register(LiquidacionType, LiquidacionTypeAdmin)
 
 
 class VariableAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = VariableForm
     list_display = ('motivo','tipo',)
     search_fields = ('motivo','tipo',)
 
@@ -135,7 +135,7 @@ admin.site.register(Variable, VariableAdmin)
 
 
 class ParametroAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = ParametroForm
     list_display = ('codigo','descripcion',)
     search_fields = ('codigo','descripcion',)
 
@@ -143,7 +143,7 @@ admin.site.register(Parametro, ParametroAdmin)
 
 
 class StateAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = StateForm
     list_display = ('nombre','tipo',)
     search_fields = ('nombre','tipo',)
 
@@ -151,7 +151,7 @@ admin.site.register(State, StateAdmin)
 
 
 class StateTypeAdmin(admin.ModelAdmin):
-    #form = CategoriaSalarialForm
+    form = StateTypeForm
     list_display = ('nombre',)
     search_fields = ('nombre',)
 

@@ -97,3 +97,144 @@ class CiudadForm(forms.ModelForm):
         if convertido.isalpha() is False:
             raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
         return self.cleaned_data['nombreciudad']
+
+
+class EstadoCivilForm(forms.ModelForm):
+    class Meta:
+        model = EstadoCivil
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']
+
+
+class GradoUniversitarioForm(forms.ModelForm):
+    class Meta:
+        model = GradoUniversitario
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']
+
+
+class ConstanteTypeForm(forms.ModelForm):
+    tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
+    class Meta:
+        model = ConstanteType
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']
+
+
+class MovimientoTypeForm(forms.ModelForm):
+    class Meta:
+        model = MovimientoType
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']
+
+
+class MovimientoMotivoForm(forms.ModelForm):
+    class Meta:
+        model = MovimientoMotivo
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']
+
+
+class DocumentoTypeForm(forms.ModelForm):
+    class Meta:
+        model = DocumentoType
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']
+
+
+class LiquidacionTypeForm(forms.ModelForm):
+    class Meta:
+        model = LiquidacionType
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']
+
+
+class VariableForm(forms.ModelForm):
+    tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
+    class Meta:
+        model = Variable
+        fields = '__all__'
+    def clean_motivo(self):
+        motivo = self.cleaned_data.get('motivo')
+        convertido = motivo.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un motivo valido, sin numeros ni simbolos")
+        return self.cleaned_data['motivo']
+
+
+class ParametroForm(forms.ModelForm):
+    class Meta:
+        model = Parametro
+        fields = '__all__'
+    def clean_codigo(self):
+        codigo = self.cleaned_data.get('codigo')
+        convertido = len(codigo)
+        if convertido != 3 or codigo.isupper() is False:
+            raise forms.ValidationError("Ingrese un numero de 3 letras en mayusculas, Ejemplo: 'JOR','HOR'")
+        return self.cleaned_data['codigo']
+    def clean_descripcion(self):
+        descripcion = self.cleaned_data.get('descripcion')
+        convertido = descripcion.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese una descripcion valida, sin numeros ni simbolos")
+        return self.cleaned_data['descripcion']
+
+
+class StateForm(forms.ModelForm):
+    class Meta:
+        model = State
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']
+
+
+class StateTypeForm(forms.ModelForm):
+    tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
+    class Meta:
+        model = StateType
+        fields = '__all__'
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        convertido = nombre.replace(" ", "")
+        if convertido.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido, sin numeros ni simbolos")
+        return self.cleaned_data['nombre']

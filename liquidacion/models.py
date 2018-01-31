@@ -201,6 +201,13 @@ class ConstanteType(models.Model):
     def __str__(self):
         return '%s ' % (self.nombre)
 
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Tipos de Constante"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
+
 
 class MovimientoType(models.Model):
     id = models.AutoField(primary_key=True)
@@ -310,6 +317,13 @@ class Variable(models.Model):
     id = models.AutoField(primary_key=True)
     motivo = models.CharField(max_length=50, default='')
     tipo = models.CharField(max_length=1, choices=ConstanteType_OPTIONS)
+
+    class Meta:
+        ordering = ["motivo"]
+        verbose_name_plural = "Variables"
+
+    def __str__(self):
+        return '%s ' % (self.motivo)
 
     class Meta:
         ordering = ["motivo"]

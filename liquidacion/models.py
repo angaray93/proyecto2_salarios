@@ -1,12 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.exceptions import ValidationError
 
 ConstanteType_OPTIONS = (
     ('D', 'Debito'),
     ('C', 'Credito'),
 )
 
+def validar_nombre(value):
+    convertido = value.replace(" ", "")
+    if convertido.isalpha() is False:
+        raise ValidationError(
+            ('%(value)s no es valido, favor ingrese un valor sin numeros ni simbolos'),
+            params={'value': value},
+        )
 
 class Funcionario(models.Model):
     idFuncionario = models.AutoField(primary_key=True)
@@ -55,8 +62,8 @@ class Movimiento(models.Model):
 
 class Objeto_De_Gasto(models.Model):
     id_og = models.AutoField(primary_key=True)
-    concepto = models.CharField(max_length=100, default='')
-    numero = models.IntegerField()
+    concepto = models.CharField(max_length=100, default='', validators=[validar_nombre], unique=True)
+    numero = models.IntegerField(unique=True)
 
     class Meta:
         ordering = ["numero"]
@@ -68,7 +75,7 @@ class Objeto_De_Gasto(models.Model):
 
 class Departamento(models.Model):
     iddepartamento = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, blank=True, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     # -----------------------------------Relationships-----------------------------------------#
     director = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_departamento_funcionario')
 
@@ -82,7 +89,7 @@ class Departamento(models.Model):
 
 class Division(models.Model):
     iddivision = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, blank=True, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     # -----------------------------------Relationships-----------------------------------------#
     jefe = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_division_funcionario')
     departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE, related_name='fk_division_departamento')
@@ -105,7 +112,7 @@ class Aguinaldo(models.Model):
 
 class Pais(models.Model):
     idpais = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["nombre"]
@@ -117,7 +124,7 @@ class Pais(models.Model):
 
 class Ciudad(models.Model):
     idciudad = models.AutoField(primary_key=True)
-    nombreciudad = models.CharField(max_length=50, default='')
+    nombreciudad = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     # -----------------------------------Relationships-----------------------------------------#
     pais = models.ForeignKey('Pais', on_delete=models.CASCADE, related_name='fk_ciudad_pais')
 
@@ -131,9 +138,9 @@ class Ciudad(models.Model):
 
 class CategoriaSalarial(models.Model):
     id = models.AutoField(primary_key=True)
-    codigo = models.CharField(max_length=20, default='')
+    codigo = models.CharField(max_length=20, default='', unique=True)
     tipo = models.CharField(max_length=30, default='')
-    cargo = models.CharField(max_length=50, default='')
+    cargo = models.CharField(max_length=50, default='', validators=[validar_nombre])
     asignacion = models.IntegerField()
 
     class Meta:
@@ -146,7 +153,7 @@ class CategoriaSalarial(models.Model):
 
 class EstadoCivil(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["nombre"]
@@ -158,7 +165,7 @@ class EstadoCivil(models.Model):
 
 class GradoUniversitario(models.Model):
     idpais = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["nombre"]
@@ -191,15 +198,8 @@ class Constante(models.Model):
 
 class ConstanteType(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     tipo = models.CharField(max_length=1, choices=ConstanteType_OPTIONS)
-
-    class Meta:
-        ordering = ["nombre"]
-        verbose_name_plural = "Tipos de Constante"
-
-    def __str__(self):
-        return '%s ' % (self.nombre)
 
     class Meta:
         ordering = ["nombre"]
@@ -211,7 +211,7 @@ class ConstanteType(models.Model):
 
 class MovimientoType(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["nombre"]
@@ -223,7 +223,7 @@ class MovimientoType(models.Model):
 
 class MovimientoMotivo(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["nombre"]
@@ -239,8 +239,10 @@ class DocumentoRespaldatorio(models.Model):
     fechaemision = models.DateField()
     quienfirma = models.CharField(max_length=50, default='')
     # -----------------------------------Relationships-----------------------------------------#
-    tipo = models.ForeignKey('DocumentoType', on_delete=models.CASCADE, related_name='fk_documentorespaldatorio_tipo')
-    autoridadfirmante = models.ForeignKey('AutoridadFirmante', on_delete=models.CASCADE, related_name='fk_documentorespaldatorio_autoridadfirmante')
+    tipo = models.ForeignKey('DocumentoType', on_delete=models.CASCADE,
+                             related_name='fk_documentorespaldatorio_tipo')
+    autoridadfirmante = models.ForeignKey('AutoridadFirmante', on_delete=models.CASCADE,
+                              related_name='fk_documentorespaldatorio_autoridadfirmante')
 
     class Meta:
         verbose_name_plural = "Documentos Respaldatorios"
@@ -251,7 +253,7 @@ class DocumentoRespaldatorio(models.Model):
 
 class DocumentoType(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["nombre"]
@@ -263,7 +265,7 @@ class DocumentoType(models.Model):
 
 class AutoridadFirmante(models.Model):
     id = models.AutoField(primary_key=True)
-    cargo = models.CharField(max_length=50)
+    cargo = models.CharField(max_length=50, validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["cargo"]
@@ -293,7 +295,7 @@ class Liquidacion(models.Model):
 
 class LiquidacionType(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["nombre"]
@@ -310,20 +312,13 @@ class DetalleLiquidacion(models.Model):
     #-----------------------------------Relationships-----------------------------------------#
     parametro = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_detalle_funcionario')
     variable = models.ForeignKey('Variable', on_delete=models.CASCADE, related_name='fk_detalle_variable')
-    liquidacion = models.ForeignKey('State', on_delete=models.CASCADE, related_name='fk_detalle_liquidacion')
+    liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE, related_name='fk_detalle_liquidacion')
 
 
 class Variable(models.Model):
     id = models.AutoField(primary_key=True)
-    motivo = models.CharField(max_length=50, default='')
+    motivo = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     tipo = models.CharField(max_length=1, choices=ConstanteType_OPTIONS)
-
-    class Meta:
-        ordering = ["motivo"]
-        verbose_name_plural = "Variables"
-
-    def __str__(self):
-        return '%s ' % (self.motivo)
 
     class Meta:
         ordering = ["motivo"]
@@ -335,8 +330,8 @@ class Variable(models.Model):
 
 class Parametro(models.Model):
     id = models.AutoField(primary_key=True)
-    codigo = models.CharField(max_length=50, blank=True, default='')
-    descripcion = models.CharField(max_length=50, blank=True, default='')
+    codigo = models.CharField(max_length=50, default='', unique=True)
+    descripcion = models.CharField(max_length=50, default='', unique=True)
 
     class Meta:
         ordering = ["descripcion"]
@@ -361,7 +356,7 @@ class Liquidacionhaber(models.Model):
 
 class State(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, blank=True, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     tipo = models.ForeignKey('StateType', on_delete=models.CASCADE)
 
     class Meta:
@@ -374,7 +369,7 @@ class State(models.Model):
 
 class StateType(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, blank=True, default='')
+    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
 
     class Meta:
         ordering = ["nombre"]

@@ -20,17 +20,16 @@ class Funcionario(models.Model):
     cedula = models.CharField(max_length=50, default='')
     nombres = models.CharField(max_length=50, default='')
     apellidos = models.CharField(max_length=50, default='')
-    fechanacimiento = models.DateField()
+    fechanacimiento = models.DateField(verbose_name='Fecha de Nacimiento')
     direccion = models.CharField(max_length=100, default='')
     email = models.CharField(max_length=50, default='')
     telefono = models.CharField(max_length=50, default='')
-    cantHijos = models.IntegerField()
+    cantHijos = models.IntegerField(verbose_name='Cantidad de Hijos')
     #-----------------------------------Relationships-----------------------------------------#
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='fk_funcionario_usuario')
     grado = models.ForeignKey('GradoUniversitario', on_delete=models.CASCADE, related_name='fk_funcionario_usuario' )
-    estadocivil = models.ForeignKey('EstadoCivil', on_delete=models.CASCADE, related_name='fk_funcionario_gradouniversitario')
-    ciudadnacimiento = models.ForeignKey('Ciudad', on_delete=models.CASCADE, related_name='fk_funcionario_ciudad')
-    vacaciones = models.ForeignKey('Vacaciones', on_delete=models.CASCADE, related_name='fk_funcionario_vacaciones')
+    estadocivil = models.ForeignKey('EstadoCivil', on_delete=models.CASCADE, related_name='fk_funcionario_gradouniversitario', verbose_name='Estado Civil')
+    ciudadnacimiento = models.ForeignKey('Ciudad', on_delete=models.CASCADE, related_name='fk_funcionario_ciudad', verbose_name='Lugar de Nacimiento')
 
     class Meta:
         ordering = ["apellidos"]
@@ -58,6 +57,7 @@ class Movimiento(models.Model):
     og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.CASCADE, related_name='fk_movimiento_og')
     motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.CASCADE, related_name='fk_movimiento_motivo')
     tipo = models.ForeignKey('MovimientoType', on_delete=models.CASCADE, related_name='fk_movimiento_tipo')
+    vacaciones = models.OneToOneField('Vacaciones', on_delete=models.CASCADE, related_name='fk_movimiento_vacaciones' )
 
 
 class Objeto_De_Gasto(models.Model):
@@ -124,7 +124,7 @@ class Pais(models.Model):
 
 class Ciudad(models.Model):
     idciudad = models.AutoField(primary_key=True)
-    nombreciudad = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
+    nombreciudad = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True, verbose_name='Nombre de la Ciudad')
     # -----------------------------------Relationships-----------------------------------------#
     pais = models.ForeignKey('Pais', on_delete=models.CASCADE, related_name='fk_ciudad_pais')
 

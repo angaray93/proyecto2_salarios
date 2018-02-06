@@ -98,8 +98,8 @@ class Division(models.Model):
         ordering = ["nombre"]
         verbose_name_plural = "Divisiones"
 
-    def __str__(self):
-        return '%s %s %s' % (self.nombre,' - ', self.departamento)
+    #def __str__(self):
+    #    return '%s %s %s' % (self.nombre,' - ', self.departamento)
 
 
 class Aguinaldo(models.Model):
@@ -132,8 +132,8 @@ class Ciudad(models.Model):
         ordering = ["nombreciudad"]
         verbose_name_plural = "Ciudades"
 
-    def __str__(self):
-        return '%s %s %s' % (self.nombreciudad, ' - ', self.pais)
+    #def __str__(self):
+    #    return '%s %s %s' % (self.nombreciudad, ' - ', self.pais)
 
 
 class CategoriaSalarial(models.Model):

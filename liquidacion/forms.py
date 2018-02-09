@@ -23,6 +23,11 @@ class AutoridadFirmanteForm(forms.ModelForm):
     class Meta:
         model = AutoridadFirmante
         fields = '__all__'
+        widgets = {
+            'cargo': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+        }
 
 
 class Objeto_De_GastoAdminForm(forms.ModelForm):

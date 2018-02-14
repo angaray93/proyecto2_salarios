@@ -13,7 +13,7 @@ def index(request):
 
 def lista_objetos(request, model_name):
     items = model_name.objects.all()
-    return render(request, 'index.html', {'items': items})
+    return render(request, 'proceso/../templates/index.html', {'items': items})
     #return render(request, 'listado.html', {'books': books})
 
 

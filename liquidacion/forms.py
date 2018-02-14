@@ -4,6 +4,7 @@ from liquidacion.models import *
 
 
 class CategoriaSalarialForm(forms.ModelForm):
+
     class Meta:
         model = CategoriaSalarial
         fields = '__all__'

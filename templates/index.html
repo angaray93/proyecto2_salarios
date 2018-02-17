@@ -2,6 +2,9 @@
 {% load staticfiles %}
 
 {% block barralateral %}
+
+  {% if user.is_authenticated %}
+
     <div class="collapse navbar-collapse" id="navbarResponsive">
   <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
       <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
@@ -202,5 +205,10 @@
     </li>
   </ul>
 </div>
-{% endblock %}
 
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
+
+{% endblock %}

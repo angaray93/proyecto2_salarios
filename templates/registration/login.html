@@ -24,7 +24,9 @@
       <div class="card-body">
         <form method="post">
           {% csrf_token %}
-          {{ form.as_p }}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
           <button type="submit">Login</button>
         </form>
         <div class="text-center">

@@ -3,7 +3,8 @@
 {% load django_bootstrap_breadcrumbs %}
 
 {% block breadcrumbs %}
-    {% breadcrumb "Home" "/" %}
+    {{ block.super }}
+    {% breadcrumb "Users" "users.views.index" %}
 {% endblock %}
 
 {% block content %}
@@ -34,7 +35,8 @@
               </div>
               <div class="mr-5">Liquidacion Salarial y Beneficios</div>
             </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
+            <a class="card-footer text-white clearfix small z-1"
+               onclick="return abrir_modal('{% url 'liquidacion:opciones_proceso' %}')">
               <span class="float-left">View Details</span>
               <span class="float-right">
                 <i class="fa fa-angle-right"></i>
@@ -60,7 +62,31 @@
         </div>
     </div>
 
-{% endif %}
+    <div id="popup" class="modal fade" role="dialog"></div>
 
+<script>
+    function abrir_modal(url)
+    {
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
+        });
+        return false;
+    }
+
+    function cerrar_modal()
+    {
+        $('#popup').modal('hide');
+        return false;
+    }
+
+    $(document).ready(function()
+    {
+
+    });
+</script>
+
+
+{% endif %}
 {% endblock %}
 

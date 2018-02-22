@@ -7,6 +7,7 @@ ConstanteType_OPTIONS = (
     ('C', 'Credito'),
 )
 
+
 def validar_nombre(value):
     convertido = value.replace(" ", "")
     if convertido.isalpha() is False:
@@ -26,10 +27,10 @@ class Funcionario(models.Model):
     telefono = models.CharField(max_length=50, default='')
     cantHijos = models.IntegerField(verbose_name='Cantidad de Hijos')
     #-----------------------------------Relationships-----------------------------------------#
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='fk_funcionario_usuario')
-    grado = models.ForeignKey('GradoUniversitario', on_delete=models.CASCADE, related_name='fk_funcionario_usuario' )
-    estadocivil = models.ForeignKey('EstadoCivil', on_delete=models.CASCADE, related_name='fk_funcionario_gradouniversitario', verbose_name='Estado Civil')
-    ciudadnacimiento = models.ForeignKey('Ciudad', on_delete=models.CASCADE, related_name='fk_funcionario_ciudad', verbose_name='Lugar de Nacimiento')
+    usuario = models.OneToOneField(User, on_delete=models.DO_NOTHING, related_name='fk_funcionario_usuario')
+    grado = models.ForeignKey('GradoUniversitario', on_delete=models.DO_NOTHING, related_name='fk_funcionario_usuario' )
+    estadocivil = models.ForeignKey('EstadoCivil', on_delete=models.DO_NOTHING, related_name='fk_funcionario_gradouniversitario', verbose_name='Estado Civil')
+    ciudadnacimiento = models.ForeignKey('Ciudad', on_delete=models.DO_NOTHING, related_name='fk_funcionario_ciudad', verbose_name='Lugar de Nacimiento')
 
     class Meta:
         ordering = ["apellidos"]
@@ -46,18 +47,18 @@ class Movimiento(models.Model):
     esPrimero = models.BooleanField(default=True)
     horaEntrada = models.TimeField()
     horaSalida = models.TimeField()
-    tieneAguinaldo = models.BooleanField(default=False)
-    tieneVacaciones = models.BooleanField(default=False)
-    tieneSeguroMedico = models.BooleanField(default=False)
+    #tieneAguinaldo = models.BooleanField(default=False)
+    #tieneVacaciones = models.BooleanField(default=False)
+    #tieneSeguroMedico = models.BooleanField(default=False)
     #-----------------------------------Relationships-----------------------------------------#
-    documentorespaldatorio = models.ForeignKey('DocumentoRespaldatorio', on_delete=models.CASCADE, related_name='fk_movimiento_documentorespaldatorio')
-    funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_movimiento_funcionario')
-    categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.CASCADE, related_name='fk_movimiento_categoriasalarial')
-    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE, related_name='fk_movimiento_departamento')
-    og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.CASCADE, related_name='fk_movimiento_og')
-    motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.CASCADE, related_name='fk_movimiento_motivo')
-    tipo = models.ForeignKey('MovimientoType', on_delete=models.CASCADE, related_name='fk_movimiento_tipo')
-    vacaciones = models.OneToOneField('Vacaciones', on_delete=models.CASCADE, related_name='fk_movimiento_vacaciones' )
+    documentorespaldatorio = models.ForeignKey('DocumentoRespaldatorio', on_delete=models.DO_NOTHING, related_name='fk_movimiento_documentorespaldatorio')
+    funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')
+    categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING, related_name='fk_movimiento_categoriasalarial')
+    departamento = models.ForeignKey('Departamento', on_delete=models.DO_NOTHING, related_name='fk_movimiento_departamento')
+    og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.DO_NOTHING, related_name='fk_movimiento_og')
+    motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo')
+    tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo')
+    movimiento_padre = models.ForeignKey('self', on_delete=models.DO_NOTHING)
 
 
 class Objeto_De_Gasto(models.Model):
@@ -77,7 +78,7 @@ class Departamento(models.Model):
     iddepartamento = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     # -----------------------------------Relationships-----------------------------------------#
-    director = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_departamento_funcionario')
+    director = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_departamento_funcionario')
 
     class Meta:
         ordering = ["nombre"]
@@ -91,8 +92,8 @@ class Division(models.Model):
     iddivision = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     # -----------------------------------Relationships-----------------------------------------#
-    jefe = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_division_funcionario')
-    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE, related_name='fk_division_departamento')
+    jefe = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_division_funcionario')
+    departamento = models.ForeignKey('Departamento', on_delete=models.DO_NOTHING, related_name='fk_division_departamento')
 
     class Meta:
         ordering = ["nombre"]
@@ -107,7 +108,7 @@ class Aguinaldo(models.Model):
     cantidad_meses = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     # -----------------------------------Relationships-----------------------------------------#
-    movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_aguinaldo_movimiento')
+    movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name='aguinaldo_movimiento')
 
 
 class Pais(models.Model):
@@ -181,9 +182,9 @@ class Vacaciones(models.Model):
     fin = models.DateField()
     cantidadmeses = models.DecimalField(max_digits=10, decimal_places=2)
     cantidaddias = models.IntegerField()
-    monto = models.DecimalField(max_digits=20, decimal_places=2,)
+    monto = models.DecimalField(max_digits=20, decimal_places=2)
     # -----------------------------------Relationships-----------------------------------------#
-    funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name= 'fk_vacaciones_funcionario')
+    movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name= 'vacaciones_movimiento', default=0)
 
 
 class Constante(models.Model):

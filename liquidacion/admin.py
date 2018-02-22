@@ -11,12 +11,12 @@ class FuncionarioAdmin(admin.ModelAdmin):
 admin.site.register(Funcionario, FuncionarioAdmin)
 
 
-"""class CategoriaSalarialAdmin(admin.ModelAdmin):
+class CategoriaSalarialAdmin(admin.ModelAdmin):
     form = CategoriaSalarialForm
     list_display = ('codigo', 'tipo', 'cargo', 'asignacion')
     search_fields = ('codigo', 'cargo',)
 
-admin.site.register(CategoriaSalarial, CategoriaSalarialAdmin)"""
+admin.site.register(CategoriaSalarial, CategoriaSalarialAdmin)
 
 
 class Objeto_De_GastoAdmin(admin.ModelAdmin):

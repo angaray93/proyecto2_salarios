@@ -1,6 +1,46 @@
 from django import forms
 from django.contrib import admin
+#from django.forms import *
 from liquidacion.models import *
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
+class MovimientoForm(forms.ModelForm):
+
+    class Meta:
+        model = Movimiento
+        fields = '__all__'
+        widgets = {
+            'fechainicio': DateInput(attrs={
+                'class': 'form-control'
+            }),
+            'fechafin': DateInput(attrs={
+                'class': 'form-control'
+            }),
+            'esPrimero': forms.CheckboxInput(attrs={
+                'class': 'form-control'
+            }),
+            'horaEntrada': forms.TimeInput(attrs={
+                'class': 'form-control'
+            }),
+            'horaSalida': forms.TimeInput(attrs={
+                'class': 'form-control'
+            }),
+        }
+
+    """def clean_asignacion(self):
+        asignacion = self.cleaned_data.get('asignacion')
+        if asignacion < 1 :
+            raise forms.ValidationError("Ingrese un monto valido para la asignacion salarial")
+        return self.cleaned_data['asignacion']
+    def clean_tipo(self):
+        tipo = self.cleaned_data.get('tipo')
+        if tipo.isalpha() is False:
+            raise forms.ValidationError("Ingrese un nombre valido para el tipo de categoria")
+        return self.cleaned_data['tipo']"""
 
 
 class CategoriaSalarialForm(forms.ModelForm):

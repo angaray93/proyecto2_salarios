@@ -12,5 +12,6 @@ urlpatterns = [
     path('opciones_proceso', views.opciones_proceso, name='opciones_proceso'),
     path('movimiento/nuevo/', views.movimiento_vista, name='nuevo_movimiento'),
     path('movimiento/<int:idmovimiento>', views.movimiento_vista, name='modificar_movimiento'),
+    path('buscar_funcionario', views.busqueda_funcionarios, name='buscar_funcionario'),
 
 ]

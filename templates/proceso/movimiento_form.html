@@ -5,57 +5,143 @@
 
 <div class="col-12 col-sm-10 recuadro">
 
+<form method="post" id="movimiento_form">
+        {% csrf_token %}
+        <div class="row"> <!-- cabecera-->
+            <div class="col-10">
+                <div class="row">
+                    <div class="col-4 d-flex align-items-center">
+                        {% if movimiento %}
+                            <span class="h4">Movimiento #{{ movimiento.pk }}</span>
+                        {% else %}
+                            <span class="h4">Nuevo Movimiento</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-8">
+                        <ul class="list-inline">
+                            <li class="list-inline-item">Funcionario: {{ funcionario }}</li>
+                            <input type="hidden" name="funcionario" value="{{ funcionario }}">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 d-flex justify-content-end align-items-center">
+            {% if movimiento %}
+                <button type="submit" class="btn btn-success" name="guardar"
+                        formaction="{% url 'liquidacion:modificar_movimiento' movimiento.pk %}">
+                    Guardar
+                </button>
+            {% else %}
+                <div class="row separador"></div>
+                <button type="submit" class="btn btn-success" name="guardar"
+                        formaction="{% url 'liquidacion:nuevo_movimiento' %}">
+                    Guardar
+                </button>
+            {% endif %}
+            </div>
+        </div>
+    <!-- Fin cabecera -->
+        <hr>
 
-
-  <h1>Registration</h1>
-
-  <form action="/">
-      <hr>
-    <div class="accounttype">
-      <input type="radio" value="None" id="radioOne" name="account" checked/>
-      <label for="radioOne" class="radio" checked>Personal</label>
-      <input type="radio" value="None" id="radioTwo" name="account" />
-      <label for="radioTwo" class="radio">Company</label>
-    </div>
-  <hr>
-
+    <!-- Primera Fila -->
     <div class="row">
         <div class="col-lg-4">
-            <label id="icon" for="name"><i class="icon-envelope "></i></label>
-            <input class="form-control" type="text" name="name" id="name" placeholder="Email" required/>
+            <div class="form-group">
+                <label for="esPrimero">Es primero:</label>
+                    {{ form.esPrimero }}
+            </div>
         </div>
-        <div class="col-lg-4">
-            <label id="icon" for="name"><i class="icon-user"></i></label>
-            <input class="form-control" type="text" name="name" id="name" placeholder="Name" required/>
+    </div>
+    <hr>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="categoria_salarial">Categoria Salarial:</label>
+                <div class="input-group">
+                    {{ form.categoria_salarial }}
+                    <span class="input-group-btn">
+                        <a onclick="window.open('{% url 'admin:liquidacion_categoriasalarial_add' %}')">
+                            <button class="btn btn-secondary" type="button">+</button></a>
+                    </span>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-4">
-            <label id="icon" for="name"><i class="icon-shield"></i></label>
-            <input class="form-control" type="password" name="name" id="name" placeholder="Password" required/>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="og">Objeto de Gasto:</label>
+                <div class="input-group">
+                    {{ form.og }}
+                    <span class="input-group-btn">
+                        <a onclick="window.open('{% url 'admin:liquidacion_objeto_de_gasto_add' %}')">
+                                <button class="btn btn-secondary" type="button">+</button></a>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 
-      <div class="row">
-        <div class="col-lg-4">
-            <label id="icon" for="name"><i class="icon-envelope "></i></label>
-            <input type="text" name="name" id="name" placeholder="Email" required/>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="tipo">Tipo de Movimiento:</label>
+                <div class="input-group">
+                    {{ form.tipo }}
+                </div>
+            </div>
         </div>
-        <div class="col-lg-4">
-            <label id="icon" for="name"><i class="icon-user"></i></label>
-            <input type="text" name="name" id="name" placeholder="Name" required/>
-        </div>
-        <div class="col-lg-4">
-            <label id="icon" for="name"><i class="icon-shield"></i></label>
-            <input type="password" name="name" id="name" placeholder="Password" required/>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="motivo">Motivo del Movimiento:</label>
+                <div class="input-group">
+                    {{ form.motivo }}
+                </div>
+            </div>
         </div>
     </div>
-  <div class="gender">
-    <input type="radio" value="None" id="male" name="gender" checked/>
-    <label for="male" class="radio" chec>Male</label>
-    <input type="radio" value="None" id="female" name="gender" />
-    <label for="female" class="radio">Female</label>
-   </div>
-   <p>By clicking Register, you agree on our <a href="#">terms and condition</a>.</p>
-   <a href="#" class="button">Register</a>
+    <hr>
+
+    <div class="row">
+        <div class="col-lg">
+            <div class="form-group">
+                <label for="departamento">Departamento:</label>
+                    {{ form.departamento }}
+            </div>
+        </div>
+      </div>
+    <hr>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="fechainicio">Fecha de Inicio:</label>
+                    {{ form.fechainicio }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="fechafin">Fecha de Fin:</label>
+                    {{ form.fechafin }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="horaEntrada">Hora de Entrada:</label>
+                    {{ form.horaEntrada }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="horaSalida">Hora de Salida:</label>
+                    {{ form.horaSalida }}
+            </div>
+        </div>
+    </div>
+
 
   </form>
 </div>

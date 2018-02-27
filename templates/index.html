@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% load django_bootstrap_breadcrumbs %}
-
-{% block breadcrumbs %}
-    {{ block.super }}
-    {% breadcrumb "Users" "users.views.index" %}
-{% endblock %}
+{% load admin_urls %}
 
 {% block content %}
   {% if user.is_authenticated %}

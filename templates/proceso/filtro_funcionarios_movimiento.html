@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<form method="get">
+    <input type="text" name="q" placeholder="Ingrese un numero de cedula" value="{{ request.GET.q }}"/>
+    <button type="submit">Search</button>
+  </form>
+  <ul>
+  {% for funcionario in funcionarios %}
+    <li>{{ funcionario.nombres }} - {{ funcionario.apellidos }}</li>
+  {% endfor %}
+  </ul>
+
+{% endblock %}
+

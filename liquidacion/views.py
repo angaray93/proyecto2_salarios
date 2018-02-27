@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
 
+from liquidacion.filters import FuncionarioFilter
 from liquidacion.forms import *
 from liquidacion.models import *
 
@@ -54,4 +55,12 @@ def opciones_proceso(request):
     return render(request, 'proceso/opciones_proceso.html')
 
 
+def busqueda_funcionarios(request):
+    queryset_list = Funcionario.objects.all()
+    recibido = request.GET.get("q")
+    if recibido:
+        queryset_list = queryset_list.filter(nombres__icontains=recibido)
 
+    #funcionario_list = Funcionario.objects.all()
+    #funcionario_filter = FuncionarioFilter(request.GET, queryset=funcionario_list)
+    return render(request, 'proceso/filtro_funcionarios_movimiento.html', {'funcionarios': queryset_list})

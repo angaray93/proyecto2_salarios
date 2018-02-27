@@ -12,8 +12,23 @@ class MovimientoForm(forms.ModelForm):
 
     class Meta:
         model = Movimiento
-        fields = '__all__'
+        exclude = ['movimiento_padre']
         widgets = {
+            'categoria_salarial': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'og': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'tipo': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'motivo': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'departamento': forms.Select(attrs={
+                'class': 'form-control'
+            }),
             'fechainicio': DateInput(attrs={
                 'class': 'form-control'
             }),

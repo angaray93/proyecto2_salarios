@@ -34,7 +34,7 @@
             {% else %}
                 <div class="row separador"></div>
                 <button type="submit" class="btn btn-success" name="guardar"
-                        formaction="{% url 'liquidacion:nuevo_movimiento' %}">
+                        formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}">
                     Guardar
                 </button>
             {% endif %}

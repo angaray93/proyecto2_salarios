@@ -1,0 +1,93 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content" id="documento_modal">
+        {% if documento %}
+        <form class="well" role="form" action="{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}" method="post">
+            <div>
+                <h3>Documento </h3>
+            </div>
+        {% else %}
+        <form role="form" action="{% url 'liquidacion:nuevo_documento' movimiento.pk %}" method="post">
+            <div>
+                <h3>Nuevo Documento</h3>
+            </div>
+        {% endif %}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+      </div>
+        <div class="modal-body">
+            {% csrf_token %}
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="tipodoc">Tipo de Documento:</label>
+                                {% if documento %}
+                                    <input type="text" id="tipo" class="form-control"
+                                           value="{{ documento.tipo }}" disabled/>
+                                {% else %}
+                                    {{ form.tipo }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="codigo">Codigo:</label>
+                                {% if documento %}
+                                    <input type="text" id="codigo" class="form-control"
+                                           value="{{ documento.codigo }}" disabled/>
+                                {% else %}
+                                    {{ form.codigo }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="fechaemision">Fecha de Emision:</label>
+                                {% if documento %}
+                                    <input type="text" id="fechaemision" class="form-control"
+                                           value="{{ documento.fechaemision }}" disabled/>
+                                {% else %}
+                                    {{ form.fechaemision }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="autoridadfirmante">Autoridad Firmante:</label>
+                                {% if documento %}
+                                    <input type="text" id="autoridadfirmante" class="form-control"
+                                           value="{{ documento.autoridadfirmante }}" disabled/>
+                                {% else %}
+                                    {{ form.autoridadfirmante }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="quienfirma">Firmado por:</label>
+                                {% if documento %}
+                                    <input type="text" id="quienfirma" class="form-control"
+                                           value="{{ documento.quienfirma }}" disabled/>
+                                {% else %}
+                                    {{ form.quienfirma }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% if not documento %}
+            <div class="modal-footer">
+                <div class="col-lg-12 text-right">
+                    <input type="submit" class="btn btn-primary" name="submit" value="Guardar">
+                </div>
+            </div>
+    {% endif %}
+
+        </form>
+    </div>
+</div>

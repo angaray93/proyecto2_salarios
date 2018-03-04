@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -42,23 +43,22 @@ class Funcionario(models.Model):
 
 class Movimiento(models.Model):
     idmovimiento = models.AutoField(primary_key=True)
+    tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo')
+    motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo')
     fechainicio = models.DateField()
     fechafin = models.DateField()
     esPrimero = models.BooleanField(default=True)
     horaEntrada = models.TimeField()
     horaSalida = models.TimeField()
-    #tieneAguinaldo = models.BooleanField(default=False)
-    #tieneVacaciones = models.BooleanField(default=False)
+    tieneAguinaldo = models.BooleanField(default=False)
+    tieneVacaciones = models.BooleanField(default=False)
     #tieneSeguroMedico = models.BooleanField(default=False)
     #-----------------------------------Relationships-----------------------------------------#
-    documentorespaldatorio = models.ForeignKey('DocumentoRespaldatorio', on_delete=models.DO_NOTHING, related_name='fk_movimiento_documentorespaldatorio')
     funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')
     categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING, related_name='fk_movimiento_categoriasalarial')
     departamento = models.ForeignKey('Departamento', on_delete=models.DO_NOTHING, related_name='fk_movimiento_departamento')
     og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.DO_NOTHING, related_name='fk_movimiento_og')
-    motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo')
-    tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo')
-    movimiento_padre = models.ForeignKey('self', on_delete=models.DO_NOTHING)
+    movimiento_padre = models.ForeignKey('self', on_delete=models.DO_NOTHING, blank=True, null=True,)
 
 
 class Objeto_De_Gasto(models.Model):
@@ -109,6 +109,16 @@ class Aguinaldo(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name='aguinaldo_movimiento')
+
+    def calcular_cantidad_meses(self):
+        fechafin = self.movimiento.fechafin
+        if not fechafin :
+            fechafin = datetime.datetime.today()
+        print(fechafin)
+
+        cant_meses = abs(fechafin.month - self.movimiento.fechainicio.month)
+        return (cant_meses)
+
 
 
 class Pais(models.Model):
@@ -191,9 +201,9 @@ class Constante(models.Model):
     id = models.AutoField(primary_key=True)
     fechainicio = models.DateField()
     fechafin = models.DateField()
-    monto = models.IntegerField()
+    monto = models.IntegerField(blank=True, null=True)
     # -----------------------------------Relationships-----------------------------------------#
-    funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_constante_funcionario')
+    movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_constante_movimiento')
     tipo = models.ForeignKey('ConstanteType', on_delete=models.CASCADE, related_name='fk_constante_tipo')
 
 
@@ -201,6 +211,7 @@ class ConstanteType(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     tipo = models.CharField(max_length=1, choices=ConstanteType_OPTIONS)
+    porcentaje = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
 
     class Meta:
         ordering = ["nombre"]
@@ -240,6 +251,8 @@ class DocumentoRespaldatorio(models.Model):
     fechaemision = models.DateField()
     quienfirma = models.CharField(max_length=50, default='')
     # -----------------------------------Relationships-----------------------------------------#
+    movimiento = models.ForeignKey('Movimiento', on_delete=models.DO_NOTHING,
+                                               related_name='fk_movimiento_documentorespaldatorio')
     tipo = models.ForeignKey('DocumentoType', on_delete=models.CASCADE,
                              related_name='fk_documentorespaldatorio_tipo')
     autoridadfirmante = models.ForeignKey('AutoridadFirmante', on_delete=models.CASCADE,

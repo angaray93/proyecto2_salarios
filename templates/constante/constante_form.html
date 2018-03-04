@@ -1,0 +1,86 @@
+{% load staticfiles %}
+
+{% block content %}
+
+<form method="post" id="constante_form">
+        {% csrf_token %}
+        <div class="row"> <!-- cabecera-->
+            <div class="col-10"></div>
+            <div class="col-2 d-flex justify-content-end align-items-center">
+                <div class="row separador"></div>
+                <button type="submit" class="btn btn-success" name="guardar"
+                        formaction="{% url 'liquidacion:nueva_constante' movimiento.pk %}">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    <!-- Fin cabecera -->
+        <hr>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="tipo">Tipo:</label>
+                    <div class="input-group">
+                        {{ form.tipo }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="monto">Monto (opcional):</label>
+                    <div class="input-group">
+                        {{ form.monto }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="fechainicio">Fecha de Inicio:</label>
+                    <div class="input-group">
+                        {{ form.fechainicio }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="fechafin">Fecha de Fin:</label>
+                    <div class="input-group">
+                        {{ form.fechafin }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</form>
+<hr>
+    
+<div id="popup" class="modal fade" role="dialog">
+
+</div>
+
+<script>
+function abrir_modal(url)
+{
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
+        });
+        return false;
+}
+
+function cerrar_modal()
+{
+        $('#popup').modal('hide');
+        return false;
+}
+
+$(document).ready(function()
+{
+
+});
+</script>
+
+{% endblock %}

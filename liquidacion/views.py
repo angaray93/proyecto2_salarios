@@ -20,7 +20,10 @@ def movimiento_vista(request, idmovimiento=None, idfuncionario=None):
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
         else:
-            movimiento = Movimiento()
+            funcionario = Funcionario.objects.get(pk=idfuncionario)
+            movimiento = Movimiento(
+                funcionario = funcionario
+            )
         form = MovimientoForm(request.POST, instance=movimiento)
         if form.is_valid():
             movimiento = form.save()
@@ -35,9 +38,21 @@ def movimiento_vista(request, idmovimiento=None, idfuncionario=None):
     else:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
+            documentos = DocumentoRespaldatorio.objects.filter(movimiento=movimiento)
+            constantes = Constante.objects.filter(movimiento=movimiento)
             form = MovimientoForm(instance=movimiento)
+            """if movimiento.tieneAguinaldo is True:
+                aguinaldo = Aguinaldo.objects.get(movimiento=movimiento)
+                if not aguinaldo:
+                    aguinaldo = Aguinaldo(movimiento=movimiento)
+                print(aguinaldo)
+                aguinaldo.cantidad_meses = aguinaldo.calcular_cantidad_meses()
+                aguinaldo.save()
+                print(aguinaldo.cantidad_meses)"""
             context.update({
                 'movimiento': movimiento,
+                'documentos': documentos,
+                'constantes': constantes,
                 'form': form
             })
         else:
@@ -64,3 +79,129 @@ def busqueda_funcionarios(request):
             (Q(nombres__icontains=recibido) | Q(apellidos__icontains=recibido) | Q(cedula__icontains=recibido))
 
     return render(request, 'proceso/filtro_funcionarios_movimiento.html', {'funcionarios': queryset_list})
+
+
+def documento_vista(request, idmovimiento=None, iddocumento=None):
+    context = {}
+    documento = None
+    if request.POST:
+        if iddocumento:
+            documento = get_object_or_404(DocumentoRespaldatorio, pk=iddocumento)
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            documento = DocumentoRespaldatorio(
+                movimiento=movimiento,
+            )
+        form = DocumentoRespaldatorioForm(request.POST, instance=documento)
+        if form.is_valid():
+            documento = form.save()
+            return redirect(reverse('liquidacion:ver_movimiento', args=[documento.movimiento.pk]))
+        else:
+            # TODO Implementar sistema de errores
+            context.update({
+                'errors': form.errors,
+                'form': form
+            })
+            return render(request, 'proceso/documento_form.html', context)
+    else:
+        if iddocumento:
+            documento = get_object_or_404(DocumentoRespaldatorio, pk=iddocumento)
+            form = DocumentoRespaldatorioForm(instance=documento)
+            context.update({
+                'documento': documento,
+                'form': form
+            })
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            form = DocumentoRespaldatorioForm(initial={
+                'movimiento': movimiento,
+            })
+            context.update({
+                'movimiento': movimiento,
+                'form': form,
+            })
+        return render(request, 'proceso/documento_form.html', context)
+
+
+def aguinaldo_vista(request, idmovimiento=None, idaguinaldo=None):
+    context = {}
+    aguinaldo = None
+    if request.POST:
+        if idaguinaldo:
+            aguinaldo = get_object_or_404(Aguinaldo, pk=idaguinaldo)
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            aguinaldo = Aguinaldo(
+                movimiento=movimiento,
+            )
+        form = AguinaldoForm(request.POST, instance=aguinaldo)
+        if form.is_valid():
+            aguinaldo = form.save()
+            return redirect(reverse('liquidacion:ver_movimiento', args=[aguinaldo.movimiento.pk]))
+        else:
+            # TODO Implementar sistema de errores
+            context.update({
+                'errors': form.errors,
+                'form': form
+            })
+            return render(request, 'aguinaldo/aguinaldo_form.html', context)
+    else:
+        if idaguinaldo:
+            aguinaldo = get_object_or_404(Aguinaldo, pk=idaguinaldo)
+            form = AguinaldoForm(request.POST, instance=aguinaldo)
+            context.update({
+                'aguinaldo': aguinaldo,
+                'form': form
+            })
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            form = AguinaldoForm(initial={
+                'movimiento': movimiento,
+            })
+            context.update({
+                'movimiento': movimiento,
+                'form': form,
+            })
+        return render(request, 'aguinaldo/aguinaldo_form.html', context)
+
+
+def constante_vista(request, idmovimiento=None, idconstante=None):
+    context = {}
+    constante = None
+    if request.POST:
+        if idconstante:
+            constante = get_object_or_404(Constante, pk=idconstante)
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            constante = Constante(
+                movimiento=movimiento,
+            )
+        form = ConstanteForm(request.POST, instance=constante, prefix='constante')
+        if form.is_valid():
+            constante = form.save()
+            return redirect(reverse('liquidacion:ver_movimiento', args=[constante.movimiento.pk]))
+        else:
+            # TODO Implementar sistema de errores
+            context.update({
+                'errors': form.errors,
+                'form': form
+            })
+            return render(request, 'constante/constante_form.html', context)
+    else:
+        if idconstante:
+            constante = get_object_or_404(Constante, pk=idconstante)
+            form = ConstanteForm(request.POST, instance=constante, prefix='constante')
+            context.update({
+                'constante': constante,
+                'form': form
+            })
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            form = ConstanteForm(initial={
+                'movimiento': movimiento,
+            })
+            context.update({
+                'movimiento': movimiento,
+                'form': form,
+            })
+        return render(request, 'constante/constante_form.html', context)

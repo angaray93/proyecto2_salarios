@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib import admin
 #from django.forms import *
+from django.forms import ModelForm, NumberInput
+
 from liquidacion.models import *
 
 
@@ -12,7 +14,7 @@ class MovimientoForm(forms.ModelForm):
 
     class Meta:
         model = Movimiento
-        exclude = ['movimiento_padre']
+        exclude = ['movimiento_padre', 'funcionario']
         widgets = {
             'categoria_salarial': forms.Select(attrs={
                 'class': 'form-control'
@@ -44,6 +46,12 @@ class MovimientoForm(forms.ModelForm):
             'horaSalida': forms.TimeInput(attrs={
                 'class': 'form-control'
             }),
+            'tieneAguinaldo': forms.CheckboxInput(attrs={
+                'class': 'form-control'
+            }),
+            'tieneVacaciones': forms.CheckboxInput(attrs={
+                'class': 'form-control'
+            }),
         }
 
     """def clean_asignacion(self):
@@ -57,6 +65,25 @@ class MovimientoForm(forms.ModelForm):
             raise forms.ValidationError("Ingrese un nombre valido para el tipo de categoria")
         return self.cleaned_data['tipo']"""
 
+class ConstanteForm(ModelForm):
+
+    class Meta:
+        model = Constante
+        exclude = ['movimiento']
+        widgets = {
+            'fechainicio': DateInput(attrs={
+                'class': 'form-control',
+            }),
+            'fechafin': DateInput(attrs={
+                'class': 'form-control',
+            }),
+            'monto': forms.NumberInput(attrs={
+                'class': 'form-control',
+            }),
+            'tipo': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+        }
 
 class CategoriaSalarialForm(forms.ModelForm):
 
@@ -81,6 +108,29 @@ class AutoridadFirmanteForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'cargo': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+        }
+
+class DocumentoRespaldatorioForm(forms.ModelForm):
+
+    class Meta:
+        model = DocumentoRespaldatorio
+        exclude = ['movimiento']
+        widgets = {
+            'tipo': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'codigo': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'fechaemision': DateInput(attrs={
+                'class': 'form-control',
+            }),
+            'autoridadfirmante': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'quienfirma': forms.TextInput(attrs={
                 'class': 'form-control',
             }),
         }

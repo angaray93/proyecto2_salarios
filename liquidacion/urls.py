@@ -14,5 +14,9 @@ urlpatterns = [
     path('movimiento/<int:idmovimiento>', views.movimiento_vista, name='modificar_movimiento'),
     path('movimiento/<int:idmovimiento>', views.movimiento_vista, name='ver_movimiento'),
     path('buscar_funcionario', views.busqueda_funcionarios, name='buscar_funcionario'),
+    path('movimiento/<int:idmovimiento>/documento/nuevo/', views.documento_vista, name='nuevo_documento'),
+    path('movimiento/<int:idmovimiento>/documento/<int:iddocumento>', views.documento_vista, name='ver_documento'),
+    path('movimiento/<int:idmovimiento>/constante/nuevo/', views.constante_vista, name='nueva_constante'),
+    path('movimiento/<int:idmovimiento>/constante/<int:idconstante>', views.constante_vista, name='borrar_constante'),
 
 ]

@@ -27,10 +27,18 @@
             </div>
             <div class="col-2 d-flex justify-content-end align-items-center">
             {% if movimiento %}
-                <button type="submit" class="btn btn-success" name="guardar"
+                <ul class="list-inline">
+                    <li class="list-inline-item">
+                        <button type="submit" class="btn btn-success" name="guardar"
                         formaction="{% url 'liquidacion:modificar_movimiento' movimiento.pk %}">
-                    Guardar
-                </button>
+                            Guardar
+                        </button>
+                    </li>
+                    <li class="list-inline-item">
+                        <button type="button" class="btn btn-secondary fa fa-arrow-right" title="Volver a la propuesta"
+                            onclick="location.href='{% url 'liquidacion:nueva_constante' movimiento.pk %}'">Siguiente</button>
+                    </li>
+                </ul>
             {% else %}
                 <div class="row separador"></div>
                 <button type="submit" class="btn btn-success" name="guardar"
@@ -51,199 +59,111 @@
         </div>
     </div>
     <hr>
-
-
-
-
-
-<div id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="card">
-    <div class="card-header" role="tab" id="headingOne">
-      <h5 class="mb-0">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          Collapsible Group Item #1
-        </a>
-      </h5>
-    </div>
-
-    <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-      <div class="card-block">
-        <div class="row">
-            <div class="col-lg-6">
-            <div class="form-group">
-            <label for="categoria_salarial">Categoria Salarial:</label>
-            <div class="input-group">
-                {{ form.categoria_salarial }}
-                <span class="input-group-btn">
-                    <a onclick="window.open('{% url 'admin:liquidacion_categoriasalarial_add' %}')">
+    <div class="row">
+        <div class="col-lg-6">
+        <div class="form-group">
+        <label for="categoria_salarial">Categoria Salarial:</label>
+        <div class="input-group">
+            {{ form.categoria_salarial }}
+            <span class="input-group-btn">
+                <a onclick="window.open('{% url 'admin:liquidacion_categoriasalarial_add' %}')">
+                    <button class="btn btn-secondary" type="button">+</button></a>
+            </span>
+        </div>
+        </div>
+        </div>
+        <div class="col-lg-6">
+        <div class="form-group">
+        <label for="og">Objeto de Gasto:</label>
+        <div class="input-group">
+            {{ form.og }}
+            <span class="input-group-btn">
+                <a onclick="window.open('{% url 'admin:liquidacion_objeto_de_gasto_add' %}')">
                         <button class="btn btn-secondary" type="button">+</button></a>
-                </span>
-            </div>
-            </div>
-            </div>
-            <div class="col-lg-6">
+            </span>
+        </div>
+        </div>
+        </div>
+        </div>
+
+    <div class="row">
+    <div class="col-lg-6">
+    <div class="form-group">
+    <label for="tipo">Tipo de Movimiento:</label>
+    <div class="input-group">
+        {{ form.tipo }}
+    </div>
+    </div>
+    </div>
+    <div class="col-lg-6">
+    <div class="form-group">
+    <label for="motivo">Motivo del Movimiento:</label>
+    <div class="input-group">
+        {{ form.motivo }}
+    </div>
+    </div>
+    </div>
+    </div>
+    <hr>
+
+    <div class="row">
+        <div class="col-lg">
             <div class="form-group">
-            <label for="og">Objeto de Gasto:</label>
-            <div class="input-group">
-                {{ form.og }}
-                <span class="input-group-btn">
-                    <a onclick="window.open('{% url 'admin:liquidacion_objeto_de_gasto_add' %}')">
-                            <button class="btn btn-secondary" type="button">+</button></a>
-                </span>
+                <label for="departamento">Departamento:</label>
+                    {{ form.departamento }}
             </div>
-            </div>
-            </div>
-            </div>
+        </div>
+      </div>
+    <hr>
 
-        <div class="row">
+    <div class="row">
         <div class="col-lg-6">
-        <div class="form-group">
-        <label for="tipo">Tipo de Movimiento:</label>
-        <div class="input-group">
-            {{ form.tipo }}
-        </div>
-        </div>
+            <div class="form-group">
+                <label for="fechainicio">Fecha de Inicio:</label>
+                    {{ form.fechainicio }}
+            </div>
         </div>
         <div class="col-lg-6">
-        <div class="form-group">
-        <label for="motivo">Motivo del Movimiento:</label>
-        <div class="input-group">
-            {{ form.motivo }}
+            <div class="form-group">
+                <label for="fechafin">Fecha de Fin:</label>
+                    {{ form.fechafin }}
+            </div>
         </div>
-        </div>
-        </div>
-        </div>
-        <hr>
+    </div>
 
-        <div class="row">
-            <div class="col-lg">
-                <div class="form-group">
-                    <label for="departamento">Departamento:</label>
-                        {{ form.departamento }}
-                </div>
-            </div>
-          </div>
-        <hr>
-
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="fechainicio">Fecha de Inicio:</label>
-                        {{ form.fechainicio }}
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="fechafin">Fecha de Fin:</label>
-                        {{ form.fechafin }}
-                </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="horaEntrada">Hora de Entrada:</label>
+                    {{ form.horaEntrada }}
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="horaEntrada">Hora de Entrada:</label>
-                        {{ form.horaEntrada }}
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="horaSalida">Hora de Salida:</label>
-                        {{ form.horaSalida }}
-                </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="horaSalida">Hora de Salida:</label>
+                    {{ form.horaSalida }}
             </div>
         </div>
+    </div>
 
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="tieneAguinaldo">Tiene Aguinaldo:</label>
-                        {{ form.tieneAguinaldo }}
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="tieneVacaciones">Tiene Vacaciones:</label>
-                        {{ form.tieneVacaciones }}
-                </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="tieneAguinaldo">Tiene Aguinaldo:</label>
+                    {{ form.tieneAguinaldo }}
             </div>
         </div>
-
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" role="tab" id="headingTwo">
-      <h5 class="mb-0">
-        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-          Collapsible Group Item #2
-        </a>
-      </h5>
-    </div>
-    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
-      <div class="card-block">
-        {% include "constante/constante_form.html" %}
-        <div class="row">
-        <div class="col-lg-12">
-        <table id="tabla_constantes" class="table table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th class="text-center">Descripcion</th>
-                    <th class="text-center">Tipo</th>
-                    <th class="text-center">Monto</th>
-                    <th class="text-center">Fecha de Inicio</th>
-                    <th class="text-center">Fecha de Fin</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for constante in constantes %}
-                    <tr class='clickable-row'>
-                        <td>{{ constante.tipo.nombre }}</td>
-                        <td>{{ constante.tipo.tipo }}</td>
-                        <td>{{ constante.monto }}</td>
-                        <td>{{ constante.fechainicio }}</td>
-                        <td>{{ constante.fechafin }}</td>
-                        <td class="text-center">
-                            <a href="#">
-                              <span class="glyphicon glyphicon-eye-open"></span>
-                            </a>
-                            <button class="btn btn-outline-primary btn-edit" type="button"
-                                onclick="return abrir_modal('{% url 'liquidacion:borrar_constante' constante.movimiento.pk constante.pk %}')">
-                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="tieneVacaciones">Tiene Vacaciones:</label>
+                    {{ form.tieneVacaciones }}
+            </div>
         </div>
     </div>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" role="tab" id="headingThree">
-      <h5 class="mb-0">
-        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-          Collapsible Group Item #3
-        </a>
-      </h5>
-    </div>
-    <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
-      <div class="card-block">
-        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-      </div>
-    </div>
-  </div>
-</div>
+
 
     </form>
     <hr>
-
-
-
-
 
 {% if movimiento %}
     <div class="row">
@@ -277,11 +197,8 @@
                 {% endfor %}
             </tbody>
         </table>
-                </div>
-            </div>
+        </div>
     </div>
-
-
 </div>
 
 {% endif %}

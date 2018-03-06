@@ -176,10 +176,10 @@ def constante_vista(request, idmovimiento=None, idconstante=None):
             constante = Constante(
                 movimiento=movimiento,
             )
-        form = ConstanteForm(request.POST, instance=constante, prefix='constante')
+        form = ConstanteForm(request.POST, instance=constante)
         if form.is_valid():
             constante = form.save()
-            return redirect(reverse('liquidacion:ver_movimiento', args=[constante.movimiento.pk]))
+            return redirect(reverse('liquidacion:nueva_constante', args=[movimiento.pk]))
         else:
             # TODO Implementar sistema de errores
             context.update({
@@ -190,18 +190,20 @@ def constante_vista(request, idmovimiento=None, idconstante=None):
     else:
         if idconstante:
             constante = get_object_or_404(Constante, pk=idconstante)
-            form = ConstanteForm(request.POST, instance=constante, prefix='constante')
+            form = ConstanteForm(request.POST, instance=constante)
             context.update({
                 'constante': constante,
                 'form': form
             })
         else:
             movimiento = Movimiento.objects.get(pk=idmovimiento)
+            constantes = Constante.objects.filter(movimiento=movimiento)
             form = ConstanteForm(initial={
                 'movimiento': movimiento,
             })
             context.update({
                 'movimiento': movimiento,
+                'constantes': constantes,
                 'form': form,
             })
         return render(request, 'constante/constante_form.html', context)

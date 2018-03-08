@@ -20,7 +20,7 @@
                     <div class="col-8">
                         <ul class="list-inline">
                             <li class="list-inline-item">Funcionario: {{ funcionario }}</li>
-                            <input type="hidden" name="funcionario" value="{{ funcionario }}">
+                            <!-- <input type="hidden" name="funcionario" value="{{ funcionario.pk }}">Fin cabecera -->
                         </ul>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
             {% if movimiento %}
                 <ul class="list-inline">
                     <li class="list-inline-item">
-                        <button type="submit" class="btn btn-success" name="guardar"
+                        <button type="submit" class="btn btn-secondary btn-lg active" name="guardar"
                         formaction="{% url 'liquidacion:modificar_movimiento' movimiento.pk %}">
                             Guardar
                         </button>
@@ -41,8 +41,8 @@
                 </ul>
             {% else %}
                 <div class="row separador"></div>
-                <button type="submit" class="btn btn-success" name="guardar"
-                        formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}">
+                <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
+                        formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}" aria-pressed="true">
                     Guardar
                 </button>
             {% endif %}

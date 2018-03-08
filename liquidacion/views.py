@@ -4,9 +4,11 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
-
+from django.http import HttpResponse
 from liquidacion.forms import *
 from liquidacion.models import *
+
+import json
 
 
 def index(request):
@@ -94,9 +96,19 @@ def busqueda_movimiento_funcionario(request):
     return render(request, 'proceso/seleccion_movimiento_funcionario.html', {'funcionarios': queryset_list})
 
 
-def get_movimientos(request, idfuncionario):
-    queryset_list = Movimiento.objects.filter(funcionario=idfuncionario)
-    return render(request, 'proceso/seleccion_movimiento_funcionario.html', {'movimientos': queryset_list})
+def get_movimientos(request):
+    if request.is_ajax():
+        q = request.GET.get('idfuncionario', '')
+        movimientos = Movimiento.objects.filter(funcionario=q)
+        res = []
+        for movimiento in movimientos:
+            movimiento_json = {'motivo': movimiento.motivo.nombre, 'tipo': movimiento.tipo.nombre}
+            res.append(movimiento_json)
+        data = json.dumps(res)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
 
 
 def documento_vista(request, idmovimiento=None, iddocumento=None):

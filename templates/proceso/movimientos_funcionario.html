@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-lg-12">
+        <table id="tabla_movimientos" class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center">movimiento.tipo.nombre</th>
+                        <th class="text-center">movimiento.fechainicio</th>
+                        <th class="text-center">movimiento.fechafin</th>
+                        <th class="text-center">Total de horas del periodo</th>
+                        <th class="text-center">Horas restantes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movimiento in movimientos %}
+                        <tr class='clickable-row'>
+                            <td>{{ movimiento.tipo.nombre }}</td>
+                            <td>{{ movimiento.fechainicio }}</td>
+                            <td>{{ movimiento.fechafin }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+        </table>
+    </div>
+</div>

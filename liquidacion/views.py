@@ -56,6 +56,7 @@ def movimiento_vista(request, idmovimiento=None, idfuncionario=None):
                 'form': form
             })
         else:
+            q = request.GET.get('term', '')
             funcionario = Funcionario.objects.get(pk=idfuncionario)
             form = MovimientoForm(initial={
                 'funcionario': funcionario,
@@ -72,6 +73,7 @@ def opciones_proceso(request):
 
 
 def busqueda_funcionarios(request):
+    choice = request.GET.get("q")
     queryset_list = Funcionario.objects.all()
     recibido = request.GET.get("q")
     if recibido:
@@ -79,6 +81,22 @@ def busqueda_funcionarios(request):
             (Q(nombres__icontains=recibido) | Q(apellidos__icontains=recibido) | Q(cedula__icontains=recibido))
 
     return render(request, 'proceso/filtro_funcionarios_movimiento.html', {'funcionarios': queryset_list})
+
+
+def busqueda_movimiento_funcionario(request):
+    choice = request.GET.get("q")
+    queryset_list = Funcionario.objects.all()
+    recibido = request.GET.get("q")
+    if recibido:
+        queryset_list = queryset_list.filter\
+            (Q(nombres__icontains=recibido) | Q(apellidos__icontains=recibido) | Q(cedula__icontains=recibido))
+
+    return render(request, 'proceso/seleccion_movimiento_funcionario.html', {'funcionarios': queryset_list})
+
+
+def get_movimientos(request, idfuncionario):
+    queryset_list = Movimiento.objects.filter(funcionario=idfuncionario)
+    return render(request, 'proceso/seleccion_movimiento_funcionario.html', {'movimientos': queryset_list})
 
 
 def documento_vista(request, idmovimiento=None, iddocumento=None):

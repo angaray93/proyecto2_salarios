@@ -39,8 +39,25 @@
             </table>
         </div>
     </div>
-
  </div>
+
+<div class="row separador_fila">
+        <div class="col-lg-12">
+            <table id="tabla_movimientos" class="table table-hover table-striped table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="text-center">Tipo de Movimiento</th>
+                        <th class="text-center">Motivo</th>
+                        <th class="text-center">Categoria Salarial</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 <footer>
     <script>
@@ -48,12 +65,18 @@
             e.preventDefault();
             $.ajax({
                 url: '{% url 'liquidacion:get_movimientos' %}',
+                type : 'GET',
                 dataType: 'json',
                 data: {
                     idfuncionario: $("#funcionario_btn").val()
                 },
-                success: function (data) {
-                    console.log(data)
+                success: function (response) {
+                    var datos_fila = '';
+                    var tabla_movimientos = $('#tabla_movimientos');
+                    $.each(response, function (key, value) {
+                        tabla_movimientos.append('<tr>' + '<td>' + value.motivo + '</td>' + '<td>'
+                            + value.tipo + '</td>' + '<td>' + value.categoria_salarial + '</td>' + '<td>' + '</td>' + '</tr>')
+                    });
                 },
                 error: function (data) {
                     console.log(data)

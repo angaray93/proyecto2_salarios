@@ -102,7 +102,7 @@ def get_movimientos(request):
         movimientos = Movimiento.objects.filter(funcionario=q)
         res = []
         for movimiento in movimientos:
-            movimiento_json = {'motivo': movimiento.motivo.nombre, 'tipo': movimiento.tipo.nombre}
+            movimiento_json = {'motivo': movimiento.motivo.nombre, 'tipo': movimiento.tipo.nombre, 'categoria_salarial': movimiento.categoria_salarial.codigo}
             res.append(movimiento_json)
         data = json.dumps(res)
     else:

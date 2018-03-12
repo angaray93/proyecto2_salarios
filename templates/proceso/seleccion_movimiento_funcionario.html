@@ -71,19 +71,32 @@
                     idfuncionario: $("#funcionario_btn").val()
                 },
                 success: function (response) {
-                    var datos_fila = '';
                     var tabla_movimientos = $('#tabla_movimientos');
                     $.each(response, function (key, value) {
                         tabla_movimientos.append('<tr>' + '<td>' + value.motivo + '</td>' + '<td>'
-                            + value.tipo + '</td>' + '<td>' + value.categoria_salarial + '</td>' + '<td>' + '</td>' + '</tr>')
+                            + value.tipo + '</td>' + '<td>' + value.categoria_salarial + '</td>'
+                            +'<td>'
+                            +'<button id="movimiento_btn" class="btn btn-secondary btn-edit" value="'+ value.idmovimiento +'">' +
+                            +'<i class="fa fa-check-square-o" aria-hidden="true"></i>' +
+                            +'</button>' + '</td>' + '</tr>'
+                            )
+                    });
+
+                    $('#movimiento_btn').click(function (e) {
+                        e.preventDefault();
+                        var idpadre = $('#movimiento_btn').val();
+                        var link = "{% url 'liquidacion:modificar_movimiento' 0 %}";
+                        link = link.replace(0, idpadre);
+                        window.location.href=link;
                     });
                 },
                 error: function (data) {
                     console.log(data)
                 }
             })
-
         });
+
+
 
     </script>
 </footer>

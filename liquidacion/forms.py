@@ -14,7 +14,7 @@ class MovimientoForm(forms.ModelForm):
 
     class Meta:
         model = Movimiento
-        exclude = ['movimiento_padre', 'funcionario']
+        exclude = ['movimiento_padre', 'funcionario','estado']
         widgets = {
             'categoria_salarial': forms.Select(attrs={
                 'class': 'form-control'

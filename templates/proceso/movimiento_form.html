@@ -45,6 +45,12 @@
                         formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}" aria-pressed="true">
                     Guardar
                 </button>
+
+                <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
+                        formaction="{% url 'liquidacion:modificar_movimiento' movimiento_padre.pk %}" aria-pressed="true">
+                    Guardar
+                </button>
+
             {% endif %}
             </div>
         </div>
@@ -54,8 +60,10 @@
     <!-- Primera Fila -->
     <div class="row">
         <div class="col-lg-10">
-            <label for="esPrimero">Es primero:</label>
-                {{ form.esPrimero }}
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input type="checkbox" class="custom-control-input" id="esPrimero">
+                <label class="custom-control-label" for="esPrimero">Es primero:</label>
+            </div>
         </div>
     </div>
     <hr>

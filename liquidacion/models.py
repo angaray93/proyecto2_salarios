@@ -46,7 +46,7 @@ class Movimiento(models.Model):
     tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo')
     motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo')
     fechainicio = models.DateField()
-    fechafin = models.DateField()
+    fechafin = models.DateField(blank=True, null=True)
     esPrimero = models.BooleanField(default=True)
     horaEntrada = models.TimeField()
     horaSalida = models.TimeField()
@@ -59,7 +59,7 @@ class Movimiento(models.Model):
     departamento = models.ForeignKey('Departamento', on_delete=models.DO_NOTHING, related_name='fk_movimiento_departamento')
     og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.DO_NOTHING, related_name='fk_movimiento_og')
     movimiento_padre = models.ForeignKey('self', on_delete=models.DO_NOTHING, blank=True, null=True)
-    #estado = models.ForeignKey('State', on_delete=models.DO_NOTHING, related_name='fk_movimiento_estado')
+    estado = models.ForeignKey('State', on_delete=models.DO_NOTHING, related_name='fk_movimiento_estado')
 
 
 class Objeto_De_Gasto(models.Model):

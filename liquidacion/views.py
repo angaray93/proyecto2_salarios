@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.apps import apps
 from django.db.models import *
 from django.http import JsonResponse
@@ -15,20 +17,45 @@ def index(request):
     return render(request, 'index.html')
 
 
-def movimiento_vista(request, idmovimiento=None, idfuncionario=None):
+def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=None):
+    print(idmovimiento, idpadre, idfuncionario)
     context = {}
     movimiento = None
     if request.POST:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
         else:
-            funcionario = Funcionario.objects.get(pk=idfuncionario)
-            movimiento = Movimiento(
-                funcionario = funcionario
-            )
+            estado_default = State.objects.get(nombre='Activo')
+            if idpadre:
+                movimiento_padre = Movimiento.objects.get(pk=idpadre)
+                funcionario = movimiento_padre.funcionario
+                movimiento = Movimiento(
+                    esPrimero = False,
+                    estado = estado_default,
+                    movimiento_padre = movimiento_padre,
+                    funcionario = funcionario
+                )
+            else:
+                movimiento_padre = None
+                funcionario = Funcionario.objects.get(pk=idfuncionario)
+                movimiento = Movimiento(
+                    estado=estado_default,
+                    movimiento_padre=movimiento_padre,
+                    funcionario=funcionario
+                )
+
         form = MovimientoForm(request.POST, instance=movimiento)
         if form.is_valid():
             movimiento = form.save()
+            #-------------------------------------------------------------------------#
+            if movimiento.movimiento_padre:
+                movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo')
+                movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
+                #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
+                movimiento.movimiento_padre.save()
+
+            #-------------------------------------------------------------------------#
+
             return redirect(reverse('liquidacion:ver_movimiento', args=[movimiento.pk]))
         else:
             # TODO Implementar sistema de errores
@@ -58,12 +85,24 @@ def movimiento_vista(request, idmovimiento=None, idfuncionario=None):
                 'form': form
             })
         else:
-            q = request.GET.get('term', '')
-            funcionario = Funcionario.objects.get(pk=idfuncionario)
+            if idpadre:
+                movimiento_padre = Movimiento.objects.get(pk=idpadre)
+                funcionario = movimiento_padre.funcionario
+            else:
+                movimiento_padre = None
+                q = request.GET.get('term', '')
+                funcionario = Funcionario.objects.get(pk=idfuncionario)
+            estado_default = State.objects.get(nombre='Activo')
+
+            print(movimiento_padre)
+
             form = MovimientoForm(initial={
                 'funcionario': funcionario,
+                'movimiento_padre': movimiento_padre,
+                'estado': estado_default,
             })
             context.update({
+                'movimiento_padre': movimiento_padre,
                 'funcionario': funcionario,
                 'form': form,
             })
@@ -102,7 +141,7 @@ def get_movimientos(request):
         movimientos = Movimiento.objects.filter(funcionario=q)
         res = []
         for movimiento in movimientos:
-            movimiento_json = {'motivo': movimiento.motivo.nombre, 'tipo': movimiento.tipo.nombre, 'categoria_salarial': movimiento.categoria_salarial.codigo}
+            movimiento_json = {'idmovimiento' :movimiento.pk, 'motivo': movimiento.motivo.nombre, 'tipo': movimiento.tipo.nombre, 'categoria_salarial': movimiento.categoria_salarial.codigo}
             res.append(movimiento_json)
         data = json.dumps(res)
     else:

@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.apps import apps
 from django.db.models import *
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -48,11 +48,21 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
         if form.is_valid():
             movimiento = form.save()
             #-------------------------------------------------------------------------#
+            haber = None
+
             if movimiento.movimiento_padre:
+                haber = Haber.objects.get(movimiento=movimiento.movimiento_padre)
+                haber.movimiento = movimiento
                 movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo')
                 movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
                 #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
                 movimiento.movimiento_padre.save()
+
+            else:
+                haber = Haber(
+                    movimiento = movimiento,
+                )
+            haber.save()
 
             #-------------------------------------------------------------------------#
 

@@ -41,15 +41,17 @@
                 </ul>
             {% else %}
                 <div class="row separador"></div>
-                <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
-                        formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}" aria-pressed="true">
-                    Guardar
-                </button>
-
-                <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
-                        formaction="{% url 'liquidacion:modificar_movimiento' movimiento_padre.pk %}" aria-pressed="true">
-                    Guardar
-                </button>
+                {% if not movimiento_padre %}
+                    <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
+                            formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}" aria-pressed="true">
+                        Guardar
+                    </button>
+                {% else %}
+                    <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
+                            >
+                        Guardar
+                    </button>
+                {% endif %}
 
             {% endif %}
             </div>

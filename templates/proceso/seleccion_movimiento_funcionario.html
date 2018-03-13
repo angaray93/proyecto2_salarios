@@ -83,10 +83,13 @@
                     });
 
                     $('#movimiento_btn').click(function (e) {
+
                         e.preventDefault();
                         var idpadre = $('#movimiento_btn').val();
+                        console.log(idpadre);
                         var link = "{% url 'liquidacion:modificar_movimiento' 0 %}";
                         link = link.replace(0, idpadre);
+                        console.log(link);
                         window.location.href=link;
                     });
                 },

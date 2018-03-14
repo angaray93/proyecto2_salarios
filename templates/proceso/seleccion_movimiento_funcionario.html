@@ -61,6 +61,7 @@
 
 <footer>
     <script>
+
         $('#funcionario_btn').click(function(e) {
             e.preventDefault();
             $.ajax({
@@ -73,24 +74,17 @@
                 success: function (response) {
                     var tabla_movimientos = $('#tabla_movimientos');
                     $.each(response, function (key, value) {
+                        var idpadre = value.idmovimiento;
+                        var link = "{% url 'liquidacion:modificar_movimiento' 0 %}";
+                        link = link.replace(0, idpadre);
+
                         tabla_movimientos.append('<tr>' + '<td>' + value.motivo + '</td>' + '<td>'
                             + value.tipo + '</td>' + '<td>' + value.categoria_salarial + '</td>'
                             +'<td>'
-                            +'<button id="movimiento_btn" class="btn btn-secondary btn-edit" value="'+ value.idmovimiento +'">' +
+                            +'<button id="movimiento_btn" class="btn btn-secondary btn-edit" onclick="location.href='+"'" + link+"'" +'">'
                             +'<i class="fa fa-check-square-o" aria-hidden="true"></i>' +
                             +'</button>' + '</td>' + '</tr>'
                             )
-                    });
-
-                    $('#movimiento_btn').click(function (e) {
-
-                        e.preventDefault();
-                        var idpadre = $('#movimiento_btn').val();
-                        console.log(idpadre);
-                        var link = "{% url 'liquidacion:modificar_movimiento' 0 %}";
-                        link = link.replace(0, idpadre);
-                        console.log(link);
-                        window.location.href=link;
                     });
                 },
                 error: function (data) {
@@ -98,8 +92,6 @@
                 }
             })
         });
-
-
 
     </script>
 </footer>

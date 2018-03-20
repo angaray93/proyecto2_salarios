@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from liquidacion.forms import *
 from liquidacion.models import *
 
+
 import json
 
 
@@ -61,6 +62,9 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 haber = Haber(movimiento = movimiento)
                 if movimiento.tieneAguinaldo is True:
                     aguinaldo = Aguinaldo(movimiento = movimiento)
+                    aguinaldo.save()
+                if movimiento.esPrimero is True and movimiento.tieneVacaciones is True:
+                    aguinaldo = Aguinaldo(movimiento=movimiento)
                     aguinaldo.save()
 
             haber.save()

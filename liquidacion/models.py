@@ -192,11 +192,12 @@ class GradoUniversitario(models.Model):
 
 class Vacaciones(models.Model):
     id = models.AutoField(primary_key=True)
+    anho = models.IntegerField(default=datetime.datetime.today().year)
     inicio = models.DateField()
-    fin = models.DateField()
-    cantidadmeses = models.DecimalField(max_digits=10, decimal_places=2)
-    cantidaddias = models.IntegerField()
-    monto = models.DecimalField(max_digits=20, decimal_places=2)
+    fin = models.DateField(blank=True, null=True)
+    diasobtenidos = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    diasusados = models.IntegerField(default=0)
+    monto = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name= 'vacaciones_movimiento', default=0)
 

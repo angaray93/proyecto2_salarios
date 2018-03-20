@@ -24,6 +24,17 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
     if request.POST:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
+            form = MovimientoForm(request.POST, instance=movimiento)
+            if form.is_valid():
+                movimiento = form.save()
+                return redirect(reverse('liquidacion:ver_movimiento', args=[movimiento.pk]))
+            else:
+                # TODO Implementar sistema de errores
+                context.update({
+                    'errors': form.errors,
+                    'form': form
+                })
+                return render(request, 'proceso/movimiento_form.html', context)
         else:
             estado_default = State.objects.get(nombre='Activo')
             if idpadre:
@@ -44,41 +55,46 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     funcionario=funcionario
                 )
 
-        form = MovimientoForm(request.POST, instance=movimiento)
-        if form.is_valid():
-            movimiento = form.save()
-            #-------------------------------------------------------------------------#
-            haber = None
+            form = MovimientoForm(request.POST, instance=movimiento)
+            if form.is_valid():
+                movimiento = form.save()
+                #-------------------------------------------------------------------------#
+                haber = None
+                if movimiento.movimiento_padre:
+                    #----------------------------Haberes----------------------------------#
+                    haber = Haber.objects.get(movimiento=movimiento.movimiento_padre)
+                    haber.movimiento = movimiento
+                    # ---------------------------Vacaciones-------------------------------#
+                    vacaciones_padre = Vacaciones.objects.get(movimiento=movimiento_padre)
+                    vacaciones_padre.fin = movimiento.fechainicio - timedelta(days=1)
+                    if movimiento.tieneVacaciones is True:
+                        vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
+                        vacaciones.save()
+                    movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo')
+                    movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
+                    #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
+                    movimiento.movimiento_padre.save()
 
-            if movimiento.movimiento_padre:
-                haber = Haber.objects.get(movimiento=movimiento.movimiento_padre)
-                haber.movimiento = movimiento
-                movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo')
-                movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
-                #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
-                movimiento.movimiento_padre.save()
+                else:
+                    haber = Haber(movimiento = movimiento)
+                    if movimiento.tieneAguinaldo is True:
+                        aguinaldo = Aguinaldo(movimiento = movimiento)
+                        aguinaldo.save()
+                    if movimiento.esPrimero is True and movimiento.tieneVacaciones is True:
+                        vacaciones = Vacaciones(movimiento=movimiento)
+                        vacaciones.save()
 
+                haber.save()
+
+                #-------------------------------------------------------------------------#
+                return redirect(reverse('liquidacion:ver_movimiento', args=[movimiento.pk]))
             else:
-                haber = Haber(movimiento = movimiento)
-                if movimiento.tieneAguinaldo is True:
-                    aguinaldo = Aguinaldo(movimiento = movimiento)
-                    aguinaldo.save()
-                if movimiento.esPrimero is True and movimiento.tieneVacaciones is True:
-                    aguinaldo = Aguinaldo(movimiento=movimiento)
-                    aguinaldo.save()
-
-            haber.save()
-
-            #-------------------------------------------------------------------------#
-
-            return redirect(reverse('liquidacion:ver_movimiento', args=[movimiento.pk]))
-        else:
-            # TODO Implementar sistema de errores
-            context.update({
-                'errors': form.errors,
-                'form': form
-            })
-            return render(request, 'proceso/movimiento_form.html', context)
+                # TODO Implementar sistema de errores
+                context.update({
+                    'errors': form.errors,
+                    'form': form
+                })
+                return render(request, 'proceso/movimiento_form.html', context)
     else:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)

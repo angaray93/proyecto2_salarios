@@ -199,7 +199,7 @@ class Vacaciones(models.Model):
     diasusados = models.IntegerField(default=0)
     monto = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     # -----------------------------------Relationships-----------------------------------------#
-    movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name= 'vacaciones_movimiento', default=0)
+    movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name= 'vacaciones_movimiento')
 
 
 class Constante(models.Model):

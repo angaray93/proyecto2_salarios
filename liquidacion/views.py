@@ -18,7 +18,6 @@ def index(request):
 
 
 def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=None):
-    print(idmovimiento, idpadre, idfuncionario)
     context = {}
     movimiento = None
     if request.POST:
@@ -59,9 +58,11 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 movimiento.movimiento_padre.save()
 
             else:
-                haber = Haber(
-                    movimiento = movimiento,
-                )
+                haber = Haber(movimiento = movimiento)
+                if movimiento.tieneAguinaldo is True:
+                    aguinaldo = Aguinaldo(movimiento = movimiento)
+                    aguinaldo.save()
+
             haber.save()
 
             #-------------------------------------------------------------------------#
@@ -103,8 +104,6 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 q = request.GET.get('term', '')
                 funcionario = Funcionario.objects.get(pk=idfuncionario)
             estado_default = State.objects.get(nombre='Activo')
-
-            print(movimiento_padre)
 
             form = MovimientoForm(initial={
                 'funcionario': funcionario,

@@ -106,8 +106,9 @@ class Division(models.Model):
 
 class Aguinaldo(models.Model):
     id = models.AutoField(primary_key=True)
-    cantidad_meses = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    anho = models.IntegerField(default=datetime.datetime.today().year)
+    cantidad_meses = models.DecimalField(default=0, max_digits=2, decimal_places=1, blank=True, null=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True)
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name='aguinaldo_movimiento')
 
@@ -119,6 +120,8 @@ class Aguinaldo(models.Model):
 
         cant_meses = abs(fechafin.month - self.movimiento.fechainicio.month)
         return (cant_meses)
+
+    #ToDo def calcular_total(self):
 
 
 

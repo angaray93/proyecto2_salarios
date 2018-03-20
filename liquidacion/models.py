@@ -112,18 +112,6 @@ class Aguinaldo(models.Model):
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name='aguinaldo_movimiento')
 
-    def calcular_cantidad_meses(self):
-        fechafin = self.movimiento.fechafin
-        if not fechafin :
-            fechafin = datetime.datetime.today()
-        print(fechafin)
-
-        cant_meses = abs(fechafin.month - self.movimiento.fechainicio.month)
-        return (cant_meses)
-
-    #ToDo def calcular_total(self):
-
-
 
 class Pais(models.Model):
     idpais = models.AutoField(primary_key=True)

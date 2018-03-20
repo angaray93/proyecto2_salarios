@@ -67,9 +67,14 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     # ---------------------------Vacaciones-------------------------------#
                     vacaciones_padre = Vacaciones.objects.get(movimiento=movimiento_padre)
                     vacaciones_padre.fin = movimiento.fechainicio - timedelta(days=1)
+                    vacaciones_padre.save()
                     if movimiento.tieneVacaciones is True:
                         vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
                         vacaciones.save()
+                        print(vacaciones)
+                    if movimiento.tieneAguinaldo is True:
+                        aguinaldo = Aguinaldo(movimiento = movimiento)
+                        aguinaldo.save()
                     movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo')
                     movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
                     #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
@@ -81,7 +86,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                         aguinaldo = Aguinaldo(movimiento = movimiento)
                         aguinaldo.save()
                     if movimiento.esPrimero is True and movimiento.tieneVacaciones is True:
-                        vacaciones = Vacaciones(movimiento=movimiento)
+                        vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
                         vacaciones.save()
 
                 haber.save()

@@ -20,7 +20,7 @@
     <!-- Fin cabecera -->
         <hr>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="form-group">
                     <label for="tipo">Tipo:</label>
                     <div class="input-group">
@@ -28,9 +28,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="form-group">
-                    <label for="monto">Monto (opcional):</label>
+                    <label for="porcentaje">Porcentaje (opcional):</label>
+                    <div class="input-group">
+                        {{ form.porcentaje }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label for="monto">Monto:</label>
                     <div class="input-group">
                         {{ form.monto }}
                     </div>
@@ -40,18 +48,16 @@
 
         <div class="row">
             <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="fechainicio">Fecha de Inicio:</label>
-                    <div class="input-group">
-                        {{ form.fechainicio }}
-                    </div>
+                <div class="custom-control custom-checkbox mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="finito" name="finito">
+                    <label class="custom-control-label" for="finito">Es finito:</label>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="form-group">
-                    <label for="fechafin">Fecha de Fin:</label>
+                    <label for="cantidad_veces">Numero de aplicaciones:</label>
                     <div class="input-group">
-                        {{ form.fechafin }}
+                        {{ form.cantidad_veces }}
                     </div>
                 </div>
             </div>
@@ -67,8 +73,7 @@
                 <tr>
                     <th class="text-center">Descripcion</th>
                     <th class="text-center">Tipo</th>
-                    <th class="text-center">Fecha de Inicio</th>
-                    <th class="text-center">Fecha de Fin</th>
+                    <th class="text-center">Porcentaje</th>
                     <th class="text-center">Monto</th>
                     <th class="text-center">Acciones</th>
                 </tr>
@@ -78,10 +83,8 @@
                     <tr class='clickable-row'>
                         <td>{{ constante.tipo.nombre }}</td>
                         <td>{{ constante.tipo.tipo }}</td>
-                        <td>{{ constante.fechainicio }}</td>
-                        <td>{{ constante.fechafin }}</td>
+                        <td>{{ constante.porcentaje }}</td>
                         <td>{{ constante.monto }}</td>
-
                         <td class="text-center">
                             <a href="#">
                               <span class="glyphicon glyphicon-eye-open"></span>

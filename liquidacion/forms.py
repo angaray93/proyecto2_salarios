@@ -71,13 +71,13 @@ class ConstanteForm(ModelForm):
         model = Constante
         exclude = ['movimiento']
         widgets = {
-            'fechainicio': DateInput(attrs={
-                'class': 'form-control',
-            }),
-            'fechafin': DateInput(attrs={
+            'cantidad_veces': forms.NumberInput(attrs={
                 'class': 'form-control',
             }),
             'monto': forms.NumberInput(attrs={
+                'class': 'form-control',
+            }),
+            'porcentaje': forms.NumberInput(attrs={
                 'class': 'form-control',
             }),
             'tipo': forms.Select(attrs={

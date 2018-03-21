@@ -192,8 +192,12 @@ class Vacaciones(models.Model):
 
 class Constante(models.Model):
     id = models.AutoField(primary_key=True)
-    fechainicio = models.DateField()
-    fechafin = models.DateField()
+    #fechainicio = models.DateField()
+    #fechafin = models.DateField()
+    finito = models.BooleanField(default=False)
+    cantidad_veces = models.IntegerField(blank=True, null=True)
+    ocurrencias = models.IntegerField(blank=True, null=True, default=0)
+    porcentaje = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default = 0.00)
     monto = models.IntegerField(blank=True, null=True)
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_constante_movimiento')

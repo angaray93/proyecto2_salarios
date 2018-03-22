@@ -57,17 +57,20 @@
             </div>
         </div>
     <!-- Fin cabecera -->
-        <hr>
+
 
     <!-- Primera Fila -->
-    <div class="row">
-        <div class="col-lg-10">
-            <div class="custom-control custom-checkbox mr-sm-2">
-                <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
-                <label class="custom-control-label" for="esPrimero">Es primero:</label>
+    {% if not movimiento %}
+        <hr>
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="custom-control custom-checkbox mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
+                    <label class="custom-control-label" for="esPrimero">Es primero:</label>
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
     <hr>
     <div class="row">
         <div class="col-lg-6">

@@ -28,16 +28,13 @@ class MovimientoForm(forms.ModelForm):
             'motivo': forms.Select(attrs={
                 'class': 'form-control'
             }),
-            'departamento': forms.Select(attrs={
+            'division': forms.Select(attrs={
                 'class': 'form-control'
             }),
             'fechainicio': DateInput(attrs={
                 'class': 'form-control'
             }),
             'fechafin': DateInput(attrs={
-                'class': 'form-control'
-            }),
-            'esPrimero': forms.CheckboxInput(attrs={
                 'class': 'form-control'
             }),
             'horaEntrada': forms.TimeInput(attrs={

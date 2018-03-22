@@ -28,12 +28,14 @@
             <div class="col-2 d-flex justify-content-end align-items-center">
             {% if movimiento %}
                 <ul class="list-inline">
+                    {% if perms.liquidacion.change_movimiento %}
                     <li class="list-inline-item">
                         <button type="submit" class="btn btn-secondary btn-lg active" name="guardar"
-                        formaction="{% url 'liquidacion:modificar_movimiento' movimiento.pk %}">
+                        formaction="{% url 'liquidacion:editar_movimiento' movimiento.pk %}">
                             Guardar
                         </button>
                     </li>
+                    {% endif %}
                     <li class="list-inline-item">
                         <button type="button" class="btn btn-secondary fa fa-arrow-right" title="Volver a la propuesta"
                             onclick="location.href='{% url 'liquidacion:nueva_constante' movimiento.pk %}'">Siguiente</button>
@@ -48,82 +50,159 @@
                     </button>
                 {% else %}
                     <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
-                            >
+                            formaction="{% url 'liquidacion:modificar_movimiento' movimiento_padre.pk %}" aria-pressed="true">
                         Guardar
                     </button>
                 {% endif %}
-
             {% endif %}
             </div>
         </div>
     <!-- Fin cabecera -->
 
-
     <!-- Primera Fila -->
-    {% if not movimiento %}
-        <hr>
-        <div class="row">
+    <hr>
+    <div class="row">
             <div class="col-lg-10">
-                <div class="custom-control custom-checkbox mr-sm-2">
-                    <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
-                    <label class="custom-control-label" for="esPrimero">Es primero:</label>
+            {% if not movimiento_padre %}
+                {% if movimiento %}
+                    {% if not perms.liquidacion.change_movimiento %}
+                        <input type="text" id="esPrimero" class="form-control"
+                           value="{{ movimiento.esPrimero }}" disabled/>
+                        <input type="hidden" name="esPrimero" value="{{ movimiento.esPrimero }}">
+                    {% else %}
+                       <div class="custom-control custom-checkbox mr-sm-2">
+                        {% if movimiento.esPrimero is True %}
+                            <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero" checked>
+                        {% else %}
+                            <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
+                        {% endif %}
+                            <label class="custom-control-label" for="esPrimero">Es primero</label>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="custom-control custom-checkbox mr-sm-2">
+                        <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
+                        <label class="custom-control-label" for="esPrimero">Es primero</label>
+                    </div>
+                {% endif %}
+            {% endif %}
+    </div>
+        </div>
+    <hr>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="categoria_salarial">Categoria Salarial:</label>
+                <div class="input-group">
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="categoria_salarial" class="form-control"
+                               value="{{ movimiento.categoria_salarial }}" disabled/>
+                            <input type="hidden" name="categoria_salarial" value="{{ movimiento.categoria_salarial }}">
+                        {% else %}
+                           {{ form.categoria_salarial }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.categoria_salarial }}
+                        <span class="input-group-btn">
+                        <a onclick="window.open('{% url 'admin:liquidacion_categoriasalarial_add' %}')">
+                            <button class="btn btn-secondary" type="button">+</button></a>
+                        </span>
+                    {% endif %}
                 </div>
             </div>
         </div>
-    {% endif %}
-    <hr>
-    <div class="row">
         <div class="col-lg-6">
-        <div class="form-group">
-        <label for="categoria_salarial">Categoria Salarial:</label>
-        <div class="input-group">
-            {{ form.categoria_salarial }}
-            <span class="input-group-btn">
-                <a onclick="window.open('{% url 'admin:liquidacion_categoriasalarial_add' %}')">
-                    <button class="btn btn-secondary" type="button">+</button></a>
-            </span>
-        </div>
-        </div>
-        </div>
-        <div class="col-lg-6">
-        <div class="form-group">
-        <label for="og">Objeto de Gasto:</label>
-        <div class="input-group">
-            {{ form.og }}
-            <span class="input-group-btn">
-                <a onclick="window.open('{% url 'admin:liquidacion_objeto_de_gasto_add' %}')">
-                        <button class="btn btn-secondary" type="button">+</button></a>
-            </span>
-        </div>
-        </div>
-        </div>
-        </div>
-
-    <div class="row">
-    <div class="col-lg-6">
-    <div class="form-group">
-    <label for="tipo">Tipo de Movimiento:</label>
-    <div class="input-group">
-        {{ form.tipo }}
-    </div>
-    </div>
-    </div>
-    <div class="col-lg-6">
-    <div class="form-group">
-    <label for="motivo">Motivo del Movimiento:</label>
-    <div class="input-group">
-        {{ form.motivo }}
-    </div>
-    </div>
-    </div>
-    </div>
-    <hr>
-
-    <div class="row">
-        <div class="col-lg">
             <div class="form-group">
-                <label for="departamento">Departamento:</label>
-                    {{ form.departamento }}
+                <label for="og">Objeto de Gasto:</label>
+                    <div class="input-group">
+                        {% if movimiento %}
+                            {% if not perms.liquidacion.change_movimiento %}
+                                <input type="text" id="og" class="form-control"
+                                   value="{{ movimiento.og }}" disabled/>
+                                <input type="hidden" name="og" value="{{ movimiento.og }}">
+                            {% else %}
+                               {{ form.og }}
+                            {% endif %}
+                        {% else %}
+                            {{ form.og }}
+                            <span class="input-group-btn">
+                                <a onclick="window.open('{% url 'admin:liquidacion_objeto_de_gasto_add' %}')">
+                                    <button class="btn btn-secondary" type="button">+</button></a>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="tipo">Tipo de Movimiento:</label>
+                <div class="input-group">
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="tipo" class="form-control"
+                               value="{{ movimiento.tipo }}" disabled/>
+                            <input type="hidden" name="tipo" value="{{ movimiento.tipo }}">
+                        {% else %}
+                           {{ form.tipo }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.tipo }}
+                        <span class="input-group-btn">
+                            <a onclick="window.open('{% url 'admin:liquidacion_movimientotype_add' %}')">
+                                <button class="btn btn-secondary" type="button">+</button></a>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="motivo">Motivo del Movimiento:</label>
+                <div class="input-group">
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="motivo" class="form-control"
+                               value="{{ movimiento.motivo }}" disabled/>
+                            <input type="hidden" name="motivo" value="{{ movimiento.motivo }}">
+                        {% else %}
+                           {{ form.motivo }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.motivo }}
+                        <span class="input-group-btn">
+                            <a onclick="window.open('{% url 'admin:liquidacion_movimientomotivo_add' %}')">
+                                <button class="btn btn-secondary" type="button">+</button></a>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label for="division">Dependencia:</label>
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="division" class="form-control"
+                               value="{{ movimiento.division }}" disabled/>
+                            <input type="hidden" name="division" value="{{ movimiento.division }}">
+                        {% else %}
+                           {{ form.division }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.division }}
+                        <span class="input-group-btn">
+                            <a onclick="window.open('{% url 'admin:liquidacion_division_add' %}')">
+                                <button class="btn btn-secondary" type="button">+</button></a>
+                        </span>
+                    {% endif %}
             </div>
         </div>
       </div>
@@ -133,13 +212,33 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="fechainicio">Fecha de Inicio:</label>
-                    {{ form.fechainicio }}
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="fechainicio" class="form-control"
+                               value="{{ movimiento.fechainicio }}" disabled/>
+                            <input type="hidden" name="fechainicio" value="{{ movimiento.fechainicio }}">
+                        {% else %}
+                           {{ form.fechainicio }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.fechainicio }}
+                    {% endif %}
             </div>
         </div>
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="fechafin">Fecha de Fin:</label>
-                    {{ form.fechafin }}
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="fechafin" class="form-control"
+                               value="{{ movimiento.fechafin }}" disabled/>
+                            <input type="hidden" name="fechafin" value="{{ movimiento.fechafin }}">
+                        {% else %}
+                           {{ form.fechafin }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.fechafin }}
+                    {% endif %}
             </div>
         </div>
     </div>
@@ -148,13 +247,33 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="horaEntrada">Hora de Entrada:</label>
-                    {{ form.horaEntrada }}
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="horaEntrada" class="form-control"
+                               value="{{ movimiento.horaEntrada }}" disabled/>
+                            <input type="hidden" name="horaEntrada" value="{{ movimiento.horaEntrada }}">
+                        {% else %}
+                           {{ form.horaEntrada }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.horaEntrada }}
+                    {% endif %}
             </div>
         </div>
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="horaSalida">Hora de Salida:</label>
-                    {{ form.horaSalida }}
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="horaSalida" class="form-control"
+                               value="{{ movimiento.horaSalida }}" disabled/>
+                            <input type="hidden" name="horaSalida" value="{{ movimiento.horaSalida }}">
+                        {% else %}
+                           {{ form.horaSalida }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.horaSalida }}
+                    {% endif %}
             </div>
         </div>
     </div>
@@ -163,13 +282,53 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="tieneAguinaldo">Tiene Aguinaldo:</label>
-                    {{ form.tieneAguinaldo }}
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="tieneAguinaldo" class="form-control"
+                               value="{{ movimiento.tieneAguinaldo }}" disabled/>
+                            <input type="hidden" name="tieneAguinaldo" value="{{ movimiento.tieneAguinaldo }}">
+                        {% else %}
+                           <div class="custom-control custom-checkbox mr-sm-2">
+                            {% if movimiento.tieneAguinaldo is True %}
+                                <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo" checked>
+                            {% else %}
+                                <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo">
+                            {% endif %}
+                           <label class="custom-control-label" for="tieneAguinaldo"></label>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="custom-control custom-checkbox mr-sm-2">
+                            <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo">
+                            <label class="custom-control-label" for="tieneAguinaldo"></label>
+                        </div>
+                    {% endif %}
             </div>
         </div>
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="tieneVacaciones">Tiene Vacaciones:</label>
-                    {{ form.tieneVacaciones }}
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="tieneVacaciones" class="form-control"
+                               value="{{ movimiento.tieneVacaciones }}" disabled/>
+                            <input type="hidden" name="tieneVacaciones" value="{{ movimiento.tieneVacaciones }}">
+                        {% else %}
+                           <div class="custom-control custom-checkbox mr-sm-2">
+                            {% if movimiento.tieneVacaciones is True %}
+                                <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones" checked>
+                            {% else %}
+                                <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones">
+                            {% endif %}
+                           <label class="custom-control-label" for="tieneVacaciones"></label>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="custom-control custom-checkbox mr-sm-2">
+                            <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones">
+                            <label class="custom-control-label" for="tieneVacaciones"></label>
+                        </div>
+                    {% endif %}
             </div>
         </div>
     </div>

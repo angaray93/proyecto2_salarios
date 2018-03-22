@@ -56,7 +56,7 @@ class Movimiento(models.Model):
     #-----------------------------------Relationships-----------------------------------------#
     funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')
     categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING, related_name='fk_movimiento_categoriasalarial')
-    departamento = models.ForeignKey('Departamento', on_delete=models.DO_NOTHING, related_name='fk_movimiento_departamento')
+    division = models.ForeignKey('Division', on_delete=models.DO_NOTHING, related_name='fk_movimiento_division')
     og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.DO_NOTHING, related_name='fk_movimiento_og')
     movimiento_padre = models.ForeignKey('self', on_delete=models.DO_NOTHING, blank=True, null=True)
     estado = models.ForeignKey('State', on_delete=models.DO_NOTHING, related_name='fk_movimiento_estado')
@@ -100,8 +100,8 @@ class Division(models.Model):
         ordering = ["nombre"]
         verbose_name_plural = "Divisiones"
 
-    #def __str__(self):
-    #    return '%s %s %s' % (self.nombre,' - ', self.departamento)
+    def __str__(self):
+        return '%s %s %s' % (self.nombre,' - ', self.departamento.nombre)
 
 
 class Aguinaldo(models.Model):

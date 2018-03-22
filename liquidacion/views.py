@@ -27,7 +27,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             form = MovimientoForm(request.POST, instance=movimiento)
             if form.is_valid():
                 movimiento = form.save()
-                return redirect(reverse('liquidacion:ver_movimiento', args=[movimiento.pk]))
+                return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
             else:
                 # TODO Implementar sistema de errores
                 context.update({
@@ -92,14 +92,15 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 haber.save()
 
                 #-------------------------------------------------------------------------#
-                return redirect(reverse('liquidacion:ver_movimiento', args=[movimiento.pk]))
+                return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
+
             else:
                 # TODO Implementar sistema de errores
                 context.update({
                     'errors': form.errors,
                     'form': form
                 })
-                return render(request, 'proceso/movimiento_form.html', context)
+            return render(request, 'proceso/movimiento_form.html', context)
     else:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
@@ -124,6 +125,9 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             if idpadre:
                 movimiento_padre = Movimiento.objects.get(pk=idpadre)
                 funcionario = movimiento_padre.funcionario
+                context.update({
+                    'movimiento_padre': movimiento_padre,
+                })
             else:
                 movimiento_padre = None
                 q = request.GET.get('term', '')
@@ -136,7 +140,6 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 'estado': estado_default,
             })
             context.update({
-                'movimiento_padre': movimiento_padre,
                 'funcionario': funcionario,
                 'form': form,
             })

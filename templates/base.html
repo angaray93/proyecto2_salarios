@@ -9,8 +9,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>SLSB-FPUNA</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- Bootstrap core CSS-->
     <link href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
     <!-- Custom fonts for this template-->
@@ -24,7 +24,6 @@
 </head>
 
 {% if user.is_authenticated %}
-
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
@@ -35,98 +34,30 @@
  <div class="collapse navbar-collapse" id="navbarResponsive">
   <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-      <a class="nav-link" href="{% url 'admin:index' %}">
-        <span class="nav-link-text">Administrador</span>
+      <a class="nav-link" href="{% url 'liquidacion:index' %}">
+        <span class="nav-link-text">Inicio</span>
       </a>
     </li>
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-      <a class="nav-link" href="index.html">
-        <i class="fa fa-fw fa-dashboard"></i>
-        <span class="nav-link-text">Dashboard</span>
-      </a>
+
     </li>
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
-      <a class="nav-link" href="charts.html">
-        <i class="fa fa-fw fa-area-chart"></i>
-        <span class="nav-link-text">Charts</span>
-      </a>
+
     </li>
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
-      <a class="nav-link" href="tables.html">
-        <i class="fa fa-fw fa-table"></i>
-        <span class="nav-link-text">Tables</span>
-      </a>
+
     </li>
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
-      <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
-        <i class="fa fa-fw fa-wrench"></i>
-        <span class="nav-link-text">Components</span>
-      </a>
-      <ul class="sidenav-second-level collapse" id="collapseComponents">
-        <li>
-          <a href="navbar.html">Navbar</a>
-        </li>
-        <li>
-          <a href="cards.html">Cards</a>
-        </li>
-      </ul>
+
     </li>
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
-      <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseExamplePages" data-parent="#exampleAccordion">
-        <i class="fa fa-fw fa-file"></i>
-        <span class="nav-link-text">Example Pages</span>
-      </a>
-      <ul class="sidenav-second-level collapse" id="collapseExamplePages">
-        <li>
-          <a href="login.html">Login Page</a>
-        </li>
-        <li>
-          <a href="register.html">Registration Page</a>
-        </li>
-        <li>
-          <a href="forgot-password.html">Forgot Password Page</a>
-        </li>
-        <li>
-          <a href="blank.html">Blank Page</a>
-        </li>
-      </ul>
+
     </li>
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Menu Levels">
-      <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti" data-parent="#exampleAccordion">
-        <i class="fa fa-fw fa-sitemap"></i>
-        <span class="nav-link-text">Menu Levels</span>
-      </a>
-      <ul class="sidenav-second-level collapse" id="collapseMulti">
-        <li>
-          <a href="#">Second Level Item</a>
-        </li>
-        <li>
-          <a href="#">Second Level Item</a>
-        </li>
-        <li>
-          <a href="#">Second Level Item</a>
-        </li>
-        <li>
-          <a class="nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti2">Third Level</a>
-          <ul class="sidenav-third-level collapse" id="collapseMulti2">
-            <li>
-              <a href="#">Third Level Item</a>
-            </li>
-            <li>
-              <a href="#">Third Level Item</a>
-            </li>
-            <li>
-              <a href="#">Third Level Item</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
+
     </li>
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
-      <a class="nav-link" href="#">
-        <i class="fa fa-fw fa-link"></i>
-        <span class="nav-link-text">Link</span>
-      </a>
+
     </li>
   </ul>
   <ul class="navbar-nav sidenav-toggler">
@@ -139,7 +70,7 @@
   <ul class="navbar-nav ml-auto">
     <li class="nav-item">
       <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-        <i class="fa fa-fw fa-sign-out"></i>Logout</a>
+        <i class="fa fa-fw fa-sign-out"></i>Salir</a>
     </li>
   </ul>
 </div>
@@ -168,20 +99,35 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Seguro que desea cerrar sesion?</h5>
             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
-          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
           <div class="modal-footer">
-            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-            <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+            <a class="btn btn-primary" href="{% url 'logout' %}">Confirmar</a>
           </div>
         </div>
       </div>
     </div>
-    <!-- Bootstrap core JavaScript-->
+  </div>
+</body>
+{% else %}
+
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+  <div class="container">
+    <div class="card card-login mx-auto mt-5">
+      <div class="card-header">Sistema de Liquidacion de Salarios y Beneficios</div>
+      <div class="card-body">
+            <p>Para continuar, identifiquese:<a href="{% url 'login' %}">Iniciar Sesión</a> </p>
+      </div>
+    </div>
+  </div>
+</body>
+{% endif %}
+<footer>
+<!-- Bootstrap core JavaScript-->
     <script src="{% static "vendor/jquery/jquery.min.js" %}"></script>
     <script src="{% static "vendor/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
     <!-- Core plugin JavaScript-->
@@ -198,13 +144,7 @@
     <!-- Custom scripts for this page-->
     <script src="{% static "js/sb-admin-datatables.min.js" %}"></script>
     <script src="{% static "js/sb-admin-charts.min.js" %}"></script>
-  </div>
-</body>
 
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a>
-{% endif %}
-
+</footer>
 
 </html>

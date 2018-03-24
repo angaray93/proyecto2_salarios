@@ -175,7 +175,7 @@ def busqueda_movimiento_funcionario(request):
 def get_movimientos(request):
     if request.is_ajax():
         q = request.GET.get('idfuncionario', '')
-        movimientos = Movimiento.objects.filter(funcionario=q)
+        movimientos = Movimiento.objects.filter(funcionario=q, estado__nombre='Activo')
         res = []
         for movimiento in movimientos:
             movimiento_json = {'idmovimiento' :movimiento.pk, 'motivo': movimiento.motivo.nombre, 'tipo': movimiento.tipo.nombre, 'categoria_salarial': movimiento.categoria_salarial.codigo}
@@ -201,7 +201,7 @@ def documento_vista(request, idmovimiento=None, iddocumento=None):
         form = DocumentoRespaldatorioForm(request.POST, instance=documento)
         if form.is_valid():
             documento = form.save()
-            return redirect(reverse('liquidacion:ver_movimiento', args=[documento.movimiento.pk]))
+            return redirect(reverse('liquidacion:editar_movimiento', args=[documento.movimiento.pk]))
         else:
             # TODO Implementar sistema de errores
             context.update({
@@ -285,7 +285,9 @@ def constante_vista(request, idmovimiento=None, idconstante=None):
         form = ConstanteForm(request.POST, instance=constante)
         if form.is_valid():
             constante = form.save()
-            return redirect(reverse('liquidacion:nueva_constante', args=[movimiento.pk]))
+            constante.monto = constante.calcular_monto()
+            constante.save()
+            return redirect(reverse('liquidacion:nueva_constante', args=[constante.movimiento.pk]))
         else:
             # TODO Implementar sistema de errores
             context.update({

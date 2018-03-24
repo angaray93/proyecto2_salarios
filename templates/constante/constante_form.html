@@ -8,7 +8,9 @@
 <form method="post" id="constante_form">
         {% csrf_token %}
         <div class="row"> <!-- cabecera-->
-            <div class="col-10"></div>
+            <div class="col-10 d-flex align-items-center">
+                <span class="h4">Debitos y Creditos de Salario</span>
+            </div>
             <div class="col-2 d-flex justify-content-end align-items-center">
                 <div class="row separador"></div>
                 <button type="submit" class="btn btn-success" name="guardar"
@@ -20,7 +22,7 @@
     <!-- Fin cabecera -->
         <hr>
         <div class="row">
-            <div class="col-lg-4">
+            <div class="col-lg-6">
                 <div class="form-group">
                     <label for="tipo">Tipo:</label>
                     <div class="input-group">
@@ -28,15 +30,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="porcentaje">Porcentaje (opcional):</label>
-                    <div class="input-group">
-                        {{ form.porcentaje }}
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
+            <div class="col-lg-6">
                 <div class="form-group">
                     <label for="monto">Monto:</label>
                     <div class="input-group">
@@ -54,7 +48,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="form-group">
+                <div class="form-group" id="cantidad_veces">
                     <label for="cantidad_veces">Numero de aplicaciones:</label>
                     <div class="input-group">
                         {{ form.cantidad_veces }}
@@ -69,7 +63,7 @@
 <div class="row">
         <div class="col-lg-12">
         <table id="tabla_constantes" class="table table-hover">
-            <thead class="thead-light">
+            <thead class="thead-dark">
                 <tr>
                     <th class="text-center">Descripcion</th>
                     <th class="text-center">Tipo</th>
@@ -123,10 +117,35 @@ function cerrar_modal()
         return false;
 }
 
-$(document).ready(function()
-{
+$(document).ready(function () {
 
+        $("#cantidad_veces").hide();
+        $('#finito').on('change', function (e) {
+            if($('#finito').is(":checked"))
+                $("#cantidad_veces").show();
+            else
+                $("#cantidad_veces").hide();
+        });
+    });
+
+$('#id_tipo').change(function () {
+    var select = document.getElementById('id_tipo');
+    var options = select.options;
+    var selected = select.options[select.selectedIndex];
+    if (selected.innerHTML == "Porcentaje") {
+        $('#id_porcentaje').prop('disabled',false);
+        $('#id_descuento').prop('disabled',true);
+    } else {
+        if (selected.innerHTML == "Monto") {
+            $('#id_porcentaje').prop('disabled',true);
+            $('#id_descuento').prop('disabled',false);
+        } else {
+            $('#id_porcentaje').prop('disabled',true);
+            $('#id_descuento').prop('disabled',true);
+        }
+    }
 });
+
 </script>
 
 {% endblock %}

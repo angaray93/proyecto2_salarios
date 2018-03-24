@@ -24,11 +24,10 @@
 </head>
 
 {% if user.is_authenticated %}
-
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+    <a class="navbar-brand" href="index.html">SLSB / FP-UNA</a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -112,7 +111,23 @@
         </div>
       </div>
     </div>
-    <!-- Bootstrap core JavaScript-->
+  </div>
+</body>
+{% else %}
+
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+  <div class="container">
+    <div class="card card-login mx-auto mt-5">
+      <div class="card-header">Sistema de Liquidacion de Salarios y Beneficios</div>
+      <div class="card-body">
+            <p>Para continuar, identifiquese:<a href="{% url 'login' %}">Iniciar Sesión</a> </p>
+      </div>
+    </div>
+  </div>
+</body>
+{% endif %}
+<footer>
+<!-- Bootstrap core JavaScript-->
     <script src="{% static "vendor/jquery/jquery.min.js" %}"></script>
     <script src="{% static "vendor/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
     <!-- Core plugin JavaScript-->
@@ -129,13 +144,7 @@
     <!-- Custom scripts for this page-->
     <script src="{% static "js/sb-admin-datatables.min.js" %}"></script>
     <script src="{% static "js/sb-admin-charts.min.js" %}"></script>
-  </div>
-</body>
 
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a>
-{% endif %}
-
+</footer>
 
 </html>

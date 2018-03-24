@@ -183,7 +183,8 @@ class GradoUniversitarioForm(forms.ModelForm):
 
 
 class ConstanteTypeForm(forms.ModelForm):
-    tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
+    #tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
+
     class Meta:
         model = ConstanteType
         fields = '__all__'

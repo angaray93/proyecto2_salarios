@@ -1,4 +1,6 @@
 import datetime
+
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -197,11 +199,17 @@ class Constante(models.Model):
     finito = models.BooleanField(default=False)
     cantidad_veces = models.IntegerField(blank=True, null=True)
     ocurrencias = models.IntegerField(blank=True, null=True, default=0)
-    porcentaje = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default = 0.00)
-    monto = models.IntegerField(blank=True, null=True)
+    #porcentaje = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default = 0.00)
+    monto = models.IntegerField(blank=True, null=True, default=0)
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_constante_movimiento')
     tipo = models.ForeignKey('ConstanteType', on_delete=models.CASCADE, related_name='fk_constante_tipo')
+
+    def calcular_monto(self):
+        if self.tipo.porcentaje != 0 and self.tipo.porcentaje is not None:
+            return ((self.movimiento.categoria_salarial.asignacion * self.tipo.porcentaje) / Decimal(100))
+        else:
+            return self.monto
 
 
 class ConstanteType(models.Model):
@@ -215,7 +223,10 @@ class ConstanteType(models.Model):
         verbose_name_plural = "Tipos de Constante"
 
     def __str__(self):
-        return '%s ' % (self.nombre)
+        if self.porcentaje != 0 :
+            return '%s %s %s %s' % (self.nombre ,' - ', self.porcentaje, '%')
+        else:
+            return '%s ' % (self.nombre)
 
 
 class MovimientoType(models.Model):

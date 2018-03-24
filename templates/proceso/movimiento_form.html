@@ -19,8 +19,11 @@
                     </div>
                     <div class="col-8">
                         <ul class="list-inline">
-                            <li class="list-inline-item">Funcionario: {{ funcionario }}</li>
-                            <!-- <input type="hidden" name="funcionario" value="{{ funcionario.pk }}">Fin cabecera -->
+                            {% if movimiento %}
+                                <li class="list-inline-item">Funcionario: {{ movimiento.funcionario }}</li>
+                            {% else %}
+                                <li class="list-inline-item">Funcionario: {{ funcionario }}</li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
@@ -218,7 +221,9 @@
                                value="{{ movimiento.fechainicio }}" disabled/>
                             <input type="hidden" name="fechainicio" value="{{ movimiento.fechainicio }}">
                         {% else %}
-                           {{ form.fechainicio }}
+                           <input type="text" id="fechainicio" class="form-control"
+                               value="{{ movimiento.fechainicio }}" disabled/>
+                            <input type="hidden" name="fechainicio" value="{{ movimiento.fechainicio }}">
                         {% endif %}
                     {% else %}
                         {{ form.fechainicio }}
@@ -234,7 +239,9 @@
                                value="{{ movimiento.fechafin }}" disabled/>
                             <input type="hidden" name="fechafin" value="{{ movimiento.fechafin }}">
                         {% else %}
-                           {{ form.fechafin }}
+                           <input type="text" id="fechafin" class="form-control"
+                               value="{{ movimiento.fechafin }}" disabled/>
+                            <input type="hidden" name="fechafin" value="{{ movimiento.fechafin }}">
                         {% endif %}
                     {% else %}
                         {{ form.fechafin }}

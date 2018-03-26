@@ -7,6 +7,13 @@
 
 <form method="post" id="movimiento_form">
         {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field.errors }}
+            {{ hidden_field }}
+        {% endfor %}
+
         <div class="row"> <!-- cabecera-->
             <div class="col-10">
                 <div class="row">
@@ -214,16 +221,13 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="form-group">
-                <label for="fechainicio">Fecha de Inicio:</label>
+                <label for="id_fechainicio">Fecha de Inicio:</label>
+                    {{ form.fechainicio.errors }}
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="fechainicio" class="form-control"
-                               value="{{ movimiento.fechainicio }}" disabled/>
-                            <input type="hidden" name="fechainicio" value="{{ movimiento.fechainicio }}">
+                            <input type="date" id="id_fechainicio" name="fechainicio">
                         {% else %}
-                           <input type="text" id="fechainicio" class="form-control"
-                               value="{{ movimiento.fechainicio }}" disabled/>
-                            <input type="hidden" name="fechainicio" value="{{ movimiento.fechainicio }}">
+                            {{ form.fechainicio }}
                         {% endif %}
                     {% else %}
                         {{ form.fechainicio }}
@@ -232,16 +236,13 @@
         </div>
         <div class="col-lg-6">
             <div class="form-group">
-                <label for="fechafin">Fecha de Fin:</label>
+                <label for="id_fechafin">Fecha de Fin:</label>
+                    {{ form.fechafin.errors }}
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="fechafin" class="form-control"
-                               value="{{ movimiento.fechafin }}" disabled/>
-                            <input type="hidden" name="fechafin" value="{{ movimiento.fechafin }}">
+                            <input type="date" id="id_fechafin" name="fechafin" value="{{ movimiento.fechafin }}">
                         {% else %}
-                           <input type="text" id="fechafin" class="form-control"
-                               value="{{ movimiento.fechafin }}" disabled/>
-                            <input type="hidden" name="fechafin" value="{{ movimiento.fechafin }}">
+                            <input type="date" id="id_fechafin" name="fechafin" value="{{ movimiento.fechafin }}">
                         {% endif %}
                     {% else %}
                         {{ form.fechafin }}
@@ -254,6 +255,13 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="horaEntrada">Hora de Entrada:</label>
+                {% if form.horaEntrada.errors %}
+                    <ol>
+                    {% for error in form.horaEntrada.errors %}
+                        <li><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ol>
+                {% endif %}
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
                             <input type="text" id="horaEntrada" class="form-control"

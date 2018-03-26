@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.apps import apps
 from django.db.models import *
 from django.http import JsonResponse, Http404
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.http import HttpResponse
@@ -29,12 +29,8 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 movimiento = form.save()
                 return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
             else:
-                # TODO Implementar sistema de errores
-                context.update({
-                    'errors': form.errors,
-                    'form': form
-                })
-                return render(request, 'proceso/movimiento_form.html', context)
+
+                return render(request, 'proceso/movimiento_form.html', {'movimiento': movimiento, 'form': form})
         else:
             estado_default = State.objects.get(nombre='Activo')
             if idpadre:
@@ -100,7 +96,6 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     'errors': form.errors,
                     'form': form
                 })
-            return render(request, 'proceso/movimiento_form.html', context)
     else:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
@@ -143,7 +138,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 'funcionario': funcionario,
                 'form': form,
             })
-        return render(request, 'proceso/movimiento_form.html', context)
+    return render(request, 'proceso/movimiento_form.html', context)
 
 
 def opciones_proceso(request):

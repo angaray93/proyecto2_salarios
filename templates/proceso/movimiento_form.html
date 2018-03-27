@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load admin_static %}
 
 {% block content %}
 
@@ -7,7 +8,9 @@
 
 <form method="post" id="movimiento_form">
         {% csrf_token %}
+        {{ form.media }}
         {{ form.non_field_errors }}
+
 
         {% for hidden_field in form.hidden_fields %}
             {{ hidden_field.errors }}
@@ -72,32 +75,32 @@
     <!-- Primera Fila -->
     <hr>
     <div class="row">
-            <div class="col-lg-10">
-            {% if not movimiento_padre %}
-                {% if movimiento %}
-                    {% if not perms.liquidacion.change_movimiento %}
-                        <input type="text" id="esPrimero" class="form-control"
-                           value="{{ movimiento.esPrimero }}" disabled/>
-                        <input type="hidden" name="esPrimero" value="{{ movimiento.esPrimero }}">
-                    {% else %}
-                       <div class="custom-control custom-checkbox mr-sm-2">
-                        {% if movimiento.esPrimero is True %}
-                            <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero" checked>
-                        {% else %}
-                            <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
-                        {% endif %}
-                            <label class="custom-control-label" for="esPrimero">Es primero</label>
-                        </div>
-                    {% endif %}
+        <div class="col-lg-10">
+        {% if not movimiento_padre %}
+            {% if movimiento %}
+                {% if not perms.liquidacion.change_movimiento %}
+                    <input type="text" id="esPrimero" class="form-control"
+                       value="{{ movimiento.esPrimero }}" disabled/>
+                    <input type="hidden" name="esPrimero" value="{{ movimiento.esPrimero }}">
                 {% else %}
-                    <div class="custom-control custom-checkbox mr-sm-2">
+                   <div class="custom-control custom-checkbox mr-sm-2">
+                    {% if movimiento.esPrimero is True %}
+                        <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero" checked>
+                    {% else %}
                         <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
+                    {% endif %}
                         <label class="custom-control-label" for="esPrimero">Es primero</label>
                     </div>
                 {% endif %}
+            {% else %}
+                <div class="custom-control custom-checkbox mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
+                    <label class="custom-control-label" for="esPrimero">Es primero</label>
+                </div>
             {% endif %}
-    </div>
+        {% endif %}
         </div>
+    </div>
     <hr>
     <div class="row">
         <div class="col-lg-6">
@@ -225,9 +228,11 @@
                     {{ form.fechainicio.errors }}
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
-                            <input type="date" id="id_fechainicio" name="fechainicio">
+                            <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
+                                   value="{{ movimiento.fechainicio }}" placeholder="{{ movimiento.fechainicio }}" disabled/>
                         {% else %}
-                            {{ form.fechainicio }}
+                            <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
+                                   value="{{ movimiento.fechainicio }}" placeholder="{{ movimiento.fechainicio }}">
                         {% endif %}
                     {% else %}
                         {{ form.fechainicio }}
@@ -239,11 +244,12 @@
                 <label for="id_fechafin">Fecha de Fin:</label>
                     {{ form.fechafin.errors }}
                     {% if movimiento %}
-                        {% if not perms.liquidacion.change_movimiento %}
-                            <input type="date" id="id_fechafin" name="fechafin" value="{{ movimiento.fechafin }}">
-                        {% else %}
-                            <input type="date" id="id_fechafin" name="fechafin" value="{{ movimiento.fechafin }}">
-                        {% endif %}
+                        <input type="date" id="id_fechafin" name="fechafin" class="form-control"
+                                   value="{{ movimiento.fechafin }}" placeholder="{{ movimiento.fechafin }}"
+                           {% if not perms.liquidacion.change_movimiento %}
+                               disabled
+                           {% endif %}
+                        />
                     {% else %}
                         {{ form.fechafin }}
                     {% endif %}

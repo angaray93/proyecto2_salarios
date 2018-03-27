@@ -2,15 +2,16 @@ from django import forms
 from django.contrib import admin
 #from django.forms import *
 from django.forms import ModelForm, NumberInput
-
+from django.forms.widgets import SelectDateWidget, DateInput
+from django.forms.fields import DateField
 from liquidacion.models import *
-
-
-class DateInput(forms.DateInput):
-    input_type = 'date'
+from sueldos.settings import DATE_INPUT_FORMATS
+from django.contrib.admin.widgets import AdminDateWidget
+from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 
 
 class MovimientoForm(forms.ModelForm):
+    fechainicio = DateField(widget=forms.DateInput, input_formats=['%Y-%m-%d'])
 
     class Meta:
         model = Movimiento
@@ -31,10 +32,7 @@ class MovimientoForm(forms.ModelForm):
             'division': forms.Select(attrs={
                 'class': 'form-control'
             }),
-            'fechainicio': DateInput(attrs={
-                'class': 'form-control'
-            }),
-            'fechafin': DateInput(attrs={
+            'fechafin': forms.DateInput(attrs={
                 'class': 'form-control'
             }),
             'horaEntrada': forms.TimeInput(attrs={
@@ -121,7 +119,7 @@ class DocumentoRespaldatorioForm(forms.ModelForm):
             'codigo': forms.TextInput(attrs={
                 'class': 'form-control',
             }),
-            'fechaemision': DateInput(attrs={
+            'fechaemision': forms.DateInput(attrs={
                 'class': 'form-control',
             }),
             'autoridadfirmante': forms.Select(attrs={

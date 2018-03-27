@@ -5,6 +5,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+from sueldos.settings import DATE_INPUT_FORMATS
+
 ConstanteType_OPTIONS = (
     ('D', 'Debito'),
     ('C', 'Credito'),

@@ -45,10 +45,16 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             else:
                 movimiento_padre = None
                 funcionario = Funcionario.objects.get(pk=idfuncionario)
+                movimientos = Movimiento.objects.filter(funcionario=funcionario)
+                if movimientos.count() > 0:
+                    esPrimero = False
+                else:
+                    esPrimero = True
                 movimiento = Movimiento(
+                    esPrimero=esPrimero,
                     estado=estado_default,
                     movimiento_padre=movimiento_padre,
-                    funcionario=funcionario
+                    funcionario=funcionario,
                 )
 
             form = MovimientoForm(request.POST, instance=movimiento)
@@ -61,13 +67,13 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     haber = Haber.objects.get(movimiento=movimiento.movimiento_padre)
                     haber.movimiento = movimiento
                     # ---------------------------Vacaciones-------------------------------#
-                    vacaciones_padre = Vacaciones.objects.get(movimiento=movimiento_padre)
-                    vacaciones_padre.fin = movimiento.fechainicio - timedelta(days=1)
-                    vacaciones_padre.save()
+                    vacaciones_padre = Vacaciones.objects.filter(movimiento=movimiento_padre)
+                    if vacaciones_padre.count() > 0:
+                        vacaciones_padre.fin = movimiento.fechainicio - timedelta(days=1)
+                        vacaciones_padre.save()
                     if movimiento.tieneVacaciones is True:
                         vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
                         vacaciones.save()
-                        print(vacaciones)
                     if movimiento.tieneAguinaldo is True:
                         aguinaldo = Aguinaldo(movimiento = movimiento)
                         aguinaldo.save()

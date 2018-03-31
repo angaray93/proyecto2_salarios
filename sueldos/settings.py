@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'liquidacion',
     'django_bootstrap_breadcrumbs',
 
@@ -83,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'proyecto2-repo',
         'USER': 'postgres',
-        'PASSWORD': 'agaray',
+        'PASSWORD': 'postgres',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -118,7 +119,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = False
+USE_L10N = True
 
 USE_TZ = True
 
@@ -132,6 +133,19 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'liquidacion/static')
 
 DATE_FORMAT = "Y-m-d"
 
+TIME_FORMAT = "G:i"
+
+TIME_INPUT_FORMATS = [
+    '%H:%M',
+]
+
 DATE_INPUT_FORMATS = [
     '%Y-%m-%d',
 ]
+
+USE_THOUSAND_SEPARATOR = True
+
+DECIMAL_SEPARATOR = ','
+
+THOUSAND_SEPARATOR = '.'
+NUMBER_GROUPING = 3

@@ -1,7 +1,14 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb " Seleccion de Funcionario "  'liquidacion:buscar_funcionario' %}
+{% endblock %}
 
 {% block content %}
+{% render_breadcrumbs %}
 <div class="col-12 col-sm-10 recuadro">
     <div class="row">
         <form method="get">

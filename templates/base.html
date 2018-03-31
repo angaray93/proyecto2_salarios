@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -77,7 +79,16 @@
   </nav>
   <div class="content-wrapper">
     <div class="container-fluid">
-    {% block content %}{% endblock %}
+    {% block breadcrumbs %}
+        {% clear_breadcrumbs %}
+        {% breadcrumb " Inicio " 'liquidacion:index' %}
+    {% endblock %}
+
+    {% block content %}
+    {% render_breadcrumbs %}
+
+
+    {% endblock %}
     </div>
     <!-- /.container-fluid-->
     <!-- /.content-wrapper}

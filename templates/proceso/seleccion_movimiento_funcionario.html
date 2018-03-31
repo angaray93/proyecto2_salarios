@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb " Seleccion de Movimiento de Funcionario "  'liquidacion:buscar_movimiento' %}
+{% endblock %}
 
 {% block content %}
+{% render_breadcrumbs %}
+
 <div class="col-12 col-sm-10 recuadro">
-    <div class="row">
-        <form method="get">
-            <input type="text" name="q" placeholder="Ingrese un numero de cedula" value="{{ request.GET.q }}"/>
-            <button type="submit" class="btn">Buscar</button>
-        </form>
-    </div>
+
+<div class="row">
+    <form method="get">
+        <input type="text" name="q" placeholder="Ingrese un numero de cedula" value="{{ request.GET.q }}"/>
+        <button type="submit" class="btn">Buscar</button>
+    </form>
+</div>
 
 {% if funcionarios %}
 <div class="row separador mt-2"></div>

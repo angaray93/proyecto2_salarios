@@ -1,8 +1,25 @@
-{% extends 'base.html' %}
+{% extends "proceso/filtro_funcionarios_movimiento.html" %}
 {% load staticfiles %}
-{% load admin_static %}
+{% load django_bootstrap_breadcrumbs %}
+{% load l10n %}
+
+{% block extrastyles %}
+    <link href="{% static "css/chung-timepicker.css" %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% if movimiento %}
+        {% breadcrumb " Modificacion de Movimiento " 'liquidacion:editar_movimiento' movimiento.pk %}
+    {% else %}
+        {% breadcrumb " Nuevo Movimiento " 'liquidacion:nuevo_movimiento' %}
+    {% endif %}
+
+{% endblock %}
+
 
 {% block content %}
+{% render_breadcrumbs %}
 
 <div class="col-12 col-sm-10 recuadro">
 
@@ -10,7 +27,6 @@
         {% csrf_token %}
         {{ form.media }}
         {{ form.non_field_errors }}
-
 
         {% for hidden_field in form.hidden_fields %}
             {{ hidden_field.errors }}
@@ -74,34 +90,7 @@
 
     <!-- Primera Fila -->
     <hr>
-    <div class="row">
-        <div class="col-lg-10">
-        {% if not movimiento_padre %}
-            {% if movimiento %}
-                {% if not perms.liquidacion.change_movimiento %}
-                    <input type="text" id="esPrimero" class="form-control"
-                       value="{{ movimiento.esPrimero }}" disabled/>
-                    <input type="hidden" name="esPrimero" value="{{ movimiento.esPrimero }}">
-                {% else %}
-                   <div class="custom-control custom-checkbox mr-sm-2">
-                    {% if movimiento.esPrimero is True %}
-                        <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero" checked>
-                    {% else %}
-                        <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
-                    {% endif %}
-                        <label class="custom-control-label" for="esPrimero">Es primero</label>
-                    </div>
-                {% endif %}
-            {% else %}
-                <div class="custom-control custom-checkbox mr-sm-2">
-                    <input type="checkbox" class="custom-control-input" id="esPrimero" name="esPrimero">
-                    <label class="custom-control-label" for="esPrimero">Es primero</label>
-                </div>
-            {% endif %}
-        {% endif %}
-        </div>
-    </div>
-    <hr>
+
     <div class="row">
         <div class="col-lg-6">
             <div class="form-group">
@@ -119,7 +108,7 @@
                         {{ form.categoria_salarial }}
                         <span class="input-group-btn">
                         <a onclick="window.open('{% url 'admin:liquidacion_categoriasalarial_add' %}')">
-                            <button class="btn btn-secondary" type="button">+</button></a>
+                            <button class="btn btn-secondary" type="button"><i class="fa fa-plus"></i></button></a>
                         </span>
                     {% endif %}
                 </div>
@@ -141,7 +130,7 @@
                             {{ form.og }}
                             <span class="input-group-btn">
                                 <a onclick="window.open('{% url 'admin:liquidacion_objeto_de_gasto_add' %}')">
-                                    <button class="btn btn-secondary" type="button">+</button></a>
+                                    <button class="btn btn-secondary" type="button"><i class="fa fa-plus"></i></button></a>
                             </span>
                         {% endif %}
                     </div>
@@ -166,7 +155,7 @@
                         {{ form.tipo }}
                         <span class="input-group-btn">
                             <a onclick="window.open('{% url 'admin:liquidacion_movimientotype_add' %}')">
-                                <button class="btn btn-secondary" type="button">+</button></a>
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-plus"></i></button></a>
                         </span>
                     {% endif %}
                 </div>
@@ -188,7 +177,7 @@
                         {{ form.motivo }}
                         <span class="input-group-btn">
                             <a onclick="window.open('{% url 'admin:liquidacion_movimientomotivo_add' %}')">
-                                <button class="btn btn-secondary" type="button">+</button></a>
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-plus"></i></button></a>
                         </span>
                     {% endif %}
                 </div>
@@ -201,6 +190,7 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <label for="division">Dependencia:</label>
+                 <div class="input-group">
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
                             <input type="text" id="division" class="form-control"
@@ -213,10 +203,12 @@
                         {{ form.division }}
                         <span class="input-group-btn">
                             <a onclick="window.open('{% url 'admin:liquidacion_division_add' %}')">
-                                <button class="btn btn-secondary" type="button">+</button></a>
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-plus"></i></button></a>
                         </span>
                     {% endif %}
+                 </div>
             </div>
+
         </div>
       </div>
     <hr>
@@ -225,33 +217,46 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="id_fechainicio">Fecha de Inicio:</label>
-                    {{ form.fechainicio.errors }}
-                    {% if movimiento %}
-                        {% if not perms.liquidacion.change_movimiento %}
-                            <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
-                                   value="{{ movimiento.fechainicio }}" placeholder="{{ movimiento.fechainicio }}" disabled/>
-                        {% else %}
-                            <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
-                                   value="{{ movimiento.fechainicio }}" placeholder="{{ movimiento.fechainicio }}">
-                        {% endif %}
-                    {% else %}
-                        {{ form.fechainicio }}
+                <div class="input-group">
+                    {% if form.fechainicio.errors %}
+                    <ol>
+                    {% for error in form.fechainicio.errors %}
+                        <li><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ol>
                     {% endif %}
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="form-group">
-                <label for="id_fechafin">Fecha de Fin:</label>
-                    {{ form.fechafin.errors }}
                     {% if movimiento %}
-                        <input type="date" id="id_fechafin" name="fechafin" class="form-control"
-                                   value="{{ movimiento.fechafin }}" placeholder="{{ movimiento.fechafin }}"
+                        <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
+                                   value="{{ movimiento.fechainicio|unlocalize }}" placeholder="{{ movimiento.fechainicio|unlocalize }}"
                            {% if not perms.liquidacion.change_movimiento %}
                                disabled
                            {% endif %}
                         />
                     {% else %}
-                        {{ form.fechafin }}
+                        <input type="date" id="id_fechainicio" name="fechainicio" class="form-control">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="id_fechafin">Fecha de Fin:</label>
+                    {% if form.fechafin.errors %}
+                    <ol>
+                    {% for error in form.fechafin.errors %}
+                        <li><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ol>
+                    {% endif %}
+                    {% if movimiento %}
+                        <input type="date" id="id_fechafin" name="fechafin" class="form-control"
+                                   value="{{ movimiento.fechafin|unlocalize }}" placeholder="{{ movimiento.fechafin|unlocalize }}"
+                           {% if not perms.liquidacion.change_movimiento %}
+                               disabled
+                           {% endif %}
+                        />
+                    {% else %}
+                        <input type="date" id="id_fechafin" name="fechafin" class="form-control">
                     {% endif %}
             </div>
         </div>
@@ -261,99 +266,53 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="horaEntrada">Hora de Entrada:</label>
-                {% if form.horaEntrada.errors %}
-                    <ol>
-                    {% for error in form.horaEntrada.errors %}
-                        <li><strong>{{ error|escape }}</strong></li>
-                    {% endfor %}
-                    </ol>
-                {% endif %}
+                <div class="input-group">
+                    {% if form.horaEntrada.errors %}
+                        <ol>
+                        {% for error in form.horaEntrada.errors %}
+                            <li><strong style="color: red">{{ error|escape }}</strong></li>
+                        {% endfor %}
+                        </ol>
+                    {% endif %}
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="horaEntrada" class="form-control"
-                               value="{{ movimiento.horaEntrada }}" disabled/>
-                            <input type="hidden" name="horaEntrada" value="{{ movimiento.horaEntrada }}">
+                            <input type="text" id="id_horaEntrada" name="horaEntrada"
+                                  value="{{ movimiento.horaEntrada }}" disabled/>
                         {% else %}
                            {{ form.horaEntrada }}
                         {% endif %}
                     {% else %}
                         {{ form.horaEntrada }}
                     {% endif %}
+                </div>
+                </div>
             </div>
-        </div>
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="horaSalida">Hora de Salida:</label>
+                    <div class="input-group">
+                     {% if form.horaSalida.errors %}
+                        <ol>
+                        {% for error in form.horaSalida.errors %}
+                            <li><strong style="color: red">{{ error|escape }}</strong></li>
+                        {% endfor %}
+                        </ol>
+                    {% endif %}
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
                             <input type="text" id="horaSalida" class="form-control"
                                value="{{ movimiento.horaSalida }}" disabled/>
                             <input type="hidden" name="horaSalida" value="{{ movimiento.horaSalida }}">
                         {% else %}
-                           {{ form.horaSalida }}
+                            {{ form.horaSalida }}
                         {% endif %}
                     {% else %}
                         {{ form.horaSalida }}
                     {% endif %}
+                    </div>
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="form-group">
-                <label for="tieneAguinaldo">Tiene Aguinaldo:</label>
-                    {% if movimiento %}
-                        {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="tieneAguinaldo" class="form-control"
-                               value="{{ movimiento.tieneAguinaldo }}" disabled/>
-                            <input type="hidden" name="tieneAguinaldo" value="{{ movimiento.tieneAguinaldo }}">
-                        {% else %}
-                           <div class="custom-control custom-checkbox mr-sm-2">
-                            {% if movimiento.tieneAguinaldo is True %}
-                                <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo" checked>
-                            {% else %}
-                                <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo">
-                            {% endif %}
-                           <label class="custom-control-label" for="tieneAguinaldo"></label>
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        <div class="custom-control custom-checkbox mr-sm-2">
-                            <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo">
-                            <label class="custom-control-label" for="tieneAguinaldo"></label>
-                        </div>
-                    {% endif %}
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="form-group">
-                <label for="tieneVacaciones">Tiene Vacaciones:</label>
-                    {% if movimiento %}
-                        {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="tieneVacaciones" class="form-control"
-                               value="{{ movimiento.tieneVacaciones }}" disabled/>
-                            <input type="hidden" name="tieneVacaciones" value="{{ movimiento.tieneVacaciones }}">
-                        {% else %}
-                           <div class="custom-control custom-checkbox mr-sm-2">
-                            {% if movimiento.tieneVacaciones is True %}
-                                <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones" checked>
-                            {% else %}
-                                <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones">
-                            {% endif %}
-                           <label class="custom-control-label" for="tieneVacaciones"></label>
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        <div class="custom-control custom-checkbox mr-sm-2">
-                            <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones">
-                            <label class="custom-control-label" for="tieneVacaciones"></label>
-                        </div>
-                    {% endif %}
-            </div>
-        </div>
-    </div>
-
 
     </form>
     <hr>
@@ -399,27 +358,43 @@
 
 </div>
 
-<script>
-function abrir_modal(url)
-{
-        $('#popup').load(url, function()
-        {
-                $(this).modal('show');
+<footer>
+    <script src="{% static "js/chung-timepicker.js" %}"></script>
+    <script>
+        $('#id_horaEntrada').chungTimePicker({
+            viewType: 1
         });
-        return false;
-}
+    </script>
+    <script>
+        $('#id_horaSalida').chungTimePicker({
+            viewType: 1
+        });
+    </script>
 
-function cerrar_modal()
-{
-        $('#popup').modal('hide');
-        return false;
-}
+    <script>
+    function abrir_modal(url)
+    {
+            $('#popup').load(url, function()
+            {
+                    $(this).modal('show');
+            });
+            return false;
+    }
 
-$(document).ready(function()
-{
+    function cerrar_modal()
+    {
+            $('#popup').modal('hide');
+            return false;
+    }
 
-});
-</script>
+
+    $(document).ready(function()
+    {
+
+    });
+    </script>
+</footer>
+
 
 </div>
 

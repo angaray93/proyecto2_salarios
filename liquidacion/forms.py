@@ -8,14 +8,14 @@ from liquidacion.models import *
 from sueldos.settings import DATE_INPUT_FORMATS
 from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
+from django.forms.widgets import TimeInput
 
 
 class MovimientoForm(forms.ModelForm):
-    fechainicio = DateField(widget=forms.DateInput, input_formats=['%Y-%m-%d'])
 
     class Meta:
         model = Movimiento
-        exclude = ['movimiento_padre', 'funcionario','estado']
+        exclude = ['movimiento_padre','funcionario','estado','esPrimero']
         widgets = {
             'categoria_salarial': forms.Select(attrs={
                 'class': 'form-control'
@@ -32,14 +32,21 @@ class MovimientoForm(forms.ModelForm):
             'division': forms.Select(attrs={
                 'class': 'form-control'
             }),
+            'fechainicio': forms.DateInput(attrs={
+                'class': 'form-control',
+                'readonly': True
+            }),
             'fechafin': forms.DateInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'readonly': True
             }),
             'horaEntrada': forms.TimeInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'readonly': True
             }),
             'horaSalida': forms.TimeInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'readonly': True
             }),
             'tieneAguinaldo': forms.CheckboxInput(attrs={
                 'class': 'form-control'

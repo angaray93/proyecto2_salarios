@@ -1,7 +1,15 @@
-{% extends 'base.html' %}
+{% extends "proceso/movimiento_form.html" %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load humanize %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Debitos y Creditos" 'liquidacion:nueva_constante' %}
+{% endblock %}
 
 {% block content %}
+{% render_breadcrumbs %}
 
 <div class="col-12 col-sm-10 recuadro">
 
@@ -78,7 +86,7 @@
                         <td>{{ constante.tipo.nombre }}</td>
                         <td>{{ constante.tipo.tipo }}</td>
                         <td>{{ constante.porcentaje }}</td>
-                        <td>{{ constante.monto }}</td>
+                        <td>Gs. {{ constante.monto|intcomma }}</td>
                         <td class="text-center">
                             <a href="#">
                               <span class="glyphicon glyphicon-eye-open"></span>

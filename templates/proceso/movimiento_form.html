@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% load l10n %}
+{% load django_popup_view_field_tags%}
 
 {% block extrastyles %}
     <link href="{% static "css/chung-timepicker.css" %}" rel="stylesheet" type="text/css">
@@ -95,22 +96,27 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="categoria_salarial">Categoria Salarial:</label>
-                <div class="input-group">
+                    <div class="input-group">
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
                             <input type="text" id="categoria_salarial" class="form-control"
                                value="{{ movimiento.categoria_salarial }}" disabled/>
                             <input type="hidden" name="categoria_salarial" value="{{ movimiento.categoria_salarial }}">
                         {% else %}
-                           {{ form.categoria_salarial }}
+                           <input type="hidden" name="categoria_salarial" id="id_categoria_salarial" value="{{ movimiento.categoria_salarial.pk }}"><input id="categoria_salarial" class="form-control" readonly>
+                            <input id="categoria_salarial" class="form-control" value="{{ movimiento.categoria_salarial }}" readonly>
                         {% endif %}
                     {% else %}
-                        {{ form.categoria_salarial }}
-                        <span class="input-group-btn">
-                        <a onclick="window.open('{% url 'admin:liquidacion_categoriasalarial_add' %}')">
-                            <button class="btn btn-secondary" type="button"><i class="fa fa-plus"></i></button></a>
-                        </span>
+                        <input type="hidden" name="categoria_salarial" id="id_categoria_salarial">
+                        <input id="categoria_salarial" class="form-control" readonly>
                     {% endif %}
+                        <span class="input-group-btn">
+                        <a>
+                            <button id="btnCategoria" class="btn btn-secondary" type="button">
+                                <i class="fa fa-search" aria-hidden="true"></i></button>
+                        </a>
+                        </span>
+
                 </div>
             </div>
         </div>
@@ -354,11 +360,40 @@
 </div>
 
 {% endif %}
-<div id="popup" class="modal fade" role="dialog">
-
-</div>
+<div id="popup" class="modal fade" role="dialog"></div>
 
 <footer>
+    <script>
+        $('#btnCategoria').click(function(e) {
+            $.ajax({
+                type: 'GET',
+                url: '{% url 'liquidacion:categoriasalarial-list' %}',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $("#popup").html(data);
+                    $("#popup").modal('show');
+                    $("tr").click(function () {
+                        var rowItems = $(this).children('td').map(function () {
+                            return this.innerHTML;
+                        }).toArray();
+                        var value = rowItems[3];
+                        var placeholder = rowItems[0] + " - "+ rowItems[1];
+                        $('input').html(value);
+                        $("#popup").modal('hide');
+                        $('#id_categoria_salarial').val(value);
+                        $('#categoria_salarial').val(placeholder);
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+    </script>
+
+
     <script src="{% static "js/chung-timepicker.js" %}"></script>
     <script>
         $('#id_horaEntrada').chungTimePicker({
@@ -374,17 +409,17 @@
     <script>
     function abrir_modal(url)
     {
-            $('#popup').load(url, function()
-            {
-                    $(this).modal('show');
-            });
-            return false;
+        $('#popup').load(url, function()
+        {
+            $(this).modal('show');
+        });
+        return false;
     }
 
     function cerrar_modal()
     {
-            $('#popup').modal('hide');
-            return false;
+        $('#popup').modal('hide');
+        return false;
     }
 
 

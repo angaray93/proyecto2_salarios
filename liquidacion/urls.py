@@ -2,6 +2,7 @@ from django.conf.urls import url, include
 from django.urls import path
 from django.views.i18n import JavaScriptCatalog
 
+from liquidacion.views import CategoriaSalarialList
 from . import views
 
 app_name = 'liquidacion'
@@ -21,5 +22,7 @@ urlpatterns = [
     path('movimiento/<int:idmovimiento>/documento/<int:iddocumento>', views.documento_vista, name='ver_documento'),
     path('movimiento/<int:idmovimiento>/constante/nuevo/', views.constante_vista, name='nueva_constante'),
     path('movimiento/<int:idmovimiento>/constante/<int:idconstante>', views.constante_vista, name='borrar_constante'),
+    #path('django_popup_view_field/', include('django_popup_view_field.urls', namespace="django_popup_view_field")),
+    path('categoriasalarial-list', CategoriaSalarialList.as_view(), name='categoriasalarial-list'),
 
 ]

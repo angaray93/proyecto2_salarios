@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'liquidacion',
     'django_bootstrap_breadcrumbs',
+    'django_popup_view_field',
 
 ]
 
@@ -146,6 +147,5 @@ DATE_INPUT_FORMATS = [
 USE_THOUSAND_SEPARATOR = True
 
 DECIMAL_SEPARATOR = ','
-
 THOUSAND_SEPARATOR = '.'
 NUMBER_GROUPING = 3

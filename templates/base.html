@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
+{% load django_popup_view_field_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -155,6 +156,7 @@
     <!-- Custom scripts for this page-->
     <script src="{% static "js/sb-admin-datatables.min.js" %}"></script>
     <script src="{% static "js/sb-admin-charts.min.js" %}"></script>
+    {% django_popup_view_field_javascript %}
 
 </footer>
 

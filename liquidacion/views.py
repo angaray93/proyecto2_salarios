@@ -1,14 +1,17 @@
-from datetime import timedelta
-
+from datetime import timedelta, timezone
 from django.apps import apps
+from django.core.paginator import Paginator
 from django.db.models import *
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect, render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.http import HttpResponse
+from django.views.generic import ListView
+
 from liquidacion.forms import *
 from liquidacion.models import *
+from django_popup_view_field.registry import registry_popup_view
 
 
 import json
@@ -316,3 +319,9 @@ def constante_vista(request, idmovimiento=None, idconstante=None):
                 'form': form,
             })
         return render(request, 'constante/constante_form.html', context)
+
+
+class CategoriaSalarialList(ListView):
+        model = CategoriaSalarial
+        template_name = 'categoriasalarial_list.html'
+        context_object_name = 'page_obj'

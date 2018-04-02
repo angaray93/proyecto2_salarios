@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('liquidacion/', include('django.contrib.auth.urls')),
     path('liquidacion/', include('liquidacion.urls')),
+    path('django_popup_view_field/', include('django_popup_view_field.urls', namespace="django_popup_view_field")),
 ]

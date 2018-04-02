@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect, render_to_resp
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.http import HttpResponse
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 
 from liquidacion.forms import *
 from liquidacion.models import *
@@ -325,3 +325,9 @@ class CategoriaSalarialList(ListView):
         model = CategoriaSalarial
         template_name = 'categoriasalarial_list.html'
         context_object_name = 'page_obj'
+
+
+class ObjetoDeGastoCreate(CreateView):
+    model = Objeto_De_Gasto
+    fields = '__all__'
+    template_name = 'objetodegasto_modal.html'

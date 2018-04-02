@@ -1,0 +1,20 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content" id="objetodegasto_modal">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+      </div>
+        <div class="modal-body">
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Save" />
+            </form>
+        </div>
+        <div class="modal-footer">
+            <div class="col-lg-12 text-right">
+                <input type="submit" class="btn btn-primary" name="submit" value="Guardar">
+            </div>
+        </div>
+    </div>
+</div>

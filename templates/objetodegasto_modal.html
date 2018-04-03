@@ -1,27 +1,51 @@
-<div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-         <div id="success_div" class="alert alert-success hide"><button type="button" class="close" data-dismiss="alert">&times;</button></div>
-         <div id="error_div" class="alert alert-error hide"><button type="button" class="close" data-dismiss="alert">&times;</button></div>
-         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-         <h4 class="modal-title">Crear Objeto de Gasto</h4>
-      </div>
+    <div style="margin-bottom:1%" class="modal-header">
+        <button id="login_close" type="button" class="close .login-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    </div>
       <!-- form here -->
+    {% if form.errors %}
+
+        {% for error in form.non_field_errors %}
+
+            <div class="error-message">
+                <div class="alert alert-danger">
+                    <h4>Ops! Invalid Data...</h4>
+                </div>
+                <ul><li><h5>{{ error|safe }}</h5></li></ul>
+            </div>
+
+        {% endfor %}
+
+        <script type="text/javascript">
+
+            var divisor = document.querySelectorAll(".form-div");
+            var len = divisor.length;
+            console.log(divisor, len);
+            for (i=0; i < len; i++ ){
+
+                divisor[i].className += " has-error";
+            }
+
+        </script>
+
+    {% endif %}
       <form id="og_form" method="post" action="{% url 'liquidacion:objetodegasto-add' %}">
       <div class="modal-body">
         {% csrf_token %}
-        {{ form.media }}
-        {{ form.non_field_errors }}
             <div class="panel panel-default">
                 <div class="panel-body">
-                    {% for field in form %}
-                      <div class="form-group{% if field.errors %} has-error{% endif %}">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{field}}
-                        {% for error in field.errors %}
-                          <p class="help-block">{{ error }}</p>
-                        {% endfor %}
-                      </div>
+                    {% csrf_token %}
+                    {% for field in form.fields  %}
+                        {% if field == 'concepto' %}
+                            <div class="form-group form-div">
+                                <p class="control-label">{{ field|title }}</p>
+                                <input class="form-control" type="text" name="concepto">
+                            </div>
+                        {% else %}
+                            <div class="form-group form-div">
+                                <p class="control-label">{{ field|title }}</p>
+                                <input class="form-control" type="number" name="numero">
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -31,7 +55,6 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
       </form>
-    </div>
-</div>
+
 
 

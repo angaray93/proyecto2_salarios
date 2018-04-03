@@ -339,6 +339,7 @@ class AjaxableResponseMixin:
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        print('Se usa form_valid', response)
         if self.request.is_ajax():
             data = {
                 'pk': self.object.pk,

@@ -133,10 +133,10 @@
                         {% else %}
                             {{ form.og }}
                             <span class="input-group-btn">
-                            <a>
-                                <button id="btnog" class="btn btn-secondary" type="button">
-                                    <i class="fa fa-plus" aria-hidden="true"></i></button>
-                            </a>
+                            <a id="btnog" data-toggle="modal" href="{% url 'liquidacion:objetodegasto-add' %}" data-target="#og_modal">
+                                <button class="btn btn-secondary" type="button">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </button></a>
                             </span>
                         {% endif %}
                     </div>
@@ -362,6 +362,13 @@
 {% endif %}
 <div id="popup" class="modal fade" role="dialog"></div>
 
+<div id="og_modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content modal-custom">
+        </div>
+    </div>
+</div>
+
 <footer>
     <script>
         $('#btnCategoria').click(function(e) {
@@ -394,37 +401,38 @@
     </script>
 
     <script>
-        $(document).ready(function(){
-            $('#popup').on('submit', '#og_form', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    type: $(this).attr('method'),
-                    url: $(this).attr('action'),
-                    data: $(this).serialize(),
-                    success: function(response) { // on success..
-                        $('#success_div').append('Changes saved'); // update the DIV
-                        $('#success_div').toggleClass('alert alert-success'); // unhide
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) { // on error..
-                        $('#error_div').append(xhr); // update the DIV
-                        $('#error_div').toggleClass('alert alert-error'); // unhide
+        $(document).on('submit','#og_form', function(e){
+            console.log('Por lo menos entra aca');
+            e.preventDefault();
+            var og_form = $('#og_form');
+            var action = og_form.attr('action');
+            var method = og_form.attr('method');
+            var data_ = og_form.serialize();
+            console.log(action, method, data_ );
+
+            $.ajax({
+                type: method,
+                url: action,
+                data: data_,
+                success: function(data, status) {
+                    console.log('SUCCESS');
+                    if ($(data).find('.alert-danger').length > 0) {
+                        $('.modal-custom').html(data);
+                        console.log(data);
+
+                    }else{
+                        console.log('Log In Form Successfuly Summited');
+                        $('#og_modal').modal('hide');
+                        location.reload(); //Reload the current document page on success
+
                     }
-                });
-                return false;
-        });
-
-
-        $('#btnog').click(function(ev) {
-            ev.preventDefault(); // prevent navigation
-            var url = '{% url 'liquidacion:objetodegasto-add' %}';
-            $('#popup').load(url, function() { // load the url into the modal
-                $(this).modal('show'); // display the modal on url load
+                }
             });
-            return false; // prevent click propagation
-        });
-    });
 
+            return false;
+        });
     </script>
+
     <script src="{% static "js/chung-timepicker.js" %}"></script>
     <script>
         $('#id_horaEntrada').chungTimePicker({

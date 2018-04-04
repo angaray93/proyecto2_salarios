@@ -401,37 +401,35 @@
     </script>
 
     <script>
-        $(document).on('submit','#og_form', function(e){
-            console.log('Por lo menos entra aca');
-            e.preventDefault();
-            var og_form = $('#og_form');
-            var action = og_form.attr('action');
-            var method = og_form.attr('method');
-            var data_ = og_form.serialize();
-            console.log(action, method, data_ );
-
+    $(document).ready(function(){
+        var $myForm = $('.my-ajax-form');
+        $myForm.submit(function(event){
+            event.preventDefault();
+            var $formData = $(this).serialize();
+            var $thisURL = $myForm.attr('data-url') || window.location.href;// or set your own url
             $.ajax({
-                type: method,
-                url: action,
-                data: data_,
-                success: function(data, status) {
-                    console.log('SUCCESS');
-                    if ($(data).find('.alert-danger').length > 0) {
-                        $('.modal-custom').html(data);
-                        console.log(data);
-
-                    }else{
-                        console.log('Log In Form Successfuly Summited');
-                        $('#og_modal').modal('hide');
-                        location.reload(); //Reload the current document page on success
-
-                    }
-                }
-            });
-
-            return false;
+                method: "POST",
+                url: $thisURL,
+                data: $formData,
+                success: handleFormSuccess,
+                error: handleFormError
+            })
         });
-    </script>
+
+        function handleFormSuccess(data, textStatus, jqXHR){
+            console.log(data);
+            console.log(textStatus);
+            console.log(jqXHR);
+            $myForm.reset(); // reset form data
+        }
+
+        function handleFormError(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR);
+            console.log(textStatus);
+            console.log(errorThrown)
+        }
+    })
+</script>
 
     <script src="{% static "js/chung-timepicker.js" %}"></script>
     <script>

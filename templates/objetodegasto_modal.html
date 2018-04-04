@@ -1,54 +1,12 @@
     <div style="margin-bottom:1%" class="modal-header">
         <button id="login_close" type="button" class="close .login-close" data-dismiss="modal" aria-hidden="true">&times;</button>
     </div>
-      <!-- form here -->
-    {% if form.errors %}
 
-        {% for error in form.non_field_errors %}
-
-            <div class="error-message">
-                <div class="alert alert-danger">
-                    <h4>Ops! Invalid Data...</h4>
-                </div>
-                <ul><li><h5>{{ error|safe }}</h5></li></ul>
-            </div>
-
-        {% endfor %}
-
-        <script type="text/javascript">
-
-            var divisor = document.querySelectorAll(".form-div");
-            var len = divisor.length;
-            console.log(divisor, len);
-            for (i=0; i < len; i++ ){
-
-                divisor[i].className += " has-error";
-            }
-
-        </script>
-
-    {% endif %}
-      <form id="og_form" method="post" action="{% url 'liquidacion:objetodegasto-add' %}">
+      <form id="og_form" class="my-ajax-form" method="post" action="{% url 'liquidacion:objetodegasto-add' %}" data-url='{{ request.build_absolute_uri|safe }}'>
       <div class="modal-body">
         {% csrf_token %}
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    {% csrf_token %}
-                    {% for field in form.fields  %}
-                        {% if field == 'concepto' %}
-                            <div class="form-group form-div">
-                                <p class="control-label">{{ field|title }}</p>
-                                <input class="form-control" type="text" name="concepto">
-                            </div>
-                        {% else %}
-                            <div class="form-group form-div">
-                                <p class="control-label">{{ field|title }}</p>
-                                <input class="form-control" type="number" name="numero">
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
+        {{form.as_p|safe}}
+        <button type='submit'>Submit</button>
       </div>
       <div class="modal-footer">
         <input class="btn btn-primary" id="modal-submit" type="submit" value="Save" />

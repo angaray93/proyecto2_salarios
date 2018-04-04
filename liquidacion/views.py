@@ -8,9 +8,10 @@ from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 
 from liquidacion.forms import *
+from liquidacion.mixins import AjaxFormMixin
 from liquidacion.models import *
 from django_popup_view_field.registry import registry_popup_view
 
@@ -331,7 +332,7 @@ class CategoriaSalarialList(ListView):
 class AjaxableResponseMixin:
 
     def form_invalid(self, form):
-        response = super().form_invalid(form)
+        response = super(AjaxableResponseMixin, self).form_invalid(form)
         if self.request.is_ajax():
             return JsonResponse(form.errors, status=400)
         else:
@@ -349,8 +350,8 @@ class AjaxableResponseMixin:
             return response
 
 
-class ObjetoDeGastoCreate(AjaxableResponseMixin, CreateView):
-    model = Objeto_De_Gasto
-    fields = '__all__'
-    template_name = 'objetodegasto_modal.html'
-    #success_url = reverse_lazy('rsvp:rsvp_list')
+class ObjetoDeGastoCreate(AjaxFormMixin, FormView):
+
+    form_class = Objeto_De_GastoAdminForm
+    template_name  = 'objetodegasto_modal.html'
+    success_url = 'objetodegasto-add'

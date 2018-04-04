@@ -1,18 +1,68 @@
-    <div style="margin-bottom:1%" class="modal-header">
-        <button id="login_close" type="button" class="close .login-close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    </div>
+{% load staticfiles %}
+<div style="margin-bottom:1%" class="modal-header">
+    <button id="login_close" type="button" class="close .login-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+</div>
 
-      <form id="og_form" class="my-ajax-form" method="post" action="{% url 'liquidacion:objetodegasto-add' %}" data-url='{{ request.build_absolute_uri|safe }}'>
-      <div class="modal-body">
-        {% csrf_token %}
-        {{form.as_p|safe}}
-        <button type='submit'>Submit</button>
-      </div>
-      <div class="modal-footer">
-        <input class="btn btn-primary" id="modal-submit" type="submit" value="Save" />
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-      </form>
+    <form id="og_form" class="form-horizontal" method="post" action="{% url 'liquidacion:objetodegasto-add' %}">
+        <div id="form-modal-body" class="modal-body">
+            {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                {% for field in form %}
+                    <div class="form-group">
+                        {% if field.errors %}
+                            <ul class="form-errors">
+                            {% for error in field.errors %}
+                                <li><span class="fa fa-exclamation-triangle"></span> <strong>{{ error|escape }}</strong></li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {{ field.label_tag }} {{ field }}
+                        {% if field.help_text %}<div class="form-helptext">{{ field.help_text }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="annulla" />
+            <input type="submit" class="btn btn-primary" value="save" style="margin-bottom: 5px;" />
+        </div>
+    </form>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        var $myForm = $('.my-ajax-form');
+        $myForm.submit(function(event){
+            event.preventDefault();
+            var $formData = $(this).serialize();
+            var $thisURL = $myForm.attr('data-url') || window.location.href;// or set your own url
+            $.ajax({
+                method: "POST",
+                url: $thisURL,
+                data: $formData,
+                success: handleFormSuccess,
+                error: handleFormError
+            })
+        });
 
+        function handleFormSuccess(data, textStatus, XHR){
+            console.log(data);
+            console.log(textStatus);
+            console.log(XHR);
+            $myForm[0].reset(); // reset form data
+        }
+
+        function handleFormError(XHR, textStatus, errorThrown){
+            if ($(XHR).find('.has-error').length > 0) {
+                console.log('if ($(jqXHR).find(\'.has-error\').length > 0) {');
+                    $(modal).html(jqXHR);
+                    formAjaxSubmit(form, modal);
+            }
+            console.log('XHR: ',XHR);
+            console.log('textStatus: ',textStatus);
+            console.log('errorThrown: ',errorThrown);
+        }
+    });
+</script>
 

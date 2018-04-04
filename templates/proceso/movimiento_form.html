@@ -133,7 +133,7 @@
                         {% else %}
                             {{ form.og }}
                             <span class="input-group-btn">
-                            <a id="btnog" data-toggle="modal" href="{% url 'liquidacion:objetodegasto-add' %}" data-target="#og_modal">
+                            <a id="btnog" data-toggle="modal" href="{% url 'liquidacion:objetodegasto-add' %}" data-target="#form-modal-body">
                                 <button class="btn btn-secondary" type="button">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
                                 </button></a>
@@ -400,36 +400,6 @@
         })
     </script>
 
-    <script>
-    $(document).ready(function(){
-        var $myForm = $('.my-ajax-form');
-        $myForm.submit(function(event){
-            event.preventDefault();
-            var $formData = $(this).serialize();
-            var $thisURL = $myForm.attr('data-url') || window.location.href;// or set your own url
-            $.ajax({
-                method: "POST",
-                url: $thisURL,
-                data: $formData,
-                success: handleFormSuccess,
-                error: handleFormError
-            })
-        });
-
-        function handleFormSuccess(data, textStatus, jqXHR){
-            console.log(data);
-            console.log(textStatus);
-            console.log(jqXHR);
-            $myForm.reset(); // reset form data
-        }
-
-        function handleFormError(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown)
-        }
-    })
-</script>
 
     <script src="{% static "js/chung-timepicker.js" %}"></script>
     <script>

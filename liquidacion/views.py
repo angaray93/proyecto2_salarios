@@ -11,7 +11,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 
 from liquidacion.forms import *
-from liquidacion.mixins import AjaxFormMixin
+from liquidacion.mixins import AjaxFormMixin, AjaxTemplateMixin
 from liquidacion.models import *
 from django_popup_view_field.registry import registry_popup_view
 
@@ -329,29 +329,8 @@ class CategoriaSalarialList(ListView):
         context_object_name = 'page_obj'
 
 
-class AjaxableResponseMixin:
-
-    def form_invalid(self, form):
-        response = super(AjaxableResponseMixin, self).form_invalid(form)
-        if self.request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-        else:
-            return response
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        print('Se usa form_valid', response)
-        if self.request.is_ajax():
-            data = {
-                'pk': self.object.pk,
-            }
-            return JsonResponse(data)
-        else:
-            return response
-
-
-class ObjetoDeGastoCreate(AjaxFormMixin, FormView):
+class ObjetoDeGastoCreate(AjaxTemplateMixin, FormView):
 
     form_class = Objeto_De_GastoAdminForm
-    template_name  = 'objetodegasto_modal.html'
-    success_url = 'objetodegasto-add'
+    template_name  = 'objetodegasto_form.html'
+    success_url = reverse_lazy('liquidacion:objetodegasto-add')

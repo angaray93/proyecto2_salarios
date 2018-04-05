@@ -1,0 +1,8 @@
+{% load crispy_forms_tags %}
+<form id="og_form" class="form-horizontal" method="post" action="{% url 'liquidacion:objetodegasto-add' %}">
+    {% crispy form %}
+
+</form>
+<input type="button" class="btn btn-default" data-dismiss="modal" value="Cerrar" />
+    <input type="submit" class="btn btn-primary" value="save" style="margin-bottom: 5px;" />
+

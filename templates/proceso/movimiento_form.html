@@ -133,7 +133,7 @@
                         {% else %}
                             {{ form.og }}
                             <span class="input-group-btn">
-                            <a id="btnog" data-toggle="modal" href="{% url 'liquidacion:objetodegasto-add' %}" data-target="#og_modal">
+                            <a id="btnog" data-toggle="modal" data-target="#og_modal">
                                 <button class="btn btn-secondary" type="button">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
                                 </button></a>
@@ -369,9 +369,7 @@
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
               <h4 class="modal-title"></h4>
             </div>
-            <div id="form-modal-body" class="modal-body">
 
-           </div>
            <div class="modal-footer">
              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
            </div>
@@ -382,8 +380,18 @@
 
 <footer>
 
-
     <script>
+        $('#btnog').on('click', function () {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'liquidacion:objetodegasto-add' %}",
+                success: function (data, textStatus, jqXHR) {
+                    $('#og_modal').find('.modal-content').html(data);
+                    $('#og_modal').modal('show');
+                }
+            });
+        });
+
         $('#btnCategoria').click(function(e) {
             $.ajax({
                 type: 'GET',

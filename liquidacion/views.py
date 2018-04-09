@@ -333,4 +333,4 @@ class ObjetoDeGastoCreate(AjaxTemplateMixin, FormView):
 
     form_class = Objeto_De_GastoAdminForm
     template_name  = 'objetodegasto_form.html'
-    success_url = reverse_lazy('liquidacion:objetodegasto-add')
+    success_url = reverse_lazy('liquidacion:index')

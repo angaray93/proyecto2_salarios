@@ -329,8 +329,8 @@ class CategoriaSalarialList(ListView):
         context_object_name = 'page_obj'
 
 
-class ObjetoDeGastoCreate(AjaxTemplateMixin, FormView):
+class ObjetoDeGastoCreate(AjaxTemplateMixin, CreateView):
 
     form_class = Objeto_De_GastoAdminForm
     template_name  = 'objetodegasto_form.html'
-    success_url = reverse_lazy('liquidacion:index')
+    success_url = reverse_lazy('liquidacion:objetodegasto-add')

@@ -1,39 +1,31 @@
 <div class="modal-dialog modal-lg">
     <div class="modal-content" id="categoria_modal">
-      <div class="modal-header">
-        <div class="row">
-            <div class="col-lg-10">
-                <p>Seleccionar Categoria</p>
-            </div>
-            <div class="col-lg-2">
-                <button type="button" class="close" data-dismiss="modal">×</button>
-            </div>
-        </div>
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Seleccionar Categoria</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
       </div>
         <div class="modal-body">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <table class="table table-hover" id="categoria-sel-tabla">
-                        <thead>
-                            <tr>
-                                <th class="text-center">Codigo</th>
-                                <th class="text-center">Cargo</th>
-                                <th class="text-center">Asignacion</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for categoria in page_obj %}
-                                <tr class="clickable-row">
-                                    <td>{{ categoria.codigo }}</td>
-                                    <td>{{ categoria.cargo }}</td>
-                                    <td>Gs. {{ categoria.asignacion }}</td>
-                                    <td style="visibility: hidden">{{ categoria.pk }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <table class="table table-hover" id="categoria-sel-tabla">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center">Codigo</th>
+                        <th class="text-center">Cargo</th>
+                        <th class="text-center">Asignacion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for categoria in page_obj %}
+                        <tr class="clickable-row">
+                            <td>{{ categoria.codigo }}</td>
+                            <td>{{ categoria.cargo }}</td>
+                            <td>Gs. {{ categoria.asignacion }}</td>
+                            <td style="visibility: hidden">{{ categoria.pk }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
         <div class="modal-footer">
 

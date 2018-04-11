@@ -142,7 +142,14 @@ class Objeto_De_GastoAdminForm(forms.ModelForm):
     class Meta:
         model = Objeto_De_Gasto
         fields = '__all__'
-
+        widgets = {
+            'numero': forms.NumberInput(attrs={
+                'class': 'form-control',
+            }),
+            'concepto': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+        }
     def clean_numero(self):
         numero = self.cleaned_data.get('numero')
         convertido = len(str(abs(numero)))
@@ -199,12 +206,22 @@ class MovimientoTypeForm(forms.ModelForm):
     class Meta:
         model = MovimientoType
         fields = '__all__'
+        widgets = {
+            'nombre': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+        }
 
 
 class MovimientoMotivoForm(forms.ModelForm):
     class Meta:
         model = MovimientoMotivo
         fields = '__all__'
+        widgets = {
+            'nombre': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+        }
 
 
 class DocumentoTypeForm(forms.ModelForm):

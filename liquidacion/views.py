@@ -330,7 +330,18 @@ class CategoriaSalarialList(ListView):
 
 
 class ObjetoDeGastoCreate(AjaxTemplateMixin, CreateView):
-
     form_class = Objeto_De_GastoAdminForm
     template_name  = 'objetodegasto_form.html'
     success_url = reverse_lazy('liquidacion:objetodegasto-add')
+
+
+class TipoMovimientoCreate(AjaxTemplateMixin, CreateView):
+    form_class = MovimientoTypeForm
+    template_name  = 'tipomovimiento_form.html'
+    success_url = reverse_lazy('liquidacion:tipomovimiento-add')
+
+
+class MovimientoMotivoCreate(AjaxTemplateMixin, CreateView):
+    form_class = MovimientoMotivoForm
+    template_name  = 'movimientomotivo_form.html'
+    success_url = reverse_lazy('liquidacion:movimientomotivo-add')

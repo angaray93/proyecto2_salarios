@@ -25,5 +25,7 @@ urlpatterns = [
     #path('django_popup_view_field/', include('django_popup_view_field.urls', namespace="django_popup_view_field")),
     path('categoriasalarial-list', CategoriaSalarialList.as_view(), name='categoriasalarial-list'),
     path('objetodegasto/add/', ObjetoDeGastoCreate.as_view(), name='objetodegasto-add'),
+    path('tipomovimiento/add/', TipoMovimientoCreate.as_view(), name='tipomovimiento-add'),
+    path('movimientomotivo/add/', MovimientoMotivoCreate.as_view(), name='movimientomotivo-add'),
 
 ]

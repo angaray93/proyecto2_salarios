@@ -1,31 +1,18 @@
 <div id="form-modal-body" class="modal-body">
-    <form id="og_form" class="form-horizontal" method="post" action="{% url 'liquidacion:objetodegasto-add' %}">
+    <form id="motivomov_form" class="form-horizontal" method="post" action="{% url 'liquidacion:movimientomotivo-add' %}">
         {% csrf_token %}
         <div class="form-group">
-            {% if form.numero.errors %}
-                    {% for error in form.numero.errors %}
+            {% if form.nombre.errors %}
+                    {% for error in form.nombre.errors %}
                         <div class="errorlist">
                             <strong style="color: red">{{ error|escape }}</strong>
                         </div>
                     {% endfor %}
                 {% endif %}
-            <label for="numero">Numero:</label>
+            <label for="nombre">Descripcion:</label>
             <div class="input-group">
-               {{ form.numero }}
+               {{ form.nombre }}
             </div>
-        </div>
-        <div class="form-group">
-            {% if form.concepto.errors %}
-                {% for error in form.concepto.errors %}
-                    <div class="errorlist">
-                        <strong style="color: red">{{ error|escape }}</strong>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        <label for="concepto">Concepto:</label>
-        <div class="input-group">
-            {{ form.concepto }}
-        </div>
         </div>
         <div class="form-group">
             <div class="input-group">
@@ -38,7 +25,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#og_form').on("submit", function(e) {
+        $('#motivomov_form').on("submit", function(e) {
             e.preventDefault();
             $.ajax({
              type: $(this).attr('method'),
@@ -46,9 +33,9 @@
              data: $(this).serialize(),
              success: function (xhr, ajaxOptions, thrownError) {
                  if ( $(xhr).find('.errorlist').length > 0 ) {
-                    $('#og_modal').find('.modal-body').html(xhr);
+                    $('#motivomov_modal').find('.modal-body').html(xhr);
                 } else {
-                     $('#og_modal').find('.modal-body').html('Los datos se han creado correctamente!');
+                     $('#motivomov_modal').find('.modal-body').html('Los datos se han creado correctamente!');
                 }
             },
               error: function (xhr, ajaxOptions, thrownError) {
@@ -59,7 +46,7 @@
     });
 
     $("#submitForm").on('click', function() {
-		$("#og_form").submit();
+		$("#motivomov_form").submit();
 	});
  });
 </script>

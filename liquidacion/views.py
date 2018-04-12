@@ -23,6 +23,27 @@ def index(request):
     return render(request, 'index.html')
 
 
+def success_page(request, idmovimiento):
+    context = {}
+    context.update({
+        'idmovimiento': idmovimiento,
+    })
+    return render(request, 'success_page.html', context)
+
+
+def mostrar_movimiento_resumen(request, idmovimiento):
+    context = {}
+    movimiento = Movimiento.objects.get(pk=idmovimiento)
+    aguinaldo = Aguinaldo.objects.get(movimiento=movimiento)
+    vacaciones = Vacaciones.objects.get(movimiento=movimiento)
+    context.update({
+        'movimiento': movimiento,
+        'aguinaldo': aguinaldo,
+        'vacaciones': vacaciones,
+    })
+
+    return render(request, 'proceso/resumen_movimiento.html', context)
+
 def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=None):
     context = {}
     movimiento = None
@@ -72,8 +93,13 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     haber = Haber.objects.get(movimiento=movimiento.movimiento_padre)
                     haber.movimiento = movimiento
                     # ---------------------------Vacaciones-------------------------------#
-                    vacaciones_padre = Vacaciones.objects.filter(movimiento=movimiento_padre)
-                    if vacaciones_padre.count() > 0:
+                    try:
+                        vacaciones_padre = Vacaciones.objects.get(movimiento=movimiento_padre)
+
+                    except Vacaciones.DoesNotExist:
+                        vacaciones_padre = None
+
+                    if vacaciones_padre is not None:
                         vacaciones_padre.fin = movimiento.fechainicio - timedelta(days=1)
                         vacaciones_padre.save()
                     if movimiento.tieneVacaciones is True:
@@ -92,14 +118,14 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     if movimiento.tieneAguinaldo is True:
                         aguinaldo = Aguinaldo(movimiento = movimiento)
                         aguinaldo.save()
-                    if movimiento.esPrimero is True and movimiento.tieneVacaciones is True:
+                    if movimiento.tieneVacaciones is True:
                         vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
                         vacaciones.save()
 
                 haber.save()
 
                 #-------------------------------------------------------------------------#
-                return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
+                return redirect(reverse('liquidacion:success_page', args=[movimiento.pk]))
 
             else:
                 # TODO Implementar sistema de errores

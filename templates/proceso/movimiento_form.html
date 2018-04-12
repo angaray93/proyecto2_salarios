@@ -324,6 +324,61 @@
         </div>
     </div>
 
+<div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="tieneAguinaldo">Tiene Aguinaldo:</label>
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="tieneAguinaldo" class="form-control"
+                               value="{{ movimiento.tieneAguinaldo }}" disabled/>
+                            <input type="hidden" name="tieneAguinaldo" value="{{ movimiento.tieneAguinaldo }}">
+                        {% else %}
+                           <div class="custom-control custom-checkbox mr-sm-2">
+                            {% if movimiento.tieneAguinaldo is True %}
+                                <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo" checked>
+                            {% else %}
+                                <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo">
+                            {% endif %}
+                           <label class="custom-control-label" for="tieneAguinaldo"></label>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="custom-control custom-checkbox mr-sm-2">
+                            <input type="checkbox" class="custom-control-input" id="tieneAguinaldo" name="tieneAguinaldo">
+                            <label class="custom-control-label" for="tieneAguinaldo"></label>
+                        </div>
+                    {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="tieneVacaciones">Tiene Vacaciones:</label>
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="tieneVacaciones" class="form-control"
+                               value="{{ movimiento.tieneVacaciones }}" disabled/>
+                            <input type="hidden" name="tieneVacaciones" value="{{ movimiento.tieneVacaciones }}">
+                        {% else %}
+                           <div class="custom-control custom-checkbox mr-sm-2">
+                            {% if movimiento.tieneVacaciones is True %}
+                                <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones" checked>
+                            {% else %}
+                                <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones">
+                            {% endif %}
+                           <label class="custom-control-label" for="tieneVacaciones"></label>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="custom-control custom-checkbox mr-sm-2">
+                            <input type="checkbox" class="custom-control-input" id="tieneVacaciones" name="tieneVacaciones">
+                            <label class="custom-control-label" for="tieneVacaciones"></label>
+                        </div>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+
     </form>
     <hr>
 

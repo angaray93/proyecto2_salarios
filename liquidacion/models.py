@@ -56,6 +56,7 @@ class Movimiento(models.Model):
     horaSalida = models.TimeField()
     tieneAguinaldo = models.BooleanField(default=False)
     tieneVacaciones = models.BooleanField(default=False)
+    funcion = models.CharField(max_length=100, default='')
     #tieneSeguroMedico = models.BooleanField(default=False)
     #-----------------------------------Relationships-----------------------------------------#
     funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')

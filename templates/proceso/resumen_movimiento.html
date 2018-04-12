@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block content %}
+
+<div class="col-12 col-sm-10 recuadro">
+
+<div class="row">
+    <div class="col-12 d-flex align-items-center">
+        <span class="h4">Detalles de Movimiento de Funcionario : {{ movimiento.funcionario }}</span>
+    </div>
+</div>
+
+<div id="accordion">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Datos Administrativos del Movimiento
+        </button>
+      </h5>
+    </div>
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body">
+            <ul class="list-group">
+                <li class="list-group-item">Tipo: {{ movimiento.tipo }}</li>
+                <li class="list-group-item">Motivo : {{ movimiento.motivo }}</li>
+                <li class="list-group-item">Objeto de Gasto : {{ movimiento.og }}</li>
+            </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingTwo">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          Categoria Salarial
+        </button>
+      </h5>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+      <div class="card-body">
+            <ul class="list-group">
+                <li class="list-group-item">Codigo: {{ movimiento.categoria_salarial.codigo }}</li>
+                <li class="list-group-item">Cargo : {{ movimiento.categoria_salarial.cargo }}</li>
+                <li class="list-group-item">Asignacion : Gs. {{ movimiento.categoria_salarial.asignacion }}</li>
+            </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingThree">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          Detalles del Cargo
+        </button>
+      </h5>
+    </div>
+    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+      <div class="card-body">
+        <ul class="list-group">
+            <li class="list-group-item">Dependencia: {{ movimiento.division }}</li>
+            <li class="list-group-item">Funcion : </li>
+            <li class="list-group-item">Hora de entrada : {{ movimiento.horaEntrada }} hs.</li>
+            <li class="list-group-item">Hora de entrada : {{ movimiento.horaSalida }} hs.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

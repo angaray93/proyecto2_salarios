@@ -27,5 +27,7 @@ urlpatterns = [
     path('objetodegasto/add/', ObjetoDeGastoCreate.as_view(), name='objetodegasto-add'),
     path('tipomovimiento/add/', TipoMovimientoCreate.as_view(), name='tipomovimiento-add'),
     path('movimientomotivo/add/', MovimientoMotivoCreate.as_view(), name='movimientomotivo-add'),
+    path('success_page/<int:idmovimiento>/', views.success_page, name='success_page'),
+    path('movimiento_resumen/<int:idmovimiento>/', views.mostrar_movimiento_resumen, name='movimiento_resumen'),
 
 ]

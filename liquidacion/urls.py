@@ -29,5 +29,8 @@ urlpatterns = [
     path('movimientomotivo/add/', MovimientoMotivoCreate.as_view(), name='movimientomotivo-add'),
     path('success_page/<int:idmovimiento>/', views.success_page, name='success_page'),
     path('movimiento_resumen/<int:idmovimiento>/', views.mostrar_movimiento_resumen, name='movimiento_resumen'),
+    path('ajax/traer_tipomovimientos/', views.traer_tipomovimientos, name='traer_tipomovimientos'),
+    path('ajax/traer_og/', views.traer_og, name='traer_og'),
+    path('ajax/traer_motivomovimientos/', views.traer_motivomovimientos, name='traer_motivomovimientos'),
 
 ]

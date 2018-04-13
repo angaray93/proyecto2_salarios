@@ -2,7 +2,6 @@
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% load l10n %}
-{% load django_popup_view_field_tags%}
 
 {% block extrastyles %}
     <link href="{% static "css/chung-timepicker.css" %}" rel="stylesheet" type="text/css">
@@ -473,6 +472,69 @@
 <footer>
 
     <script>
+
+        $('#id_og').on('click', function () {
+            var og_select = $('#id_og');
+            $.ajax({
+                url: '{% url 'liquidacion:traer_og' %}',
+                dataType: 'json',
+                success: function (data) {
+                    if ($.trim(data)) {
+                        og_select.empty().append('<option value=' + 0 + ' selected>' + 'Seleccione una opcion' + '</option>');
+                        $.each(data, function (key, value) {
+                            og_select.append('<option value=' + value.id + '>' + value.value + ' - ' + value.value2 + '</option>')
+                        });
+                    } else {
+                        og_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                    }
+                },
+                error: function (data) {
+                    og_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                }
+            });
+        });
+
+        $('#id_tipo').on('click', function () {
+            var tipo_select = $('#id_tipo');
+            $.ajax({
+                url: '{% url 'liquidacion:traer_tipomovimientos' %}',
+                dataType: 'json',
+                success: function (data) {
+                    if ($.trim(data)) {
+                        tipo_select.empty().append('<option value=' + 0 + ' selected>' + 'Seleccione una opcion' + '</option>');
+                        $.each(data, function (key, value) {
+                            tipo_select.append('<option value=' + value.id + '>' + value.value + '</option>')
+                        });
+                    } else {
+                        tipo_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                    }
+                },
+                error: function (data) {
+                    tipo_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                }
+            });
+        });
+
+        $('#id_motivo').on('click', function () {
+            var motivo_select = $('#id_motivo');
+            $.ajax({
+                url: '{% url 'liquidacion:traer_motivomovimientos' %}',
+                dataType: 'json',
+                success: function (data) {
+                    if ($.trim(data)) {
+                        motivo_select.empty().append('<option value=' + 0 + ' selected>' + 'Seleccione una opcion' + '</option>');
+                        $.each(data, function (key, value) {
+                            motivo_select.append('<option value=' + value.id + '>' + value.value + '</option>')
+                        });
+                    } else {
+                        motivo_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                    }
+                },
+                error: function (data) {
+                    motivo_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                }
+            });
+        });
 
         $('#btnmotmov').on('click', function () {
             $.ajax({

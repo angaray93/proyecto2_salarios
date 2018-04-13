@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect, render_to_resp
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
+from django.views.decorators.http import require_GET
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 
@@ -371,3 +372,48 @@ class MovimientoMotivoCreate(AjaxTemplateMixin, CreateView):
     form_class = MovimientoMotivoForm
     template_name  = 'movimientomotivo_form.html'
     success_url = reverse_lazy('liquidacion:movimientomotivo-add')
+
+
+@require_GET
+def traer_og(request):
+    if request.is_ajax():
+        ogs = Objeto_De_Gasto.objects.all()
+        res = []
+        for og in ogs:
+            og_json = {'id': og.pk, 'value': og.numero, 'value2': og.concepto}
+            res.append(og_json)
+        data = json.dumps(res)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+@require_GET
+def traer_tipomovimientos(request):
+    if request.is_ajax():
+        tipomovimientos = MovimientoType.objects.all()
+        res = []
+        for tipomovimiento in tipomovimientos:
+            tipomovimiento_json = {'id': tipomovimiento.pk, 'value': tipomovimiento.nombre}
+            res.append(tipomovimiento_json)
+        data = json.dumps(res)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+@require_GET
+def traer_motivomovimientos(request):
+    if request.is_ajax():
+        motivomovimientos = MovimientoMotivo.objects.all()
+        res = []
+        for motivomovimiento in motivomovimientos:
+            motivomovimiento_json = {'id': motivomovimiento.pk, 'value': motivomovimiento.nombre}
+            res.append(motivomovimiento_json)
+        data = json.dumps(res)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)

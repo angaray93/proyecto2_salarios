@@ -32,6 +32,9 @@ class MovimientoForm(forms.ModelForm):
             'division': forms.Select(attrs={
                 'class': 'form-control'
             }),
+            'funcion': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
             'fechainicio': forms.DateInput(attrs={
                 'class': 'form-control',
                 'readonly': True
@@ -103,7 +106,6 @@ class CategoriaSalarialForm(forms.ModelForm):
             raise forms.ValidationError("Ingrese un nombre valido para el tipo de categoria")
         return self.cleaned_data['tipo']
 
-
 class AutoridadFirmanteForm(forms.ModelForm):
     class Meta:
         model = AutoridadFirmante
@@ -137,7 +139,6 @@ class DocumentoRespaldatorioForm(forms.ModelForm):
             }),
         }
 
-
 class Objeto_De_GastoAdminForm(forms.ModelForm):
     class Meta:
         model = Objeto_De_Gasto
@@ -157,42 +158,35 @@ class Objeto_De_GastoAdminForm(forms.ModelForm):
             raise forms.ValidationError("Ingrese un numero de 3 digitos o menos")
         return self.cleaned_data['numero']
 
-
 class DepartamentoForm(forms.ModelForm):
     class Meta:
         model = Departamento
         fields = '__all__'
-
 
 class DivisionForm(forms.ModelForm):
     class Meta:
         model = Division
         fields = '__all__'
 
-
 class PaisForm(forms.ModelForm):
     class Meta:
         model = Pais
         fields = '__all__'
-
 
 class CiudadForm(forms.ModelForm):
     class Meta:
         model = Ciudad
         fields = '__all__'
 
-
 class EstadoCivilForm(forms.ModelForm):
     class Meta:
         model = EstadoCivil
         fields = '__all__'
 
-
 class GradoUniversitarioForm(forms.ModelForm):
     class Meta:
         model = GradoUniversitario
         fields = '__all__'
-
 
 class ConstanteTypeForm(forms.ModelForm):
     #tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
@@ -200,7 +194,6 @@ class ConstanteTypeForm(forms.ModelForm):
     class Meta:
         model = ConstanteType
         fields = '__all__'
-
 
 class MovimientoTypeForm(forms.ModelForm):
     class Meta:
@@ -212,7 +205,6 @@ class MovimientoTypeForm(forms.ModelForm):
             }),
         }
 
-
 class MovimientoMotivoForm(forms.ModelForm):
     class Meta:
         model = MovimientoMotivo
@@ -223,18 +215,15 @@ class MovimientoMotivoForm(forms.ModelForm):
             }),
         }
 
-
 class DocumentoTypeForm(forms.ModelForm):
     class Meta:
         model = DocumentoType
         fields = '__all__'
 
-
 class LiquidacionTypeForm(forms.ModelForm):
     class Meta:
         model = LiquidacionType
         fields = '__all__'
-
 
 class VariableForm(forms.ModelForm):
     tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
@@ -247,7 +236,6 @@ class VariableForm(forms.ModelForm):
         if convertido.isalpha() is False:
             raise forms.ValidationError("Ingrese un motivo valido, sin numeros ni simbolos")
         return self.cleaned_data['motivo']
-
 
 class ParametroForm(forms.ModelForm):
     class Meta:
@@ -266,15 +254,22 @@ class ParametroForm(forms.ModelForm):
             raise forms.ValidationError("Ingrese una descripcion valida, sin numeros ni simbolos")
         return self.cleaned_data['descripcion']
 
-
 class StateForm(forms.ModelForm):
     class Meta:
         model = State
         fields = '__all__'
-
 
 class StateTypeForm(forms.ModelForm):
     tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
     class Meta:
         model = StateType
         fields = '__all__'
+
+
+class BusquedaMovimientoFuncionarioForm(forms.Form):
+
+    cedula = forms.IntegerField(label='Nro. de Cedula', required=False, widget=forms.TextInput(attrs={'class': 'form-control',}))
+
+    nombres = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control',}))
+
+    apellidos = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', }))

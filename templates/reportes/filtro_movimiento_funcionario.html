@@ -1,0 +1,154 @@
+{% extends "index.html" %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load l10n %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb " Consultar movimientos " 'liquidacion:buscar_movimientos_funcionario' %}
+{% endblock %}
+
+{% block head %}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    {% block title %}
+        <title>Reporte</title>
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+{% render_breadcrumbs %}
+
+    <div class="col-12 col-sm-10 recuadro">
+        <form method="get">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="col-12 d-flex align-self-start">
+                        {% if vista == 'buscar_movimientos_funcionario' %}
+                            <h5>Consulta de Movimientos</h5>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            {% if advertencia %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ advertencia }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nombres">Nombres:</label>
+                        <div class="input-group">
+                            {{ form.nombres }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="apellidos">Apellidos:</label>
+                        <div class="input-group">
+                            {{ form.apellidos }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="cedula">Documento de Identidad:</label>
+                        <div class="input-group">
+                            {{ form.cedula }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 align-self-end pb-3">
+                    {% if vista == 'buscar_movimientos_funcionario' %}
+                        <button type="submit" class="btn btn-success" name="q" value="true"
+                                formaction="{% url 'liquidacion:buscar_movimientos_funcionario' %}">
+                            Generar reporte
+                        </button>
+                    {% endif %}
+                </div>
+
+            </div>
+
+
+
+            {% if form.errors %}
+                <div class="row mt-0">
+                    <div class="col-md-4">
+                        <strong style="color:red">{{ form.cedula.errors.as_text }}</strong>
+                    </div>
+
+                    <div class="col-md-4">
+                        <strong style="color:red">{{ form.nombres.errors.as_text }}</strong>
+                    </div>
+
+                    <div class="col-md-4">
+                        <strong style="color:red">{{ form.apellidos.errors.as_text }}</strong>
+                    </div>
+                </div>
+            {% endif %}
+
+        </form>
+
+        <div class="row mt-3 mb-3"></div>
+
+        {% if sin_datos %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ sin_datos }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+
+        {% if movimientos %}
+        <table id="tabla-movimientos" class="table">
+            <thead class="thead-light">
+                <th class="centrartexto">Cedula</th>
+                <th>Funcionario</th>
+                <th>Motivo</th>
+                <th>Categoria Salarial</th>
+                <th class="centrartexto">Acciones</th>
+            </thead>
+            <tbody>
+            {% for movimiento in movimientos %}
+                <tr>
+                    <td>{{ movimiento.funcionario.cedula }}</td>
+                    <td>{{ movimiento.funcionario.nombres }} {{ movimiento.funcionario.apellidos }}</td>
+                    <td>{{ movimiento.motivo }}</td>
+                    <td>{{ movimiento.categoria_salarial.codigo }}</td>
+                    <td class="centrartexto"><a title="Editar" class="btn btn-outline-primary" type="button"
+                        href ="{% url 'liquidacion:movimiento_resumen' movimiento.pk %}">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+        {% endif %}
+
+    </div>
+
+    <footer>
+        <script>
+
+
+        </script>
+    </footer>
+
+{% endblock %}

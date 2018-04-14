@@ -223,6 +223,29 @@
     <hr>
 
     <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label for="funcion">Funcion:</label>
+                 <div class="input-group">
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="funcion" class="form-control"
+                               value="{{ movimiento.funcion }}" disabled/>
+                            <input type="hidden" name="funcion" value="{{ movimiento.funcion }}">
+                        {% else %}
+                           {{ form.funcion }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.funcion }}
+                    {% endif %}
+                 </div>
+            </div>
+
+        </div>
+      </div>
+    <hr>
+
+    <div class="row">
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="id_fechainicio">Fecha de Inicio:</label>
@@ -472,8 +495,7 @@
 <footer>
 
     <script>
-
-        $('#id_og').on('click', function () {
+        $('#og_modal').on('hidden.bs.modal', function () {
             var og_select = $('#id_og');
             $.ajax({
                 url: '{% url 'liquidacion:traer_og' %}',
@@ -494,7 +516,7 @@
             });
         });
 
-        $('#id_tipo').on('click', function () {
+        $('#tipomov_modal').on('hidden.bs.modal', function () {
             var tipo_select = $('#id_tipo');
             $.ajax({
                 url: '{% url 'liquidacion:traer_tipomovimientos' %}',
@@ -515,7 +537,7 @@
             });
         });
 
-        $('#id_motivo').on('click', function () {
+        $('#motivomov_modal').on('hidden.bs.modal', function () {
             var motivo_select = $('#id_motivo');
             $.ajax({
                 url: '{% url 'liquidacion:traer_motivomovimientos' %}',

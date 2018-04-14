@@ -32,5 +32,6 @@ urlpatterns = [
     path('ajax/traer_tipomovimientos/', views.traer_tipomovimientos, name='traer_tipomovimientos'),
     path('ajax/traer_og/', views.traer_og, name='traer_og'),
     path('ajax/traer_motivomovimientos/', views.traer_motivomovimientos, name='traer_motivomovimientos'),
+    path('buscarmovimientofuncionario/', views.buscar_movimientos_funcionario, name='buscar_movimientos_funcionario'),
 
 ]

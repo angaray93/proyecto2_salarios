@@ -1,5 +1,6 @@
 from datetime import timedelta, timezone
 from django.apps import apps
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import *
 from django.http import JsonResponse, Http404
@@ -35,12 +36,15 @@ def success_page(request, idmovimiento):
 def mostrar_movimiento_resumen(request, idmovimiento):
     context = {}
     movimiento = Movimiento.objects.get(pk=idmovimiento)
-    aguinaldo = Aguinaldo.objects.get(movimiento=movimiento)
-    vacaciones = Vacaciones.objects.get(movimiento=movimiento)
+    aguinaldos = Aguinaldo.objects.filter(movimiento=movimiento)
+    vacaciones = Vacaciones.objects.filter(movimiento=movimiento)
+    constantes = Constante.objects.filter(movimiento=movimiento)
+    print(constantes)
     context.update({
         'movimiento': movimiento,
-        'aguinaldo': aguinaldo,
+        'aguinaldos': aguinaldos,
         'vacaciones': vacaciones,
+        'constantes': constantes,
     })
 
     return render(request, 'proceso/resumen_movimiento.html', context)
@@ -417,3 +421,50 @@ def traer_motivomovimientos(request):
         data = 'fail'
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
+
+
+@login_required()
+@require_GET
+def buscar_movimientos_funcionario(request):
+    vista = 'buscar_movimientos_funcionario'
+
+    if request.GET.get('q'):
+        form = BusquedaMovimientoFuncionarioForm(request.GET)
+
+        if not form.has_changed():
+            sin_datos = 'Ingrese todos los datos solicitados'
+            return render(request, 'reportes/filtro_movimiento_funcionario.html', {'form': BusquedaMovimientoFuncionarioForm(initial=request.GET),
+                                                          'sin_datos': sin_datos, 'vista': vista})
+        if form.is_valid():
+            context = {}
+            cedula = form.cleaned_data['cedula']
+            nombres = form.cleaned_data['nombres']
+            apellidos = form.cleaned_data['apellidos']
+            context.update({
+                'nombres': nombres,
+                'apellidos': apellidos,
+            })
+
+            f = Q(funcionario__cedula = cedula) | \
+                Q(funcionario__nombres__icontains = nombres) | \
+                Q(funcionario__apellidos__icontains = apellidos)
+
+            movimientos = Movimiento.objects.filter(f)
+
+            context.update({
+                'form': BusquedaMovimientoFuncionarioForm(initial=request.GET),
+                'movimientos': movimientos,
+                'vista': vista,
+            })
+            if movimientos.count() == 0:
+                sin_datos = 'Sin resultados'
+                return render(request, 'reportes/filtro_movimiento_funcionario.html', {'form': BusquedaMovimientoFuncionarioForm(initial=request.GET),
+                                                              'sin_datos': sin_datos, 'vista': vista})
+
+            return render(request, 'reportes/filtro_movimiento_funcionario.html', context)
+
+    else:
+        return render(request, 'reportes/filtro_movimiento_funcionario.html', {'form': BusquedaMovimientoFuncionarioForm(), 'vista': vista})
+
+
+

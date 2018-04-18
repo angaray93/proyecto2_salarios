@@ -142,7 +142,7 @@ class ParametroAdmin(admin.ModelAdmin):
 admin.site.register(Parametro, ParametroAdmin)
 
 
-class StateAdmin(admin.ModelAdmin):
+'''class StateAdmin(admin.ModelAdmin):
     form = StateForm
     list_display = ('nombre','tipo',)
     search_fields = ('nombre','tipo',)
@@ -155,4 +155,4 @@ class StateTypeAdmin(admin.ModelAdmin):
     list_display = ('nombre',)
     search_fields = ('nombre',)
 
-admin.site.register(StateType, StateTypeAdmin)
+admin.site.register(StateType, StateTypeAdmin)'''

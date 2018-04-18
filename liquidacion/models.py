@@ -379,7 +379,7 @@ class Liquidacionhaber(models.Model):
     liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE)
 
 
-class State(models.Model):
+"""class State(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
     tipo = models.ForeignKey('StateType', on_delete=models.CASCADE)
@@ -401,4 +401,81 @@ class StateType(models.Model):
         verbose_name_plural = "Tipos de Estado de Liquidacion"
 
     def __str__(self):
-        return '%s ' % (self.nombre)
+        return '%s ' % (self.nombre)"""
+
+
+class Process(models.Model):
+    name = models.CharField(max_length=50)
+    active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+class DefaultProcess(models.Model):
+    entity = models.CharField(max_length=20)
+    process = models.ForeignKey(Process, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} - {}'.format(self.entity, self.process)
+
+
+class StateType(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class State(models.Model):
+    stateType = models.ForeignKey(StateType, on_delete=models.CASCADE)
+    process = models.ForeignKey(Process, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200, blank=True, default='')
+    condition = models.TextField(blank=True, default='')
+
+    def __str__(self):
+        return self.name
+
+
+class ActionType(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class Action(models.Model):
+    actionType = models.ForeignKey(ActionType, on_delete=models.CASCADE)
+    process = models.ForeignKey(Process, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200, blank=True, default='')
+    #showTo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Transition(models.Model):
+    process = models.ForeignKey(Process, on_delete=models.CASCADE)
+    currentState = models.ForeignKey(State, on_delete=models.CASCADE, related_name='currentState')
+    nextState = models.ForeignKey(State, on_delete=models.CASCADE, related_name='nextState')
+    #actions = models.ManyToManyField(Action, db_table='KHCRM_transitionaction')
+    #activities = models.ManyToManyField(Activity, related_name='activities')
+    condition = models.TextField(blank=True, default='')
+
+    def __str__(self):
+        return '{} -> {}'.format(self.currentState, self.nextState)
+
+
+'''class PropuestaAction(models.Model):
+    propuesta = models.ForeignKey('Propuesta', on_delete=models.CASCADE)
+    action = models.ForeignKey(Action, on_delete=models.CASCADE)
+    transition = models.ForeignKey(Transition, on_delete=models.CASCADE)
+    isActive = models.BooleanField(default=True)
+    isComplete = models.BooleanField(default=False)
+    completed_on = models.DateTimeField(null=True, blank=True)
+    by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return '{} - {} - {} - {}'.format(self.id, self.propuesta, self.action, self.transition)'''

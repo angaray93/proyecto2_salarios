@@ -29,6 +29,9 @@ class MovimientoForm(forms.ModelForm):
             'motivo': forms.Select(attrs={
                 'class': 'form-control'
             }),
+            'formapago': forms.Select(attrs={
+                'class': 'form-control'
+            }),
             'division': forms.Select(attrs={
                 'class': 'form-control'
             }),
@@ -86,6 +89,21 @@ class ConstanteForm(ModelForm):
                 'class': 'form-control',
             }),
             'tipo': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+        }
+
+
+class PagoForm(ModelForm):
+
+    class Meta:
+        model = Pago
+        exclude = ['movimiento']
+        widgets = {
+            'mes': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'monto': forms.NumberInput(attrs={
                 'class': 'form-control',
             }),
         }

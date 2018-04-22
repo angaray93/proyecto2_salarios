@@ -12,6 +12,28 @@ ConstanteType_OPTIONS = (
     ('C', 'Credito'),
 )
 
+Modalidad_OPTIONS = (
+    ('M' , 'Mensual'),
+    ('S' , 'Semestral'),
+    ('O' , 'Otros'),
+)
+
+MES_OPTIONS = (
+    ('Enero' , 'Enero'),
+    ('Febrero' , 'Febrero'),
+    ('Marzo' , 'Marzo'),
+    ('Abril' , 'Abril'),
+    ('Mayo' , 'Mayo'),
+    ('Junio' , 'Junio'),
+    ('Julio' , 'Julio'),
+    ('Agosto' , 'Agosto'),
+    ('Septiembre' , 'Septiembre'),
+    ('Octubre' , 'Octubre'),
+    ('Noviembre' , 'Noviembre'),
+    ('Diciembre' , 'Diciembre'),
+
+)
+
 
 def validar_nombre(value):
     convertido = value.replace(" ", "")
@@ -49,6 +71,7 @@ class Movimiento(models.Model):
     idmovimiento = models.AutoField(primary_key=True)
     tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo')
     motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo')
+    formapago = models.CharField(max_length=1, default='M',choices=Modalidad_OPTIONS)
     fechainicio = models.DateField()
     fechafin = models.DateField(blank=True, null=True)
     esPrimero = models.BooleanField(default=True)
@@ -57,14 +80,23 @@ class Movimiento(models.Model):
     tieneAguinaldo = models.BooleanField(default=False)
     tieneVacaciones = models.BooleanField(default=False)
     funcion = models.CharField(max_length=100, default='')
-    #tieneSeguroMedico = models.BooleanField(default=False)
     #-----------------------------------Relationships-----------------------------------------#
     funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')
-    categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING, related_name='fk_movimiento_categoriasalarial')
+    categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING,
+                                           related_name='fk_movimiento_categoriasalarial', blank=True, null=True)
     division = models.ForeignKey('Division', on_delete=models.DO_NOTHING, related_name='fk_movimiento_division')
     og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.DO_NOTHING, related_name='fk_movimiento_og')
     movimiento_padre = models.ForeignKey('self', on_delete=models.DO_NOTHING, blank=True, null=True)
     estado = models.ForeignKey('State', on_delete=models.DO_NOTHING, related_name='fk_movimiento_estado')
+
+
+class Pago(models.Model):
+    id = models.AutoField(primary_key=True)
+    mes = models.CharField(max_length=10 ,choices=MES_OPTIONS, blank=True, null=True)
+    monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    pagado = models.BooleanField(default=False)
+    # -----------------------------------Relationships-----------------------------------------#
+    movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_pago_movimiento')
 
 
 class Objeto_De_Gasto(models.Model):
@@ -197,12 +229,9 @@ class Vacaciones(models.Model):
 
 class Constante(models.Model):
     id = models.AutoField(primary_key=True)
-    #fechainicio = models.DateField()
-    #fechafin = models.DateField()
     finito = models.BooleanField(default=False)
     cantidad_veces = models.IntegerField(blank=True, null=True)
     ocurrencias = models.IntegerField(blank=True, null=True, default=0)
-    #porcentaje = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default = 0.00)
     monto = models.IntegerField(blank=True, null=True, default=0)
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_constante_movimiento')

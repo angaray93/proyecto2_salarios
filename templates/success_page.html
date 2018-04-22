@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "proceso/movimiento_form.html" %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% load l10n %}
@@ -8,18 +8,18 @@
 <div class="col-12 col-sm-10 recuadro">
 <div>
     <strong>
-        Proceso '......' completado con exito!
+        Proceso completado con exito!
     </strong>
 </div>
 <hr>
 <div class="row">
   		<div class="col-md-4 text-left">
 		   <button type="submit" id="submitForm" class="btn btn-primary"
-                    onclick="location.href='{% url 'liquidacion:buscar_funcionario' %}'">Crear nuevo</button>
+                    onclick="location.href='{% url 'liquidacion:nuevo_pago' idmovimiento %}'">Agregar Pagos</button>
         </div>
         <div class="col-md-4 text-center">
 		   <button type="submit" id="submitForm" class="btn btn-primary"
-           onclick="location.href='{% url 'liquidacion:index' %}'">Volver al inicio</button>
+           onclick="location.href='{% url 'liquidacion:nueva_constante' idmovimiento %}'">Agregar Debitos y Creditos</button>
         </div>
         <div class="col-md-4 text-right">
             <button type="submit" id="submitForm" class="btn btn-primary"

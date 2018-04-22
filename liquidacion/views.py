@@ -63,7 +63,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
 
                 return render(request, 'proceso/movimiento_form.html', {'movimiento': movimiento, 'form': form})
         else:
-            estado_default = State.objects.get(nombre='Activo')
+            estado_default = State.objects.get(name='Activo')
             if idpadre:
                 movimiento_padre = Movimiento.objects.get(pk=idpadre)
                 funcionario = movimiento_padre.funcionario
@@ -92,42 +92,43 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             if form.is_valid():
                 movimiento = form.save()
                 #-------------------------------------------------------------------------#
-                haber = None
-                if movimiento.movimiento_padre:
-                    #----------------------------Haberes----------------------------------#
-                    haber = Haber.objects.get(movimiento=movimiento.movimiento_padre)
-                    haber.movimiento = movimiento
-                    # ---------------------------Vacaciones-------------------------------#
-                    try:
-                        vacaciones_padre = Vacaciones.objects.get(movimiento=movimiento_padre)
+                if movimiento.motivo.nombre != 'Contrato':
+                    haber = None
+                    if movimiento.movimiento_padre:
+                        #----------------------------Haberes----------------------------------#
+                        haber = Haber.objects.get(movimiento=movimiento.movimiento_padre)
+                        haber.movimiento = movimiento
+                        # ---------------------------Vacaciones-------------------------------#
+                        try:
+                            vacaciones_padre = Vacaciones.objects.get(movimiento=movimiento_padre)
 
-                    except Vacaciones.DoesNotExist:
-                        vacaciones_padre = None
+                        except Vacaciones.DoesNotExist:
+                            vacaciones_padre = None
 
-                    if vacaciones_padre is not None:
-                        vacaciones_padre.fin = movimiento.fechainicio - timedelta(days=1)
-                        vacaciones_padre.save()
-                    if movimiento.tieneVacaciones is True:
-                        vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
-                        vacaciones.save()
-                    if movimiento.tieneAguinaldo is True:
-                        aguinaldo = Aguinaldo(movimiento = movimiento)
-                        aguinaldo.save()
-                    movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo')
-                    movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
-                    #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
-                    movimiento.movimiento_padre.save()
-
+                        if vacaciones_padre is not None:
+                            vacaciones_padre.fin = movimiento.fechainicio - timedelta(days=1)
+                            vacaciones_padre.save()
+                        if movimiento.tieneVacaciones is True:
+                            vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
+                            vacaciones.save()
+                        if movimiento.tieneAguinaldo is True:
+                            aguinaldo = Aguinaldo(movimiento = movimiento)
+                            aguinaldo.save()
+                        movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo')
+                        movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
+                        #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
+                        movimiento.movimiento_padre.save()
+                    else:
+                        haber = Haber(movimiento = movimiento)
+                        if movimiento.tieneAguinaldo is True:
+                            aguinaldo = Aguinaldo(movimiento = movimiento)
+                            aguinaldo.save()
+                        if movimiento.tieneVacaciones is True:
+                            vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
+                            vacaciones.save()
+                    haber.save()
                 else:
-                    haber = Haber(movimiento = movimiento)
-                    if movimiento.tieneAguinaldo is True:
-                        aguinaldo = Aguinaldo(movimiento = movimiento)
-                        aguinaldo.save()
-                    if movimiento.tieneVacaciones is True:
-                        vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
-                        vacaciones.save()
-
-                haber.save()
+                    m
 
                 #-------------------------------------------------------------------------#
                 return redirect(reverse('liquidacion:success_page', args=[movimiento.pk]))
@@ -169,7 +170,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 movimiento_padre = None
                 q = request.GET.get('term', '')
                 funcionario = Funcionario.objects.get(pk=idfuncionario)
-            estado_default = State.objects.get(nombre='Activo')
+            estado_default = State.objects.get(name='Activo')
 
             form = MovimientoForm(initial={
                 'funcionario': funcionario,
@@ -352,6 +353,50 @@ def constante_vista(request, idmovimiento=None, idconstante=None):
                 'form': form,
             })
         return render(request, 'constante/constante_form.html', context)
+
+
+def pago_vista(request, idmovimiento=None, idpago=None):
+    context = {}
+    pago = None
+    if request.POST:
+        if idpago:
+            pago = get_object_or_404(Pago, pk=idpago)
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            pago = Pago(
+                movimiento=movimiento,
+            )
+        form = PagoForm(request.POST, instance=pago)
+        if form.is_valid():
+            pago = form.save()
+            return redirect(reverse('liquidacion:nuevo_pago', args=[pago.movimiento.pk]))
+        else:
+            # TODO Implementar sistema de errores
+            context.update({
+                'errors': form.errors,
+                'form': form
+            })
+            return render(request, 'pago_form.html', context)
+    else:
+        if idpago:
+            pago = get_object_or_404(Constante, pk=idpago)
+            form = PagoForm(request.POST, instance=idpago)
+            context.update({
+                'pago': pago,
+                'form': form
+            })
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            pagos = Pago.objects.filter(movimiento=movimiento)
+            form = PagoForm(initial={
+                'movimiento': movimiento,
+            })
+            context.update({
+                'movimiento': movimiento,
+                'pagos': pagos,
+                'form': form,
+            })
+        return render(request, 'pago_form.html', context)
 
 
 class CategoriaSalarialList(ListView):

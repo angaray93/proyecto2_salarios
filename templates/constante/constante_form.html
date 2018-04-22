@@ -16,8 +16,13 @@
 <form method="post" id="constante_form">
         {% csrf_token %}
         <div class="row"> <!-- cabecera-->
-            <div class="col-10 d-flex align-items-center">
+            <div class="col-8 d-flex align-items-center">
                 <span class="h4">Debitos y Creditos de Salario</span>
+            </div>
+            <div class="col-2 d-flex justify-content-end align-items-center">
+                <div class="row separador"></div>
+                <button type="submit" id="submitForm" class="btn btn-primary"
+                   onclick="location.href='{% url 'liquidacion:movimiento_resumen' movimiento.pk %}'">Ver movimiento</button>
             </div>
             <div class="col-2 d-flex justify-content-end align-items-center">
                 <div class="row separador"></div>

@@ -1,3 +1,5 @@
+{% if vista =='' %}
+{%  %}
 {% extends "reportes/filtro_movimiento_funcionario.html" %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
@@ -13,6 +15,8 @@
 {% render_breadcrumbs %}
 
 <div class="col-12 col-sm-10 recuadro">
+
+{{ request.META.HTTP_REFERER }}
 
 <div class="row">
     <div class="col-12 d-flex align-items-center">

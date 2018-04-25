@@ -10,6 +10,22 @@ from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 from django.forms.widgets import TimeInput
 
+class PreLiqMensualForm(forms.Form):
+
+    desde = forms.DateTimeField(label='Desde', required=True,
+                          widget=forms.TextInput(attrs={'class': 'form-control datepicker',
+                                                  'id': 'fec_ini',}))
+
+    hasta = forms.DateTimeField(label='Hasta', required=True,
+                          widget=forms.TextInput(attrs={'class': 'form-control datepicker',
+                                                  'id': 'fec_fin',}))
+
+    departamento = forms.IntegerField(label='Departamento', required=True, widget=forms.Select(attrs={'class': 'form-control',
+                                                                                          'name': 'departamento-select',
+                                                                                          'id': 'departamento-select',
+                                                                                          }))
+    funcionarios = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
+
 
 class MovimientoForm(forms.ModelForm):
 
@@ -238,10 +254,12 @@ class DocumentoTypeForm(forms.ModelForm):
         model = DocumentoType
         fields = '__all__'
 
+
 class LiquidacionTypeForm(forms.ModelForm):
     class Meta:
         model = LiquidacionType
         fields = '__all__'
+
 
 class VariableForm(forms.ModelForm):
     tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())
@@ -254,6 +272,7 @@ class VariableForm(forms.ModelForm):
         if convertido.isalpha() is False:
             raise forms.ValidationError("Ingrese un motivo valido, sin numeros ni simbolos")
         return self.cleaned_data['motivo']
+
 
 class ParametroForm(forms.ModelForm):
     class Meta:
@@ -272,10 +291,12 @@ class ParametroForm(forms.ModelForm):
             raise forms.ValidationError("Ingrese una descripcion valida, sin numeros ni simbolos")
         return self.cleaned_data['descripcion']
 
+
 class StateForm(forms.ModelForm):
     class Meta:
         model = State
         fields = '__all__'
+
 
 class StateTypeForm(forms.ModelForm):
     tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())

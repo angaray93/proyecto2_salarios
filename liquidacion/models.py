@@ -80,7 +80,7 @@ class Movimiento(models.Model):
     tieneAguinaldo = models.BooleanField(default=False)
     tieneVacaciones = models.BooleanField(default=False)
     funcion = models.CharField(max_length=100, default='')
-    #-----------------------------------Relationships-----------------------------------------#
+    #------------------------------------Relationships-----------------------------------------#
     funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')
     categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING,
                                            related_name='fk_movimiento_categoriasalarial', blank=True, null=True)

@@ -34,6 +34,9 @@ urlpatterns = [
     path('ajax/traer_motivomovimientos/', views.traer_motivomovimientos, name='traer_motivomovimientos'),
     path('buscarmovimientofuncionario/', views.buscar_movimientos_funcionario, name='buscar_movimientos_funcionario'),
     path('movimiento/<int:idmovimiento>/pago/nuevo/', views.pago_vista, name='nuevo_pago'),
-    #path('movimiento/<int:idmovimiento>/constante/<int:idconstante>', views.constante_vista, name='borrar_constante'),
+    path('liquidacionm/seleccion/', views.parametros_liq_mensual, name='parametros_liq_mensual'),
+    path('ajax/traer_departamentos/', views.traer_departamentos, name='traer_departamentos'),
+    path('ajax/traer_funcionarios/', views.traer_funcionarios, name='traer_funcionarios'),
 
+    #path('movimiento/<int:idmovimiento>/constante/<int:idconstante>', views.constante_vista, name='borrar_constante'),
 ]

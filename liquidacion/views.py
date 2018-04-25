@@ -25,6 +25,28 @@ def index(request):
     return render(request, 'index.html')
 
 
+def parametros_liq_mensual(request):
+    context = {}
+    if request.method == 'POST':
+        form = PreLiqMensualForm(request.POST)
+        if form.is_valid():
+            formulario = form
+            context.update({
+                'form': formulario
+            })
+        else:
+            context.update({
+                'errors': form.errors,
+                'form': form
+            })
+        return render(request, 'success_page.html', context)
+    else:
+        form = PreLiqMensualForm()
+    return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form} )
+
+
+
+
 def success_page(request, idmovimiento):
     context = {}
     context.update({
@@ -60,7 +82,6 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 movimiento = form.save()
                 return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
             else:
-
                 return render(request, 'proceso/movimiento_form.html', {'movimiento': movimiento, 'form': form})
         else:
             estado_default = State.objects.get(name='Activo')
@@ -127,12 +148,11 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                             vacaciones = Vacaciones(movimiento=movimiento, inicio=movimiento.fechainicio)
                             vacaciones.save()
                     haber.save()
+                    return redirect(reverse('liquidacion:success_page', args=[movimiento.pk]))
                 else:
-                    m
+                    return redirect(reverse('liquidacion:nuevo_pago', args=[movimiento.pk]))
 
                 #-------------------------------------------------------------------------#
-                return redirect(reverse('liquidacion:success_page', args=[movimiento.pk]))
-
             else:
                 # TODO Implementar sistema de errores
                 context.update({
@@ -512,4 +532,37 @@ def buscar_movimientos_funcionario(request):
         return render(request, 'reportes/filtro_movimiento_funcionario.html', {'form': BusquedaMovimientoFuncionarioForm(), 'vista': vista})
 
 
+@require_GET
+def traer_departamentos(request):
+    if request.is_ajax():
+        departamentos = Departamento.objects.all()
+        res = []
+        for departamento in departamentos:
+            departamento_json = {'id': departamento.pk, 'value': departamento.nombre}
+            res.append(departamento_json)
+        data = json.dumps(res)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
 
+
+@require_GET
+def traer_funcionarios(request):
+    if request.is_ajax():
+        funcionarios = Funcionario.objects.all()\
+            .values("idFuncionario").order_by('-idFuncionario').distinct('idFuncionario')
+        iddepartamento = request.GET.get('iddepartamento', '')
+        if iddepartamento != 0:
+            funcionarios = Movimiento.objects.filter(estado__name='Activo', division__departamento=iddepartamento)\
+                .values('funcionario__idFuncionario','funcionario__nombres', 'funcionario__apellidos')\
+                #.order_by('-funcionario__idFuncionario').distinct('funcionario__idFuncionario')
+        res = []
+        for f in funcionarios:
+            func_json = {'id': f['funcionario__idFuncionario'], 'value': f['funcionario__nombres'], 'value2': f['funcionario__apellidos']}
+            res.append(func_json)
+        data = json.dumps(res)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)

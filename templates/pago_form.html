@@ -16,26 +16,21 @@
 <form method="post" id="pago_form">
         {% csrf_token %}
         <div class="row"> <!-- cabecera-->
-            <div class="col-8 d-flex align-items-center">
+            <div class="col-10 d-flex align-items-center">
                 <span class="h4">Pagos del Contrato</span>
             </div>
             <div class="col-2 d-flex justify-content-end align-items-center">
                 <div class="row separador"></div>
-                 <button type="submit" id="submitForm" class="btn btn-primary"
-                   onclick="location.href='{% url 'liquidacion:movimiento_resumen' movimiento.pk %}'">Ver movimiento</button>
-            </div>
-            <div class="col-2 d-flex justify-content-end align-items-center">
-                <div class="row separador"></div>
-                <button type="submit" class="btn btn-success" name="guardar"
-                        formaction="{% url 'liquidacion:nuevo_pago' movimiento.pk %}">
-                    Guardar
+                <button type="button" class="btn btn-secondary" name="finalizar"
+                        onclick="location.href='{% url 'liquidacion:movimiento_resumen' movimiento.pk %}'">
+                    Finalizar
                 </button>
             </div>
         </div>
     <!-- Fin cabecera -->
         <hr>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-5">
                 <div class="form-group">
                     <label for="mes">Mes:</label>
                     <div class="input-group">
@@ -43,13 +38,20 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-5">
                 <div class="form-group">
                     <label for="monto">Monto:</label>
                     <div class="input-group">
                         {{ form.monto }}
                     </div>
                 </div>
+            </div>
+            <div class="col-2 d-flex justify-content-end align-items-center">
+                <div class="row separador"></div>
+                <button type="submit" class="btn btn-success" name="guardar"
+                        formaction="{% url 'liquidacion:nuevo_pago' movimiento.pk %}">
+                    Agregar
+                </button>
             </div>
         </div>
 </form>

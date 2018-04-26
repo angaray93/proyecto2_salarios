@@ -39,10 +39,16 @@ def parametros_liq_mensual(request):
                 'errors': form.errors,
                 'form': form
             })
-        return render(request, 'success_page.html', context)
+        return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
+        #return render(request, 'success_page.html', context)
     else:
         form = PreLiqMensualForm()
     return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form} )
+
+
+def generar_liq_mensual(request):
+
+    return render(request, 'index.html')
 
 
 
@@ -556,7 +562,7 @@ def traer_funcionarios(request):
         if iddepartamento != 0:
             funcionarios = Movimiento.objects.filter(estado__name='Activo', division__departamento=iddepartamento)\
                 .values('funcionario__idFuncionario','funcionario__nombres', 'funcionario__apellidos')\
-                #.order_by('-funcionario__idFuncionario').distinct('funcionario__idFuncionario')
+                .order_by('-funcionario__idFuncionario').distinct('funcionario__idFuncionario')
         res = []
         for f in funcionarios:
             func_json = {'id': f['funcionario__idFuncionario'], 'value': f['funcionario__nombres'], 'value2': f['funcionario__apellidos']}

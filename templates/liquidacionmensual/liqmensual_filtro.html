@@ -70,18 +70,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="funcionarios">Funcionarios:</label>
-                        <div class="input-group">
-                            {{ form.funcionarios }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col-md-6 align-self-end pb-3">
                     <button type="submit" class="btn btn-success" name="q" value="true"
                             formaction="{% url 'liquidacion:parametros_liq_mensual' %}">
@@ -89,7 +77,6 @@
                     </button>
                 </div>
             </div>
-
 
             {% if form.errors %}
                 <div class="row mt-0">
@@ -133,16 +120,16 @@
                     data: {},
                     success: function (data) {
                         if ($.trim(data)) {
-                            departamento_select.empty().append('<option value=' + 0 + ' selected disabled="true">' + 'Seleccione una opcion' + '</option>');
+                            departamento_select.empty().append('<option value=' + 0 + ' selected >' + 'Todos' + '</option>');
                             $.each(data, function (key, value) {
                                 departamento_select.append('<option value=' + value.id + '>' + value.value + '</option>')
                             });
                         } else {
-                            departamento_select.empty().append('<option value=' + 0 + ' selected disabled="true">' + 'Todos' + '</option>');
+                            departamento_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
                         }
                     },
                     error: function (data) {
-                        departamento_select.empty().append('<option value=' + 0 + ' selected disabled="true">' + 'Todos' + '</option>');
+                        departamento_select.empty().append('<option value=' + 0 + ' selected disabled="true">' + 'No hay datos' + '</option>');
                     }
                 })
             });

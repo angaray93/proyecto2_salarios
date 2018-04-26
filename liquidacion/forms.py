@@ -24,8 +24,6 @@ class PreLiqMensualForm(forms.Form):
                                                                                           'name': 'departamento-select',
                                                                                           'id': 'departamento-select',
                                                                                           }))
-    funcionarios = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
-
 
 class MovimientoForm(forms.ModelForm):
 

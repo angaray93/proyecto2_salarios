@@ -79,7 +79,7 @@ class Movimiento(models.Model):
     horaSalida = models.TimeField()
     tieneAguinaldo = models.BooleanField(default=False)
     tieneVacaciones = models.BooleanField(default=False)
-    funcion = models.CharField(max_length=100, default='')
+    funcion = models.CharField(max_length=99, default='')
     #------------------------------------Relationships-----------------------------------------#
     funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')
     categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING,
@@ -334,11 +334,11 @@ class Liquidacion(models.Model):
     fechacreacion = models.DateField()
     ultimamodificacion = models.DateField()
     mes = models.IntegerField()
-    total_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
-    total_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
-    total_liquidacion = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
-    inicio_periodo = models.DateField()
-    fin_periodo = models.DateField()
+    total_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
+    total_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default= 0)
+    total_liquidacion = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True , default=0)
+    inicio_periodo = models.DateTimeField()
+    fin_periodo = models.DateTimeField()
     #-----------------------------------Relationships-----------------------------------------#
     haberes = models.ManyToManyField('Haber', through='Liquidacionhaber', through_fields=('liquidacion', 'haber'))
     funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_liquidacion_funcionario')

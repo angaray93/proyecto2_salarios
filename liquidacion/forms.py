@@ -21,7 +21,7 @@ class PreLiqMensualForm(forms.Form):
                                                   'id': 'fec_fin',}))
 
     departamento = forms.IntegerField(label='Departamento', required=True, widget=forms.Select(attrs={'class': 'form-control',
-                                                                                          'name': 'departamento-select',
+                                                                                          'name': 'departamento',
                                                                                           'id': 'departamento-select',
                                                                                           }))
 

@@ -20,7 +20,8 @@
 {% render_breadcrumbs %}
 
     <div class="col-12 col-sm-10 recuadro">
-        <form method="get">
+        <form method="POST">
+        {% csrf_token %}
 
             <div class="row">
                 <div class="col-12">

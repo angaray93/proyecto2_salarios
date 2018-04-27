@@ -31,15 +31,41 @@ def parametros_liq_mensual(request):
         form = PreLiqMensualForm(request.POST)
         if form.is_valid():
             formulario = form
-            context.update({
-                'form': formulario
-            })
+            depto = form.cleaned_data['departamento']
+            fechafin = form.cleaned_data['hasta']
+            fechainicio = form.cleaned_data['desde']
+
+            print(fechafin.month)
+            movimientosactivos = Movimiento.objects\
+                .filter(division__departamento=depto, estado__name='Activo')\
+                .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
+            for mov in movimientosactivos:
+                #print(mov['funcionario__idFuncionario'])
+                liquidacion = Liquidacion(
+                    fechacreacion=datetime.datetime.now(),
+                    ultimamodificacion = datetime.datetime.now(),
+                    mes = fechafin.month,
+                    inicio_periodo = fechainicio,
+                    fin_periodo = fechafin,
+                haberes = models.ManyToManyField('Haber', through='Liquidacionhaber',
+                                                 through_fields=('liquidacion', 'haber'))
+                funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE,
+                                                related_name='fk_liquidacion_funcionario')
+                estado_actual = models.ForeignKey('State', on_delete=models.CASCADE,
+                                                  related_name='fk_liquidacion_estado')
+                tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE,
+                                         related_name='fk_liquidacion_tipo')
+                propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fk_liquidacion_user')
+                )
+
+            print(movimientosactivos)
+
         else:
             context.update({
                 'errors': form.errors,
                 'form': form
             })
-        return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
+        #return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
         #return render(request, 'success_page.html', context)
     else:
         form = PreLiqMensualForm()
@@ -67,7 +93,6 @@ def mostrar_movimiento_resumen(request, idmovimiento):
     aguinaldos = Aguinaldo.objects.filter(movimiento=movimiento)
     vacaciones = Vacaciones.objects.filter(movimiento=movimiento)
     constantes = Constante.objects.filter(movimiento=movimiento)
-    print(constantes)
     context.update({
         'movimiento': movimiento,
         'aguinaldos': aguinaldos,

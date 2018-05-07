@@ -497,6 +497,15 @@ class Transition(models.Model):
         return '{} -> {}'.format(self.currentState, self.nextState)
 
 
+class Operacion(models.Model):
+    process = models.ForeignKey(Process, on_delete=models.CASCADE)
+    descripcion = models.CharField(max_length=100)
+    fechacreacion = models.DateTimeField()
+
+    def __str__(self):
+        return '{} -> {}'.format(self.currentState, self.nextState)
+
+
 '''class PropuestaAction(models.Model):
     propuesta = models.ForeignKey('Propuesta', on_delete=models.CASCADE)
     action = models.ForeignKey(Action, on_delete=models.CASCADE)

@@ -34,39 +34,42 @@ def parametros_liq_mensual(request):
             depto = form.cleaned_data['departamento']
             fechafin = form.cleaned_data['hasta']
             fechainicio = form.cleaned_data['desde']
-
-            print(fechafin.month)
-            movimientosactivos = Movimiento.objects\
+            funcionarios = Movimiento.objects\
                 .filter(division__departamento=depto, estado__name='Activo')\
                 .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
-            for mov in movimientosactivos:
-                #print(mov['funcionario__idFuncionario'])
+            tipo = LiquidacionType.objects.get(nombre='Mensual')
+            proceso = Process.objects.get(name='Liquidacion Mensual')
+            initial_state_type = StateType.objects.get(name='Inicio')
+            initial_state = State.objects.get(process=proceso, stateType=initial_state_type)
+            liquidaciones = []
+            for mov in funcionarios:
+                funcionario = Funcionario.objects.get(pk = mov['funcionario__idFuncionario'])
                 liquidacion = Liquidacion(
                     fechacreacion=datetime.datetime.now(),
                     ultimamodificacion = datetime.datetime.now(),
                     mes = fechafin.month,
                     inicio_periodo = fechainicio,
                     fin_periodo = fechafin,
-                haberes = models.ManyToManyField('Haber', through='Liquidacionhaber',
-                                                 through_fields=('liquidacion', 'haber'))
-                funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE,
-                                                related_name='fk_liquidacion_funcionario')
-                estado_actual = models.ForeignKey('State', on_delete=models.CASCADE,
-                                                  related_name='fk_liquidacion_estado')
-                tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE,
-                                         related_name='fk_liquidacion_tipo')
-                propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fk_liquidacion_user')
+                    funcionario = funcionario,
+                    estado_actual = initial_state,
+                    tipo = tipo,
+                    propietario = request.user,
                 )
-
-            print(movimientosactivos)
+                print(liquidacion)
+                liquidacion.save()
+                liquidaciones.append(liquidacion)
+                print(liquidaciones)
+            context.update({
+                'lista': liquidaciones,
+                'form': form
+            })
 
         else:
             context.update({
                 'errors': form.errors,
                 'form': form
             })
-        #return redirect(reverse('liquidacion:editar_movimiento', args=[movimiento.pk]))
-        #return render(request, 'success_page.html', context)
+        return render(request, 'liquidacionmensual/liqmensual_list.html', context)
     else:
         form = PreLiqMensualForm()
     return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form} )
@@ -264,7 +267,7 @@ def busqueda_movimiento_funcionario(request):
 def get_movimientos(request):
     if request.is_ajax():
         q = request.GET.get('idfuncionario', '')
-        movimientos = Movimiento.objects.filter(funcionario=q, estado__nombre='Activo')
+        movimientos = Movimiento.objects.filter(funcionario=q, estado__name = 'Activo')
         res = []
         for movimiento in movimientos:
             movimiento_json = {'idmovimiento' :movimiento.pk, 'motivo': movimiento.motivo.nombre, 'tipo': movimiento.tipo.nombre, 'categoria_salarial': movimiento.categoria_salarial.codigo}

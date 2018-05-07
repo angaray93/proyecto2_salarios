@@ -1,0 +1,56 @@
+{% extends "liquidacionmensual/liqmensual_filtro.html" %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load l10n %}
+
+{% block breadcrumbs %}
+
+{% endblock %}
+
+{% block head %}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    {% block title %}
+        <title>Generar Liquidacion</title>
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+{% render_breadcrumbs %}
+<title>{{ lista }}</title>
+    <div class="col-12 col-sm-10 recuadro">
+        <div class="row">
+            <table id="tabla" class="table">
+                <thead class="thead-light">
+                    <th class="centrartexto">Cedula</th>
+                    <th>Funcionario</th>
+                    <th>Mes</th>
+                    <th class="centrartexto">Acciones</th>
+                </thead>
+                <tbody>
+                {% for item in lista %}
+                    <tr>
+                        <td>{{ item.funcionario.cedula }}</td>
+                        <td>{{ item.funcionario }}</td>
+                        <td>{{ item.mes }}</td>
+                        <td class="centrartexto">
+                            <a title="Editar" class="btn btn-outline-primary" type="button"
+                            href =""><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                            <a title="Editar" class="btn btn-outline-primary" type="button"
+                            href =""><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                            <a title="Editar" class="btn btn-outline-primary" type="button"
+                            href =""><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <footer>
+
+    </footer>
+
+{% endblock %}

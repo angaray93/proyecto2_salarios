@@ -408,31 +408,6 @@ class Liquidacionhaber(models.Model):
     liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE)
 
 
-"""class State(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
-    tipo = models.ForeignKey('StateType', on_delete=models.CASCADE)
-
-    class Meta:
-        ordering = ["nombre"]
-        verbose_name_plural = "Estados de Liquidacion Salarial"
-
-    def __str__(self):
-        return '%s ' % (self.nombre)
-
-
-class StateType(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, default='', validators=[validar_nombre], unique=True)
-
-    class Meta:
-        ordering = ["nombre"]
-        verbose_name_plural = "Tipos de Estado de Liquidacion"
-
-    def __str__(self):
-        return '%s ' % (self.nombre)"""
-
-
 class Process(models.Model):
     name = models.CharField(max_length=50)
     active = models.BooleanField(default=False)
@@ -489,7 +464,7 @@ class Transition(models.Model):
     process = models.ForeignKey(Process, on_delete=models.CASCADE)
     currentState = models.ForeignKey(State, on_delete=models.CASCADE, related_name='currentState')
     nextState = models.ForeignKey(State, on_delete=models.CASCADE, related_name='nextState')
-    #actions = models.ManyToManyField(Action, db_table='KHCRM_transitionaction')
+    actions = models.ManyToManyField('Action', through='Transitionaction', through_fields=('transition', 'action'))
     #activities = models.ManyToManyField(Activity, related_name='activities')
     condition = models.TextField(blank=True, default='')
 
@@ -497,13 +472,10 @@ class Transition(models.Model):
         return '{} -> {}'.format(self.currentState, self.nextState)
 
 
-class Operacion(models.Model):
-    process = models.ForeignKey(Process, on_delete=models.CASCADE)
-    descripcion = models.CharField(max_length=100)
-    fechacreacion = models.DateTimeField()
-
-    def __str__(self):
-        return '{} -> {}'.format(self.currentState, self.nextState)
+class Transitionaction(models.Model):
+    id = models.AutoField(primary_key=True)
+    transition = models.ForeignKey('Transition', on_delete=models.DO_NOTHING)
+    action = models.ForeignKey('Action', on_delete=models.DO_NOTHING)
 
 
 '''class PropuestaAction(models.Model):

@@ -54,9 +54,9 @@ class Funcionario(models.Model):
     telefono = models.CharField(max_length=50, default='')
     cantHijos = models.IntegerField(verbose_name='Cantidad de Hijos')
     #-----------------------------------Relationships-----------------------------------------#
-    usuario = models.OneToOneField(User, on_delete=models.DO_NOTHING, related_name='fk_funcionario_usuario')
-    grado = models.ForeignKey('GradoUniversitario', on_delete=models.DO_NOTHING, related_name='fk_funcionario_usuario' )
-    estadocivil = models.ForeignKey('EstadoCivil', on_delete=models.DO_NOTHING, related_name='fk_funcionario_gradouniversitario', verbose_name='Estado Civil')
+    usuario = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='fk_funcionario_usuario')
+    grado = models.ForeignKey('GradoUniversitario', on_delete=models.DO_NOTHING, related_name='fk_funcionario_grado' )
+    estadocivil = models.ForeignKey('EstadoCivil', on_delete=models.DO_NOTHING, related_name='fk_funcionario_ecivil', verbose_name='Estado Civil')
     ciudadnacimiento = models.ForeignKey('Ciudad', on_delete=models.DO_NOTHING, related_name='fk_funcionario_ciudad', verbose_name='Lugar de Nacimiento')
 
     class Meta:
@@ -418,7 +418,7 @@ class Process(models.Model):
 
 class DefaultProcess(models.Model):
     entity = models.CharField(max_length=20)
-    process = models.ForeignKey(Process, on_delete=models.CASCADE)
+    process = models.ForeignKey('Process', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} - {}'.format(self.entity, self.process)
@@ -432,11 +432,34 @@ class StateType(models.Model):
 
 
 class State(models.Model):
-    stateType = models.ForeignKey(StateType, on_delete=models.CASCADE)
-    process = models.ForeignKey(Process, on_delete=models.CASCADE)
+    stateType = models.ForeignKey('StateType', on_delete=models.CASCADE)
+    process = models.ForeignKey('Process', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=200, blank=True, default='')
     condition = models.TextField(blank=True, default='')
+
+    def __str__(self):
+        return self.name
+
+
+class Transition(models.Model):
+    process = models.ForeignKey('Process', on_delete=models.CASCADE)
+    currentState = models.ForeignKey('State', on_delete=models.CASCADE, related_name='currentState')
+    nextState = models.ForeignKey('State', on_delete=models.CASCADE, related_name='nextState')
+    actions = models.ManyToManyField('Action', through='Transitionaction', through_fields=('transition', 'action'))
+    # activities = models.ManyToManyField(Activity, related_name='activities')
+    condition = models.TextField(blank=True, default='')
+
+    def __str__(self):
+        return '{} -> {}'.format(self.currentState, self.nextState)
+
+
+class Action(models.Model):
+    actionType = models.ForeignKey('ActionType', on_delete=models.CASCADE)
+    process = models.ForeignKey('Process', on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200, blank=True, default='')
+    # showTo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -449,43 +472,10 @@ class ActionType(models.Model):
         return self.name
 
 
-class Action(models.Model):
-    actionType = models.ForeignKey(ActionType, on_delete=models.CASCADE)
-    process = models.ForeignKey(Process, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=200, blank=True, default='')
-    #showTo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Transition(models.Model):
-    process = models.ForeignKey(Process, on_delete=models.CASCADE)
-    currentState = models.ForeignKey(State, on_delete=models.CASCADE, related_name='currentState')
-    nextState = models.ForeignKey(State, on_delete=models.CASCADE, related_name='nextState')
-    actions = models.ManyToManyField('Action', through='Transitionaction', through_fields=('transition', 'action'))
-    #activities = models.ManyToManyField(Activity, related_name='activities')
-    condition = models.TextField(blank=True, default='')
-
-    def __str__(self):
-        return '{} -> {}'.format(self.currentState, self.nextState)
-
-
 class Transitionaction(models.Model):
     id = models.AutoField(primary_key=True)
     transition = models.ForeignKey('Transition', on_delete=models.DO_NOTHING)
     action = models.ForeignKey('Action', on_delete=models.DO_NOTHING)
 
 
-'''class PropuestaAction(models.Model):
-    propuesta = models.ForeignKey('Propuesta', on_delete=models.CASCADE)
-    action = models.ForeignKey(Action, on_delete=models.CASCADE)
-    transition = models.ForeignKey(Transition, on_delete=models.CASCADE)
-    isActive = models.BooleanField(default=True)
-    isComplete = models.BooleanField(default=False)
-    completed_on = models.DateTimeField(null=True, blank=True)
-    by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
-    def __str__(self):
-        return '{} - {} - {} - {}'.format(self.id, self.propuesta, self.action, self.transition)'''

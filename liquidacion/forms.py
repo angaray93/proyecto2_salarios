@@ -25,6 +25,17 @@ class PreLiqMensualForm(forms.Form):
                                                                                           'id': 'departamento-select',
                                                                                           }))
 
+class FuncionarioForm(forms.ModelForm):
+    class Meta:
+        model = Funcionario
+        fields = '__all__'
+        widgets = {
+            'usuario': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+        }
+
+
 class MovimientoForm(forms.ModelForm):
 
     class Meta:

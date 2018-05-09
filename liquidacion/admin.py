@@ -9,14 +9,15 @@ admin.site.register(Process)
 admin.site.register(DefaultProcess)
 admin.site.register(StateType)
 admin.site.register(State)
-admin.site.register(ActionType)
-admin.site.register(Action)
-admin.site.register(Transition)
+#admin.site.register(ActionType)
+#admin.site.register(Action)
+#admin.site.register(Transition)
 
 #--------------------------------------------------#
 
 class FuncionarioAdmin(admin.ModelAdmin):
-    list_display = ('cedula', 'nombres', 'apellidos', 'fechanacimiento', 'direccion', 'email', 'telefono', 'cantHijos')
+    form = FuncionarioForm
+    list_display = ('cedula', 'nombres', 'apellidos', 'fechanacimiento', 'direccion', 'email', 'telefono', 'cantHijos','usuario')
     search_fields = ('cedula', 'nombres', 'apellidos')
     raw_id_fields = ('usuario',)
 

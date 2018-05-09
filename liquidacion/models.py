@@ -478,4 +478,23 @@ class Transitionaction(models.Model):
     action = models.ForeignKey('Action', on_delete=models.DO_NOTHING)
 
 
+class LiquidacionAction(models.Model):
+    liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE)
+    action = models.ForeignKey('Action', on_delete=models.CASCADE)
+    transition = models.ForeignKey('Transition', on_delete=models.CASCADE)
+    isActive = models.BooleanField(default=True)
+    isComplete = models.BooleanField(default=False)
+    completed_on = models.DateTimeField(null=True, blank=True)
+    by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+
+class Operation(models.Model):
+    created_on = models.DateTimeField(null=True, blank=True)
+    action = models.ForeignKey('Action', on_delete=models.CASCADE)
+    transition = models.ForeignKey('Transition', on_delete=models.CASCADE)
+    isActive = models.BooleanField(default=True)
+    isComplete = models.BooleanField(default=False)
+    completed_on = models.DateTimeField(null=True, blank=True)
+    by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
 

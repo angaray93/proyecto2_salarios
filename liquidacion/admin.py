@@ -9,9 +9,10 @@ admin.site.register(Process)
 admin.site.register(DefaultProcess)
 admin.site.register(StateType)
 admin.site.register(State)
-#admin.site.register(ActionType)
-#admin.site.register(Action)
-#admin.site.register(Transition)
+admin.site.register(ActionType)
+admin.site.register(Action)
+admin.site.register(Transition)
+admin.site.register(Transitionaction)
 
 #--------------------------------------------------#
 

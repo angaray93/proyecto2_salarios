@@ -11,15 +11,11 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_GET
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
-
 from liquidacion.forms import *
 from liquidacion.mixins import AjaxFormMixin, AjaxTemplateMixin
 from liquidacion.models import *
 from django_popup_view_field.registry import registry_popup_view
-
-
 import json
-
 
 def index(request):
     return render(request, 'index.html')
@@ -55,31 +51,27 @@ def parametros_liq_mensual(request):
                     tipo = tipo,
                     propietario = request.user,
                 )
-                print(liquidacion)
+                #print(liquidacion)
                 liquidacion.save()
                 liquidaciones.append(liquidacion)
-                print(liquidaciones)
+                #print(liquidaciones)
             context.update({
                 'lista': liquidaciones,
                 'form': form
             })
-
         else:
             context.update({
                 'errors': form.errors,
                 'form': form
             })
-        return render(request, 'liquidacionmensual/liqmensual_list.html', context)
+        return render(request, 'liquidacionmensual/liqmensual_filtro.html', context)
     else:
         form = PreLiqMensualForm()
-    return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form} )
+    return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form})
 
 
 def generar_liq_mensual(request):
-
     return render(request, 'index.html')
-
-
 
 
 def success_page(request, idmovimiento):

@@ -107,12 +107,36 @@
                 </button>
             </div>
         {% endif %}
+        </div>
 
-
+<div id="success_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #b9bbbe">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-body" class="modal-body">
+                <p class="modal-title w-100 font-weight-bold">Registros creados con exito !</p>
+            </div>
+            <div class="modal-footer">
+                <button id="submitForm" class="btn btn-primary btn-block">Revisar</button>
+            </div>
+        </div>
     </div>
+</div>
 
-    <footer>
-        <script>
+
+<footer>
+    <script type="text/javascript">
+        {% if lista %}
+            $(document).ready(function () {
+                $("#success_modal").modal('show');
+            });
+        {% endif %}
+    </script>
+    <script>
             $(document).ready(function (event) {
                 var departamento_select = $('#departamento-select');
                 $.ajax({
@@ -153,6 +177,6 @@
                 })
             });
         </script>
-    </footer>
+</footer>
 
 {% endblock %}

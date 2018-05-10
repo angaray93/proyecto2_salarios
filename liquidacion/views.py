@@ -26,10 +26,10 @@ def parametros_liq_mensual(request):
     if request.method == 'POST':
         form = PreLiqMensualForm(request.POST)
         if form.is_valid():
-            formulario = form
             depto = form.cleaned_data['departamento']
             fechafin = form.cleaned_data['hasta']
             fechainicio = form.cleaned_data['desde']
+            mes = fechafin.month
             funcionarios = Movimiento.objects\
                 .filter(division__departamento=depto, estado__name='Activo')\
                 .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
@@ -37,13 +37,13 @@ def parametros_liq_mensual(request):
             proceso = Process.objects.get(name='Liquidacion Mensual')
             initial_state_type = StateType.objects.get(name='Inicio')
             initial_state = State.objects.get(process=proceso, stateType=initial_state_type)
-            liquidaciones = []
+            #liquidaciones = []
             for mov in funcionarios:
                 funcionario = Funcionario.objects.get(pk = mov['funcionario__idFuncionario'])
                 liquidacion = Liquidacion(
                     fechacreacion=datetime.datetime.now(),
                     ultimamodificacion = datetime.datetime.now(),
-                    mes = fechafin.month,
+                    mes = mes,
                     inicio_periodo = fechainicio,
                     fin_periodo = fechafin,
                     funcionario = funcionario,
@@ -53,10 +53,11 @@ def parametros_liq_mensual(request):
                 )
                 #print(liquidacion)
                 liquidacion.save()
-                liquidaciones.append(liquidacion)
+                lista = True
+                #liquidaciones.append(liquidacion)
                 #print(liquidaciones)
             context.update({
-                'lista': liquidaciones,
+                'lista': True,
                 'form': form
             })
         else:
@@ -64,10 +65,23 @@ def parametros_liq_mensual(request):
                 'errors': form.errors,
                 'form': form
             })
-        return render(request, 'liquidacionmensual/liqmensual_filtro.html', context)
+        return redirect(reverse('liquidacion:liq_pendientes_list', args=[depto, mes]))
     else:
         form = PreLiqMensualForm()
     return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form})
+
+
+def liq_pendientes_list(request, iddpto, mes):
+    context = {}
+    estado = State.objects.get(stateType__name='Pendiente', process__name='Liquidacion Mensual')
+    departamento = Departamento.objects.get(pk=iddpto)
+    funcionarios = Movimiento.objects \
+        .filter(division__departamento=departamento, estado__name='Activo') \
+        .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
+    liquidaciones = Liquidacion.objects.filter(mes=mes, estado_actual=estado, funcionario__idFuncionario__in= funcionarios)
+    print(liquidaciones)
+
+    return render(request, 'liquidacionmensual/liqmensual_list.html', {'lista': liquidaciones})
 
 
 def generar_liq_mensual(request):
@@ -97,9 +111,12 @@ def mostrar_movimiento_resumen(request, idmovimiento):
 
     return render(request, 'proceso/resumen_movimiento.html', context)
 
+
 def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=None):
     context = {}
     movimiento = None
+    proceso = Process.objects.get(name='Alta de Movimiento')
+    print(proceso)
     if request.POST:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
@@ -110,7 +127,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             else:
                 return render(request, 'proceso/movimiento_form.html', {'movimiento': movimiento, 'form': form})
         else:
-            estado_default = State.objects.get(name='Activo')
+            estado_default = State.objects.get(name='Activo', process=proceso)
             if idpadre:
                 movimiento_padre = Movimiento.objects.get(pk=idpadre)
                 funcionario = movimiento_padre.funcionario
@@ -161,7 +178,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                         if movimiento.tieneAguinaldo is True:
                             aguinaldo = Aguinaldo(movimiento = movimiento)
                             aguinaldo.save()
-                        movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo')
+                        movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo', process=proceso)
                         movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
                         #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
                         movimiento.movimiento_padre.save()
@@ -216,7 +233,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                 movimiento_padre = None
                 q = request.GET.get('term', '')
                 funcionario = Funcionario.objects.get(pk=idfuncionario)
-            estado_default = State.objects.get(name='Activo')
+            estado_default = State.objects.get(name='Activo', process=proceso)
 
             form = MovimientoForm(initial={
                 'funcionario': funcionario,

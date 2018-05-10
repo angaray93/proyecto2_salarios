@@ -121,7 +121,10 @@
                 <p class="modal-title w-100 font-weight-bold">Registros creados con exito !</p>
             </div>
             <div class="modal-footer">
-                <button id="submitForm" class="btn btn-primary btn-block">Revisar</button>
+                <button id="submitForm" class="btn btn-primary btn-block"
+                        href ="{% url 'liquidacion:liq_pendientes_list' movimiento.pk %}">
+                    Revisar
+                </button>
             </div>
         </div>
     </div>

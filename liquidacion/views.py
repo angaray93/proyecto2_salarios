@@ -143,7 +143,9 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
     else:
         if idliquidacionhaber :
             liq_haber = get_object_or_404(Liquidacionhaber, pk=idliquidacionhaber)
-            constantes = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
+            constantes = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)\
+                .annotate(tot=Sum('monto'))
+
             print(constantes)
             form = LiquidacionhaberForm(instance=liq_haber)
             context.update({

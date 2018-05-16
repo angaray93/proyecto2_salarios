@@ -10,6 +10,18 @@ from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 from django.forms.widgets import TimeInput
 
+class LiquidacionhaberForm(forms.ModelForm):
+    class Meta:
+        model = Liquidacion
+        exclude = ['haber' ,'liquidacion']
+
+
+class LiqMensualForm(forms.ModelForm):
+    class Meta:
+        model = Liquidacion
+        exclude = ['ultimamodificacion' ,'propietario', 'tipo', 'haberes']
+
+
 class PreLiqMensualForm(forms.Form):
 
     desde = forms.DateTimeField(label='Desde', required=True,

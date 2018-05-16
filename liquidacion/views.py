@@ -1,6 +1,8 @@
 from datetime import timedelta, timezone
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.paginator import Paginator
 from django.db.models import *
 from django.http import JsonResponse, Http404
@@ -19,6 +21,55 @@ import json
 
 def index(request):
     return render(request, 'index.html')
+
+
+def vista_liq_mensual(request, idliquidacion):
+    context = {}
+    advertencia = liquidacion= None
+    if request.method == 'POST':
+        if idliquidacion:
+            liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
+        form = LiqMensualForm(request.POST, instance=liquidacion)
+        if form.is_valid():
+            liquidacion = form.save()
+            if request.POST.get('descartar', '') == 'Descartar':
+                print(request.POST.get('descartar', ''))
+            return redirect(reverse('liquidacion:editar_liquidacion', args=[liquidacion.pk]))
+        else:
+            # TODO Implementar sistema de errores
+            context.update({
+                'errors': form.errors,
+                'form': form
+            })
+        return render(request, 'liquidacionmensual/liqmensual_form.html', context)
+    else:
+        if idliquidacion :
+            liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
+            haberes = Haber.objects.filter(movimiento__funcionario=liquidacion.funcionario)
+            if liquidacion.estado_actual.name == 'Nuevo':
+                for haber in haberes:
+                    liq_haber = Liquidacionhaber(
+                        haber=haber,
+                        liquidacion=liquidacion
+                    )
+                    liq_haber.save()
+            liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion)
+            form = LiqMensualForm(instance=liquidacion)
+            context.update({
+                'form': form ,
+                'liquidacion': liquidacion,
+                'liq_haberes': liq_haberes,
+            })
+            try:
+                transition = Transition.objects.get(process=liquidacion.estado_actual.process, currentState=liquidacion.estado_actual)
+                liquidacion.estado_actual = transition.nextState
+                liquidacion.save()
+            except MultipleObjectsReturned:
+                advertencia = 'Seleccione una accion para continuar'
+                context.update({
+                    'advertencia': advertencia,
+                })
+    return render(request, 'liquidacionmensual/liqmensual_form.html', context)
 
 
 def parametros_liq_mensual(request):
@@ -60,12 +111,13 @@ def parametros_liq_mensual(request):
                 'lista': True,
                 'form': form
             })
+            return redirect(reverse('liquidacion:liq_pendientes_list', args=[depto, mes]))
         else:
             context.update({
                 'errors': form.errors,
                 'form': form
             })
-        return redirect(reverse('liquidacion:liq_pendientes_list', args=[depto, mes]))
+        #return redirect(reverse('liquidacion:liq_pendientes_list', args=[depto, mes]))
     else:
         form = PreLiqMensualForm()
     return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form})
@@ -73,19 +125,33 @@ def parametros_liq_mensual(request):
 
 def liq_pendientes_list(request, iddpto, mes):
     context = {}
-    estado = State.objects.get(stateType__name='Pendiente', process__name='Liquidacion Mensual')
+    estado = State.objects.get(stateType__name='Inicio', process__name='Liquidacion Mensual')
     departamento = Departamento.objects.get(pk=iddpto)
     funcionarios = Movimiento.objects \
         .filter(division__departamento=departamento, estado__name='Activo') \
         .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
     liquidaciones = Liquidacion.objects.filter(mes=mes, estado_actual=estado, funcionario__idFuncionario__in= funcionarios)
-    print(liquidaciones)
 
-    return render(request, 'liquidacionmensual/liqmensual_list.html', {'lista': liquidaciones})
+    return render(request, 'liquidacionmensual/liqmensual_list.html', {'lista': liquidaciones, 'dpto': departamento})
 
 
-def generar_liq_mensual(request):
-    return render(request, 'index.html')
+def vista_liquidacionhaber(request, idliquidacionhaber):
+    context = {}
+    advertencia = liq_haber= None
+    if request.method == 'POST':
+        print('POST')
+    else:
+        if idliquidacionhaber :
+            liq_haber = get_object_or_404(Liquidacionhaber, pk=idliquidacionhaber)
+            constantes = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
+            print(constantes)
+            form = LiquidacionhaberForm(instance=liq_haber)
+            context.update({
+                'form': form ,
+                'liq_haber': liq_haber,
+                'constantes': constantes,
+            })
+    return render(request, 'liquidacionmensual/liquidacionhaber_form.html', context)
 
 
 def success_page(request, idmovimiento):
@@ -116,7 +182,6 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
     context = {}
     movimiento = None
     proceso = Process.objects.get(name='Alta de Movimiento')
-    print(proceso)
     if request.POST:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)

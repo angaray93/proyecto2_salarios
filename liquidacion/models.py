@@ -54,7 +54,7 @@ class Funcionario(models.Model):
     telefono = models.CharField(max_length=50, default='')
     cantHijos = models.IntegerField(verbose_name='Cantidad de Hijos')
     #-----------------------------------Relationships-----------------------------------------#
-    usuario = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='fk_funcionario_usuario')
+    usuario = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='fk_funcionario_usuario_fk')
     grado = models.ForeignKey('GradoUniversitario', on_delete=models.DO_NOTHING, related_name='fk_funcionario_grado' )
     estadocivil = models.ForeignKey('EstadoCivil', on_delete=models.DO_NOTHING, related_name='fk_funcionario_ecivil', verbose_name='Estado Civil')
     ciudadnacimiento = models.ForeignKey('Ciudad', on_delete=models.DO_NOTHING, related_name='fk_funcionario_ciudad', verbose_name='Lugar de Nacimiento')
@@ -331,8 +331,8 @@ class AutoridadFirmante(models.Model):
 
 class Liquidacion(models.Model):
     id = models.AutoField(primary_key=True)
-    fechacreacion = models.DateField()
-    ultimamodificacion = models.DateField()
+    fechacreacion = models.DateTimeField()
+    ultimamodificacion = models.DateTimeField()
     mes = models.IntegerField()
     total_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
     total_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default= 0)
@@ -340,8 +340,8 @@ class Liquidacion(models.Model):
     inicio_periodo = models.DateTimeField()
     fin_periodo = models.DateTimeField()
     #-----------------------------------Relationships-----------------------------------------#
-    haberes = models.ManyToManyField('Haber', through='Liquidacionhaber', through_fields=('liquidacion', 'haber'))
-    funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_liquidacion_funcionario')
+    haberes = models.ManyToManyField('Haber', through='Liquidacionhaber', through_fields=('liquidacion', 'haber'), null=True)
+    funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_liq_funcionario')
     estado_actual = models.ForeignKey('State', on_delete=models.CASCADE, related_name='fk_liquidacion_estado')
     tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE, related_name='fk_liquidacion_tipo')
     propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fk_liquidacion_user')
@@ -361,12 +361,13 @@ class LiquidacionType(models.Model):
 
 class DetalleLiquidacion(models.Model):
     id = models.AutoField(primary_key=True)
-    cantidad = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
-    monto = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
+    cantidad = models.DecimalField(max_digits=5, decimal_places=1, default=1)
+    monto = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    total = models.DecimalField(max_digits=10, decimal_places=1, default=0)
     #-----------------------------------Relationships-----------------------------------------#
-    parametro = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_detalle_funcionario')
+    parametro = models.ForeignKey('Parametro', on_delete=models.CASCADE, related_name='fk_detalle_funcionario')
     variable = models.ForeignKey('Variable', on_delete=models.CASCADE, related_name='fk_detalle_variable')
-    liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE, related_name='fk_detalle_liquidacion')
+    liquidacion = models.ForeignKey('Liquidacionhaber', on_delete=models.CASCADE, related_name='fk_detalle_liquidacionhaber')
 
 
 class Variable(models.Model):
@@ -384,8 +385,9 @@ class Variable(models.Model):
 
 class Parametro(models.Model):
     id = models.AutoField(primary_key=True)
-    codigo = models.CharField(max_length=50, default='', unique=True)
+    codigo = models.CharField(max_length=50, default='', unique=True, null=True)
     descripcion = models.CharField(max_length=50, default='', unique=True)
+    valor_numerico = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True, default=0)
 
     class Meta:
         ordering = ["descripcion"]
@@ -406,6 +408,11 @@ class Liquidacionhaber(models.Model):
     id = models.AutoField(primary_key=True)
     haber = models.ForeignKey(Haber, on_delete=models.CASCADE)
     liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE)
+    monto_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
+    monto_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
+
+    class Meta:
+        unique_together = (('haber', 'liquidacion'),)
 
 
 class Process(models.Model):

@@ -34,8 +34,9 @@
                         <td>{{ item.funcionario }}</td>
                         <td>{{ item.mes }}</td>
                         <td class="centrartexto">
-                            <a title="Editar" class="btn btn-outline-primary" type="button"
-                            href =""><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                            <button title="Editar" class="btn btn-outline-primary" type="button"
+                               name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacion' item.pk %}')">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                             <a title="Editar" class="btn btn-outline-primary" type="button"
                             href =""><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                             <a title="Editar" class="btn btn-outline-primary" type="button"

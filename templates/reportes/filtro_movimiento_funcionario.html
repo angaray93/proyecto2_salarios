@@ -130,7 +130,8 @@
                     <td>{{ movimiento.funcionario.nombres }} {{ movimiento.funcionario.apellidos }}</td>
                     <td>{{ movimiento.motivo }}</td>
                     <td>{{ movimiento.categoria_salarial.codigo }}</td>
-                    <td class="centrartexto"><a title="Editar" class="btn btn-outline-primary" type="button"
+                    <td class="centrartexto">
+                        <a title="Editar" class="btn btn-outline-primary" type="button"
                         href ="{% url 'liquidacion:movimiento_resumen' movimiento.pk %}">
                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                     </td>

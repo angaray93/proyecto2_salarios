@@ -38,6 +38,7 @@ urlpatterns = [
     path('ajax/traer_departamentos/', views.traer_departamentos, name='traer_departamentos'),
     path('ajax/traer_funcionarios/', views.traer_funcionarios, name='traer_funcionarios'),
     path('liqpendientes/dpto/<int:iddpto>/mes/<int:mes>/', views.liq_pendientes_list, name='liq_pendientes_list'),
+    path('editar_liquidacion/<int:idliquidacion>/', views.vista_liq_mensual, name='editar_liquidacion'),
 
     #path('movimiento/<int:idmovimiento>/constante/<int:idconstante>', views.constante_vista, name='borrar_constante'),
 ]

@@ -10,9 +10,15 @@ from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 from django.forms.widgets import TimeInput
 
+class DetalleLiquidacionForm(forms.ModelForm):
+    class Meta:
+        model = DetalleLiquidacion
+        exclude = ['liquidacion']
+
+
 class LiquidacionhaberForm(forms.ModelForm):
     class Meta:
-        model = Liquidacion
+        model = Liquidacionhaber
         exclude = ['haber' ,'liquidacion']
 
 

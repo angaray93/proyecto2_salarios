@@ -1,9 +1,10 @@
 import datetime
-
+from django.db.models import Sum, Max, Q
 from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db.models.functions import Coalesce
 
 from sueldos.settings import DATE_INPUT_FORMATS
 
@@ -88,6 +89,8 @@ class Movimiento(models.Model):
     og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.DO_NOTHING, related_name='fk_movimiento_og')
     movimiento_padre = models.ForeignKey('self', on_delete=models.DO_NOTHING, blank=True, null=True)
     estado = models.ForeignKey('State', on_delete=models.DO_NOTHING, related_name='fk_movimiento_estado')
+
+
 
 
 class Pago(models.Model):
@@ -369,6 +372,9 @@ class DetalleLiquidacion(models.Model):
     variable = models.ForeignKey('Variable', on_delete=models.CASCADE, related_name='fk_detalle_variable')
     liquidacion = models.ForeignKey('Liquidacionhaber', on_delete=models.CASCADE, related_name='fk_detalle_liquidacionhaber')
 
+    class Meta:
+        unique_together = (('liquidacion', 'variable'),)
+
 
 class Variable(models.Model):
     id = models.AutoField(primary_key=True)
@@ -410,9 +416,26 @@ class Liquidacionhaber(models.Model):
     liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE)
     monto_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
     monto_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
+    subTotal = models.DecimalField(max_digits=10, decimal_places=1, default=0)
 
     class Meta:
         unique_together = (('haber', 'liquidacion'),)
+
+    def suma_constante_debito(self):
+        suma_monto_debito = self.haber.movimiento.fk_constante_movimiento.filter(movimiento=self.haber.movimiento, tipo__tipo='D')\
+            .aggregate(monto_debito=Coalesce(
+                Sum(models.F('monto')), 0,
+                output_field=models.DecimalField(decimal_places=2)
+            ))['monto_debito'] or 0
+        return suma_monto_debito
+
+    def suma_constante_credito(self):
+        suma_monto_credito = self.haber.movimiento.fk_constante_movimiento.filter(movimiento=self.haber.movimiento, tipo__tipo='C')\
+            .aggregate(monto_credito=Coalesce(
+                Sum(models.F('monto')), 0,
+                output_field=models.DecimalField(decimal_places=2)
+            ))['monto_credito'] or 0
+        return suma_monto_credito
 
 
 class Process(models.Model):

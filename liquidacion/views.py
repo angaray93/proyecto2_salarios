@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 from django.db.models import *
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect, render_to_response
@@ -21,6 +22,47 @@ import json
 
 def index(request):
     return render(request, 'index.html')
+
+
+@login_required()
+def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None):
+    context = {}
+    liquidacionhaber = Liquidacionhaber.objects.get(pk=idliquidacionhaber)
+
+    if request.method == "POST":
+        if iddetalleliq:
+            detalleliquidacion = DetalleLiquidacion.objects.get(pk=iddetalleliq)
+            form = DetalleLiquidacionForm(request.POST, instance=detalleliquidacion)
+            context.update({
+                'detalleliquidacion': detalleliquidacion
+            })
+        else:
+            detalleliquidacion = DetalleLiquidacion(
+                liquidacion =liquidacionhaber,
+            )
+            form = DetalleLiquidacionForm(request.POST, instance=detalleliquidacion)
+        if form.is_valid():
+            print('El formulario es valido')
+        else:
+            print('El formulario no es valido')
+    else:
+        if iddetalleliq:
+            detalleliquidacion = DetalleLiquidacion.objects.get(pk=iddetalleliq)
+            form = DetalleLiquidacionForm(request.POST, instance=detalleliquidacion)
+            context.update({
+                'detalleliquidacion': detalleliquidacion
+            })
+        else:
+            # TODO Definir valores iniciales
+            form = DetalleLiquidacionForm(initial={
+                'liquidacion' : liquidacionhaber,
+            })
+
+    context.update({
+        #'contrato': contrato,
+        'form': form
+    })
+    return render(request, 'liquidacionmensual/detalleliquidacion_form.html', context)
 
 
 def vista_liq_mensual(request, idliquidacion):
@@ -143,10 +185,11 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
     else:
         if idliquidacionhaber :
             liq_haber = get_object_or_404(Liquidacionhaber, pk=idliquidacionhaber)
-            constantes = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)\
-                .annotate(tot=Sum('monto'))
-
-            print(constantes)
+            constantes = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
+            liq_haber.monto_debito = liq_haber.suma_constante_debito()
+            liq_haber.monto_credito = liq_haber.suma_constante_credito()
+            liq_haber.subTotal = round(( liq_haber.haber.movimiento.categoria_salarial.asignacion + liq_haber.monto_credito ) - liq_haber.monto_debito, 0)
+            liq_haber.save()
             form = LiquidacionhaberForm(instance=liq_haber)
             context.update({
                 'form': form ,

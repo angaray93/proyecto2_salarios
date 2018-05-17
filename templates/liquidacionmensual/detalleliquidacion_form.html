@@ -85,3 +85,28 @@
         </div>
     </div>
 </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function (event) {
+
+            $(document).ready(function () {
+                $('#id_monto').prop('disabled',true);
+                $('#id_total').prop('disabled',true);
+            });
+
+            $('#id_parametro').change(function () {
+                var select = document.getElementById('id_parametro');
+                var options = select.options;
+                var selected = select.options[select.selectedIndex];
+                var valor = $( "#id_parametro option:selected" ).text().trim();
+                if (valor == "Monto") {
+                    $('#id_monto').prop('disabled',false);
+                    $('#id_cantidad').prop('disabled',true);
+                } else {
+                    $('#id_monto').prop('disabled',true);
+                    $('#id_cantidad').prop('disabled',false);
+                }
+            });
+        })
+    </script>

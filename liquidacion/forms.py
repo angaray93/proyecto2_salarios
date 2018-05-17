@@ -13,7 +13,7 @@ from django.forms.widgets import TimeInput
 class DetalleLiquidacionForm(forms.ModelForm):
     class Meta:
         model = DetalleLiquidacion
-        exclude = ['liquidacion']
+        exclude = ['liquidacion','total']
 
 
 class LiquidacionhaberForm(forms.ModelForm):
@@ -311,12 +311,12 @@ class ParametroForm(forms.ModelForm):
         if convertido != 3 or codigo.isupper() is False:
             raise forms.ValidationError("Ingrese un numero de 3 letras en mayusculas, Ejemplo: 'JOR','HOR'")
         return self.cleaned_data['codigo']
-    def clean_descripcion(self):
+    '''def clean_descripcion(self):
         descripcion = self.cleaned_data.get('descripcion')
         convertido = descripcion.replace(" ", "")
         if convertido.isalpha() is False:
             raise forms.ValidationError("Ingrese una descripcion valida, sin numeros ni simbolos")
-        return self.cleaned_data['descripcion']
+        return self.cleaned_data['descripcion']'''
 
 
 class StateForm(forms.ModelForm):

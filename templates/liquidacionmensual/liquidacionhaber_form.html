@@ -82,7 +82,7 @@
     {% if liq_haber %}
         <div class="row">
             <div class="col-lg-10">
-                <a onclick="return abrir_modal('{% url 'liquidacion:detalleliquidacion-add' contrato.pk %}')"
+                <a onclick="return abrir_modal('{% url 'liquidacion:detalleliquidacion-add' liq_haber.pk %}')"
                    class="btn btn-primary">
                         Agregar Detalle
                 </a>
@@ -108,13 +108,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for sla in sla_list %}
+                        {% for detalle in detalles_list %}
                             <tr class='clickable-row'>
-                                <td>{{ sla.nivel.nivel }}</td>
-                                <td>{{ sla.tiempoderespuesta }}</td>
+                                <td></td>
+                                <td></td>
                                 <td class="text-center">
                                     <button class="btn btn-outline-primary btn-edit" type="button"
-                                            onclick="return abrir_modal('{% url 'Core:editar_sla' sla.contrato.pk sla.pk %}')">
+                                            onclick="">
                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                     </button>
                                 </td>
@@ -123,32 +123,6 @@
                     </tbody>
                 </table>
             </div>
-            </div>
-        <div class="row">
-                <div class="col-lg-12">
-                    <table id="tabla_periodos" class="table table-hover">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th class="text-center">Numero de Periodo</th>
-                                    <th class="text-center">Mes</th>
-                                    <th class="text-center">Anho</th>
-                                    <th class="text-center">Total de horas del periodo</th>
-                                    <th class="text-center">Horas restantes</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for periodo in periodos %}
-                                    <tr class='clickable-row'>
-                                        <td>{{ periodo.numero }}</td>
-                                        <td>{{ periodo.mes }}</td>
-                                        <td>{{ periodo.anho }}</td>
-                                        <td>{{ periodo.total_horas }}</td>
-                                        <td>{{ periodo.horasrestantes }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                    </table>
-                </div>
             </div>
     {% endif %}
 

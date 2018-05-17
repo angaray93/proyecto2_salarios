@@ -6,11 +6,7 @@
         </div>
 
         <div class="modal-body">
-            {% if detalleliquidacion %}
-                <form class="well" role="form" action="" method="post">
-            {% else %}
-                <form role="form" action="" method="post">
-            {% endif %}
+        <form role="form" action="" method="post">
             {% csrf_token %}
             <div class="panel panel-default">
                 <div class="panel-body">

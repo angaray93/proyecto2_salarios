@@ -40,6 +40,9 @@ urlpatterns = [
     path('liqpendientes/dpto/<int:iddpto>/mes/<int:mes>/', views.liq_pendientes_list, name='liq_pendientes_list'),
     path('editar_liquidacion/<int:idliquidacion>/', views.vista_liq_mensual, name='editar_liquidacion'),
     path('liquidacion_haber/<int:idliquidacionhaber>/', views.vista_liquidacionhaber, name='editar_liquidacionhaber'),
-    path('liquidacionhaber/<int:idliquidacionhaber>/detalle/<int:iddetalleliq>', views.vista_detalleliquidacion, name='detalleliquidacion-add'),
+    path('liquidacionhaber/<int:idliquidacionhaber>/detalle/nuevo/', views.vista_detalleliquidacion, name='detalleliquidacion-add'),
+    path('liquidacionhaber/<int:idliquidacionhaber>/detalle/<int:iddetalleliq>', views.vista_detalleliquidacion,
+         name='detalleliquidacion-edit'),
+
     #path('movimiento/<int:idmovimiento>/constante/<int:idconstante>', views.constante_vista, name='borrar_constante'),
 ]

@@ -57,11 +57,10 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
             form = DetalleLiquidacionForm(initial={
                 'liquidacion' : liquidacionhaber,
             })
-
-    context.update({
-        #'contrato': contrato,
-        'form': form
-    })
+        context.update({
+            #'contrato': contrato,
+            'form': form
+        })
     return render(request, 'liquidacionmensual/detalleliquidacion_form.html', context)
 
 
@@ -186,6 +185,7 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
         if idliquidacionhaber :
             liq_haber = get_object_or_404(Liquidacionhaber, pk=idliquidacionhaber)
             constantes = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
+            detalles_list = DetalleLiquidacion.objects.filter(liquidacion=liq_haber)
             liq_haber.monto_debito = liq_haber.suma_constante_debito()
             liq_haber.monto_credito = liq_haber.suma_constante_credito()
             liq_haber.subTotal = round(( liq_haber.haber.movimiento.categoria_salarial.asignacion + liq_haber.monto_credito ) - liq_haber.monto_debito, 0)
@@ -195,6 +195,7 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
                 'form': form ,
                 'liq_haber': liq_haber,
                 'constantes': constantes,
+                'detalles_list': detalles_list,
             })
     return render(request, 'liquidacionmensual/liquidacionhaber_form.html', context)
 

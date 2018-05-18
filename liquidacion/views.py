@@ -28,7 +28,6 @@ def index(request):
 def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None):
     context = {}
     liquidacionhaber = Liquidacionhaber.objects.get(pk=idliquidacionhaber)
-
     if request.method == "POST":
         if iddetalleliq:
             detalleliquidacion = DetalleLiquidacion.objects.get(pk=iddetalleliq)
@@ -37,14 +36,27 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
                 'detalleliquidacion': detalleliquidacion
             })
         else:
-            detalleliquidacion = DetalleLiquidacion(
-                liquidacion =liquidacionhaber,
-            )
-            form = DetalleLiquidacionForm(request.POST, instance=detalleliquidacion)
+            form = DetalleLiquidacionForm(request.POST)
         if form.is_valid():
-            print('El formulario es valido')
+            detalleliquidacion = form.save()
+            detalleliquidacion.monto = detalleliquidacion.calcular_monto()
+            detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+            detalleliquidacion.save()
+            if detalleliquidacion.variable.tipo == 'D':
+                detalleliquidacion.liquidacion_haber.suma_detalles_debito()
+            else:
+                detalleliquidacion.liquidacion_haber.suma_detalles_credito()
+            #detalleliquidacion.liquidacion_haber.subTotal = round(detalleliquidacion.liquidacion_haber.monto_credito
+             #                                                     - detalleliquidacion.liquidacion_haber.monto_debito, 0)
+            #detalleliquidacion.liquidacion_haber.save()
+            return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[detalleliquidacion.liquidacion_haber.pk]))
         else:
-            print('El formulario no es valido')
+            # TODO Implementar sistema de errores
+            context.update({
+                'errors': form.errors,
+                'form': form
+            })
+            return render(request, 'liquidacionmensual/detalleliquidacion_form.html', context)
     else:
         if iddetalleliq:
             detalleliquidacion = DetalleLiquidacion.objects.get(pk=iddetalleliq)
@@ -55,10 +67,10 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
         else:
             # TODO Definir valores iniciales
             form = DetalleLiquidacionForm(initial={
-                'liquidacion' : liquidacionhaber,
+                'liquidacion_haber' : liquidacionhaber,
             })
         context.update({
-            #'contrato': contrato,
+            'liquidacion_haber': liquidacionhaber,
             'form': form
         })
     return render(request, 'liquidacionmensual/detalleliquidacion_form.html', context)
@@ -93,6 +105,10 @@ def vista_liq_mensual(request, idliquidacion):
                         haber=haber,
                         liquidacion=liquidacion
                     )
+                    liq_haber.monto_debito = liq_haber.suma_constante_debito()
+                    liq_haber.monto_credito = liq_haber.suma_constante_credito()
+                    liq_haber.subTotal = round((liq_haber.haber.movimiento.categoria_salarial.asignacion + liq_haber.monto_credito)
+                                               - liq_haber.monto_debito, 0)
                     liq_haber.save()
             liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion)
             form = LiqMensualForm(instance=liquidacion)
@@ -129,7 +145,6 @@ def parametros_liq_mensual(request):
             proceso = Process.objects.get(name='Liquidacion Mensual')
             initial_state_type = StateType.objects.get(name='Inicio')
             initial_state = State.objects.get(process=proceso, stateType=initial_state_type)
-            #liquidaciones = []
             for mov in funcionarios:
                 funcionario = Funcionario.objects.get(pk = mov['funcionario__idFuncionario'])
                 liquidacion = Liquidacion(
@@ -143,11 +158,7 @@ def parametros_liq_mensual(request):
                     tipo = tipo,
                     propietario = request.user,
                 )
-                #print(liquidacion)
                 liquidacion.save()
-                lista = True
-                #liquidaciones.append(liquidacion)
-                #print(liquidaciones)
             context.update({
                 'lista': True,
                 'form': form
@@ -158,7 +169,6 @@ def parametros_liq_mensual(request):
                 'errors': form.errors,
                 'form': form
             })
-        #return redirect(reverse('liquidacion:liq_pendientes_list', args=[depto, mes]))
     else:
         form = PreLiqMensualForm()
     return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form})
@@ -185,11 +195,7 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
         if idliquidacionhaber :
             liq_haber = get_object_or_404(Liquidacionhaber, pk=idliquidacionhaber)
             constantes = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
-            detalles_list = DetalleLiquidacion.objects.filter(liquidacion=liq_haber)
-            liq_haber.monto_debito = liq_haber.suma_constante_debito()
-            liq_haber.monto_credito = liq_haber.suma_constante_credito()
-            liq_haber.subTotal = round(( liq_haber.haber.movimiento.categoria_salarial.asignacion + liq_haber.monto_credito ) - liq_haber.monto_debito, 0)
-            liq_haber.save()
+            detalles_list = DetalleLiquidacion.objects.filter(liquidacion_haber=liq_haber)
             form = LiquidacionhaberForm(instance=liq_haber)
             context.update({
                 'form': form ,

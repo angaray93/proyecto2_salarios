@@ -23,7 +23,7 @@
 </div>
 {% endif %}
 
- <form method="post" id="liqhaber_form"> <!--FORM -->
+ <form method="post" id="liqhaber_form">
     {% csrf_token %}
     <hr>
         <input type="hidden" name="haber" value="{{ liq_haber.haber }}">
@@ -86,15 +86,6 @@
                    class="btn btn-primary">
                         Agregar Detalle
                 </a>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-10">
-                {% for message in messages %}
-                    <div class="alert alert-danger">{{ message }}
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    </div>
-                {% endfor %}
             </div>
         </div>
         <div class="row">

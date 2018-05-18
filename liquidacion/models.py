@@ -364,16 +364,27 @@ class LiquidacionType(models.Model):
 
 class DetalleLiquidacion(models.Model):
     id = models.AutoField(primary_key=True)
-    cantidad = models.DecimalField(max_digits=5, decimal_places=1, default=1)
-    monto = models.DecimalField(max_digits=10, decimal_places=1, default=0)
-    total = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    cantidad = models.DecimalField(max_digits=5, decimal_places=1, default=1, blank=True,)
+    monto = models.DecimalField(max_digits=10, decimal_places=1, default=0, blank=True,)
+    total_detalle = models.DecimalField(max_digits=10, decimal_places=1, default=0, blank=True, null=True)
     #-----------------------------------Relationships-----------------------------------------#
     parametro = models.ForeignKey('Parametro', on_delete=models.CASCADE, related_name='fk_detalle_funcionario')
     variable = models.ForeignKey('Variable', on_delete=models.CASCADE, related_name='fk_detalle_variable')
-    liquidacion = models.ForeignKey('Liquidacionhaber', on_delete=models.CASCADE, related_name='fk_detalle_liquidacionhaber')
+    liquidacion_haber = models.ForeignKey('Liquidacionhaber', on_delete=models.CASCADE, db_column='liquidacion_haber_id')
 
     class Meta:
-        unique_together = (('liquidacion', 'variable'),)
+        unique_together = (('liquidacion_haber', 'variable'),)
+
+    def calcular_monto(self):
+        if self.monto == 0 :
+            monto = round(self.liquidacion_haber.haber.movimiento.categoria_salarial.asignacion / self.parametro.valor_numerico, 0)
+        else:
+            monto = self.monto
+        return monto
+
+    def calculo_totaldetalle(self):
+        total = round(self.cantidad * self.monto, 0)
+        return total
 
 
 class Variable(models.Model):
@@ -436,6 +447,28 @@ class Liquidacionhaber(models.Model):
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_credito'] or 0
         return suma_monto_credito
+
+    def suma_detalles_debito(self):
+        suma_detalle_debito = self.detalleliquidacion_set.filter(liquidacion_haber=self.id, variable__tipo='D')\
+            .aggregate(monto_debito=Coalesce(
+                Sum(models.F('total_detalle')), 0,
+                output_field=models.DecimalField(decimal_places=2)
+            ))['monto_debito'] or 0
+        print('suma_detalle_debito', suma_detalle_debito)
+        return suma_detalle_debito
+
+    def suma_detalles_credito(self):
+        suma_detalle_credito = self.detalleliquidacion_set.filter(liquidacion_haber=self.id, variable__tipo='C')\
+            .aggregate(monto_credito=Coalesce(
+                Sum(models.F('total_detalle')), 0,
+                output_field=models.DecimalField(decimal_places=2)
+            ))['monto_credito'] or 0
+        print('suma_detalle_credito', suma_detalle_credito)
+        return suma_detalle_credito
+
+    def calcular_total(self):
+        total = round((self.haber.movimiento.categoria_salarial.asignacion + self.monto_credito) - self.monto_debito, 0)
+        return total
 
 
 class Process(models.Model):

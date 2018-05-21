@@ -23,167 +23,138 @@
 </div>
 {% endif %}
 
- <form method="post" id="liqmensual_form"> <!--FORM -->
+<form method="post" id="liquidacion_form">
     {% csrf_token %}
+    <div class="row"><!--titulo-->
+        <h4>Liquidacion Salarial Mensual</h4> <!--fin titulo-->
+    </div> <!--fin titulo-->
     <hr>
-        <input type="hidden" name="ultimamodificacion" value="{{ liquidacion.ultimamodificacion|unlocalize }}">
-        <input type="hidden" name="propietario" value="{{ liquidacion.propietario }}">
-        <input type="hidden" name="tipo" value="{{ liquidacion.tipo }}">
+    <div class="row mt-2"> <!-- botones -->
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 btn_sep">
+                    <button type="submit" form="liquidacion_form"
+                            name="boton" value="Descartar"
+                            formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
+                            class="btn" style="width: 100%">
+                        Descartar
+                    </button>
+                </div>
+                <div class="col-md-3 col-sm-3 btn_sep">
+                    <button type="submit" form="liquidacion_form"
+                            name="boton" value="Confirmar"
+                            formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
+                            class="btn" style="width: 100%">
+                        Confirmar
+                    </button>
+                </div>
+                <div class="col-md-3 col-sm-3 btn_sep">
+                    <button type="submit" form="liquidacion_form"
+                            name="boton" value="Guardar"
+                            formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
+                            class="btn" style="width: 100%">
+                        Guardar Borrador
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div><!-- fin botones -->
+    <hr>
+    <input type="hidden" name="ultimamodificacion" value="{{liquidacion.ultimamodificacion|unlocalize }}">
+    <input type="hidden" name="propietario" value="{{ liquidacion.propietario }}">
+    <input type="hidden" name="tipo" value="{{ liquidacion.tipo }}">
+    <input type="hidden" name="estado_actual" value="{{ liquidacion.estado_actual.pk }}">
 
-        <div class="row separador"></div>
-        <div class="row mt-2"> <!-- botones -->
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-3 btn_sep">
-                            <button type="submit" form="liqmensual_form"
-                                    name="descartar" value="Descartar"
-                                    formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
-                                    class="btn" style="width: 100%">
-                                Descartar
-                            </button>
-                        </div>
-                        <div class="col-md-3 col-sm-3 btn_sep">
-                            <button type="submit" form="liqmensual_form"
-                                    name="confirmar" value="Confirmar"
-                                    class="btn" style="width: 100%">
-                                Confirmar
-                            </button>
-                        </div>
-                        <div class="col-md-3 col-sm-3 btn_sep">
-                            <button type="submit" form="liqmensual_form"
-                                    name="guardar" value="Guardar"
-                                    class="btn" style="width: 100%">
-                                Guardar Borrador
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- fin botones -->
-    <hr>
-        <div class="row mt-2">
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="fechacreacion">Fecha de Creacion:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.fechacreacion }}" disabled/>
-                        <input type="hidden" name="fechacreacion" value="{{ liquidacion.fechacreacion|date:"d/m/Y H:i" }}">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="mes">Mes:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.mes }}" disabled/>
-                        <input type="hidden" name="mes" value="{{ liquidacion.mes }}">
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="total_debito">Total Debito:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.total_debito }}" disabled/>
-                        <input type="hidden" name="total_debito" value="{{ liquidacion.total_debito|unlocalize }}">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="total_credito">Total Credito:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.total_credito|intcomma }}" disabled/>
-                        <input type="hidden" name="total_credito" value="{{ liquidacion.total_credito|unlocalize }}">
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="total_liquidacion">Total Liquidacion:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.total_liquidacion }}" disabled/>
-                        <input type="hidden" name="total_liquidacion" value="{{ liquidacion.total_liquidacion|unlocalize }}">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="inicio_periodo">Inicio Periodo:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.inicio_periodo|date:"d/m/Y" }}" disabled/>
-                        <input type="hidden" name="inicio_periodo" value="{{ liquidacion.inicio_periodo|date:"d/m/Y H:i" }}">
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="fin_periodo">Fin del periodo:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.fin_periodo|date:"d/m/Y" }}" disabled/>
-                        <input type="hidden" name="fin_periodo" value="{{ liquidacion.fin_periodo|date:"d/m/Y H:i" }}">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="funcionario">Funcionario:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.funcionario }}" disabled/>
+    <div class="row"> <!-- cuerpo del formulario-->
+        <div class="col-12" style="font-size: 12px">
+            <div class="row">
+                <div class="col-4 d-flex align-items-center">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><strong>Funcionario: </strong></li>
+                        <br/>
+                        <li class="list-inline-item">{{ liquidacion.funcionario }}</li>
                         <input type="hidden" name="funcionario" value="{{ liquidacion.funcionario.pk }}">
-                    {% endif %}
+                    </ul>
+                </div>
+                <div class="col-4 d-flex">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><strong>Creada el: </strong>
+                            {{ liquidacion.fechacreacion|date:"d/m/Y H:i" }}</li>
+                            <input type="hidden" name="fechacreacion" value="{{ liquidacion.fechacreacion|date:"Y-m-d H:i" }}">
+                        <br/>
+                        <li class="list-inline-item"><strong>Mes: </strong>{{ liquidacion.mes }}</li>
+                            <input type="hidden" name="mes" value="{{ liquidacion.mes }}">
+                        <br/>
+                        <li class="list-inline-item">
+                            <strong>Periodo: Del </strong>{{ liquidacion.inicio_periodo|date:"d/m/Y" }}
+                            <strong>hasta el </strong>{{ liquidacion.fin_periodo|date:"d/m/Y" }}</li>
+                            <input type="hidden" name="inicio_periodo" value="{{ liquidacion.inicio_periodo|date:"Y-m-d H:i" }}">
+                            <input type="hidden" name="fin_periodo" value="{{ liquidacion.fin_periodo|date:"Y-m-d H:i" }}">
+                        <br/>
+                    </ul>
+                </div>
+                <div class="col-4 d-flex">
+                     <ul class="list-inline">
+                        <li class="list-inline-item"><strong>Total Débitos: Gs. </strong>
+                            {{ liquidacion.total_debito|floatformat }}</li>
+                            <input type="hidden" name="total_debito" value="{{ liquidacion.total_debito|unlocalize }}">
+                        <br/>
+                        <li class="list-inline-item"><strong>Total Créditos: Gs. </strong>
+                            {{ liquidacion.total_credito|floatformat }}</li>
+                            <input type="hidden" name="total_credito" value="{{ liquidacion.total_credito|unlocalize }}">
+                        <br/>
+                        <li class="list-inline-item"><strong>Monto Líquido: Gs. </strong>
+                            {{ liquidacion.total_liquidacion|floatformat }}</li>
+                            <input type="hidden" name="total_liquidacion" value="{{ liquidacion.total_liquidacion|unlocalize }}">
+                        <br/>
+                    </ul>
                 </div>
             </div>
         </div>
-        <div class="row mt-2">
-            <div class="col-12 col-sm-6">
-                <div class="form-group">
-                    <label for="estado_actual">Estado:</label>
-                    {% if liquidacion %}
-                        <input type="text" class="form-control"
-                               value="{{ liquidacion.estado_actual }}" disabled/>
-                        <input type="hidden" name="estado_actual" value="{{ liquidacion.estado_actual.pk }}">
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-</form> <!-- FIN FORM -->
+    </div> <!-- Fin cuerpo -->
+<hr>
+</form>
+
 <hr>
 
 <div class="row">
         <div class="col-lg-12">
         <table id="tabla_liqhaberes" class="table table-hover">
+            {% for item in liq_haberes %}
+            {% ifchanged item.pk %}
             <thead class="thead-dark">
                 <tr>
-                    <th class="text-center">Categoria Salarial</th>
-                    <th class="text-center">Acciones</th>
+                    <th>{{ item.haber.movimiento.categoria_salarial }}</th>
+                    <th>Monto Creditos: {{ item.monto_credito }}</th>
+                    <th>Monto Debitos: {{ item.monto_debito }}</th>
+                    <th>Subtotal: {{ item.subTotal }}</th>
+                </tr>
+            </thead>
+            <thead class="thead-dark">
+                <tr>
+                    <th class="text-center">Concepto</th>
+                    <th class="text-center">Debitos</th>
+                    <th class="text-center">Creditos</th>
                 </tr>
             </thead>
             <tbody>
-                {% for item in liq_haberes %}
-                    <tr class='clickable-row'>
-                        <td>{{ item.haber.movimiento.categoria_salarial }}</td>
-                        <td class="text-center">
-                            <button class="btn btn-outline-primary btn-edit" type="button"
-                                onclick="location.href=('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">
-                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                        </td>
-                    </tr>
+                {% for con in constantes %}
+
                 {% endfor %}
+
+
+
+
+
+
+                <tr class='clickable-row'>
+                    <td>{{ item.haber.movimiento.categoria_salarial }}</td>
+                    <td>{{ item.haber.movimiento.categoria_salarial }}</td>
+                    <td>{{ item.haber.movimiento.categoria_salarial }}</td>
+                </tr>
             </tbody>
+            {% endifchanged %}
+            {% endfor %}
         </table>
         </div>
     </div>

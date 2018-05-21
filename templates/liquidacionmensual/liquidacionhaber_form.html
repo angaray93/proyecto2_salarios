@@ -23,41 +23,89 @@
 </div>
 {% endif %}
 
+    <div class="row"><!--titulo-->
+        <h4>Liquidacion Salarial Mensual</h4> <!--fin titulo-->
+    </div> <!--fin titulo-->
+    <hr>
+    <div class="row mt-2"> <!-- botones -->
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 btn_sep">
+                    <button type="submit" form="liquidacion_form"
+                            name="boton" value="Descartar"
+                            formaction="{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}"
+                            class="btn" style="width: 100%">
+                        Descartar
+                    </button>
+                </div>
+                <div class="col-md-3 col-sm-3 btn_sep">
+                    <button type="submit" form="liquidacion_form"
+                            name="boton" value="Confirmar"
+                            formaction="{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}"
+                            class="btn" style="width: 100%">
+                        Confirmar
+                    </button>
+                </div>
+                <div class="col-md-3 col-sm-3 btn_sep">
+                    <button type="submit" form="liquidacion_form"
+                            name="boton" value="Guardar"
+                            formaction="{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}"
+                            class="btn" style="width: 100%">
+                        Guardar Borrador
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div><!-- fin botones -->
+    <hr>
+
+    <div class="row"> <!-- cabecera-->
+        <div class="col-12" style="font-size: 12px">
+            <div class="row">
+                <div class="col-4 d-flex align-items-center">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><strong>Funcionario: </strong></li>
+                        <br/>
+                        <li class="list-inline-item">{{ liq_haber.liquidacion.funcionario }}</li>
+                    </ul>
+                </div>
+                <div class="col-4 d-flex">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><strong>Creada el: </strong>
+                            {{ liq_haber.liquidacion.fechacreacion|date:"d/m/Y H:i" }}</li>
+                        <br/>
+                        <li class="list-inline-item"><strong>Mes: </strong>{{ liq_haber.liquidacion.mes }}</li>
+                        <br/>
+                        <li class="list-inline-item">
+                            <strong>Periodo: Del </strong>{{ liq_haber.liquidacion.inicio_periodo|date:"d/m/Y" }}
+                            <strong>hasta el </strong>{{ liq_haber.liquidacion.fin_periodo|date:"d/m/Y" }}</li>
+                        <br/>
+                    </ul>
+                </div>
+                <div class="col-4 d-flex">
+                     <ul class="list-inline">
+                        <li class="list-inline-item"><strong>Total Débitos: Gs. </strong>
+                            {{ liq_haber.liquidacion.total_debito|floatformat }}</li>
+                        <br/>
+                        <li class="list-inline-item"><strong>Total Créditos: Gs. </strong>
+                            {{ liq_haber.liquidacion.total_credito|floatformat }}</li>
+                        <br/>
+                        <li class="list-inline-item"><strong>Monto Líquido: Gs. </strong>
+                            {{ liq_haber.liquidacion.total_liquidacion|floatformat }}</li>
+                        <br/>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Fin cabecera -->
+<hr>
+
  <form method="post" id="liqhaber_form">
     {% csrf_token %}
-    <hr>
+        <!-- Campos ocultos -->
         <input type="hidden" name="haber" value="{{ liq_haber.haber }}">
         <input type="hidden" name="liquidacion" value="{{ liq_haber.liquidacion }}">
-
         <div class="row separador"></div>
-        <div class="row mt-2"> <!-- botones -->
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-3 btn_sep">
-                            <button type="submit" form="liqmensual_form"
-                                    name="descartar" value="Descartar"
-                                    formaction=""
-                                    class="btn" style="width: 100%">
-                                Descartar
-                            </button>
-                        </div>
-                        <div class="col-md-3 col-sm-3 btn_sep">
-                            <button type="submit" form="liqmensual_form"
-                                    name="confirmar" value="Confirmar"
-                                    class="btn" style="width: 100%">
-                                Confirmar
-                            </button>
-                        </div>
-                        <div class="col-md-3 col-sm-3 btn_sep">
-                            <button type="submit" form="liqmensual_form"
-                                    name="guardar" value="Guardar"
-                                    class="btn" style="width: 100%">
-                                Guardar Borrador
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- fin botones -->
     <hr>
         <div class="row mt-2">
             <div class="col-12 col-sm-4">
@@ -131,8 +179,6 @@
             </div>
             </div>
     {% endif %}
-
-
 
 </div>
 

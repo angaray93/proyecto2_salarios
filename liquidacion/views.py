@@ -114,8 +114,9 @@ def vista_liq_mensual(request, idliquidacion):
         form = LiqMensualForm(request.POST, instance=liquidacion)
         if form.is_valid():
             liquidacion = form.save()
-            if request.POST.get('descartar', '') == 'Descartar':
-                print(request.POST.get('descartar', ''))
+            if request.POST.get('boton', ''):
+                print(request.POST.get('boton', ''))
+
             return redirect(reverse('liquidacion:editar_liquidacion', args=[liquidacion.pk]))
         else:
             # TODO Implementar sistema de errores
@@ -138,7 +139,13 @@ def vista_liq_mensual(request, idliquidacion):
                     liq_haber.monto_credito = liq_haber.suma_constante_credito()
                     liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
                     liq_haber.save()'''
-            liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion)
+            liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
+            #print(liq_haberes)
+            movimientos = Movimiento.objects.filter(pk__in = Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
+            constantes = Constante.objects.filter(movimiento__pk__in=Subquery(movimientos.values('pk')))
+            #print(constantes)
+            detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
+            #print(detalles)
             '''liquidacion.total_debito = liquidacion.calculo_total_debito()
             liquidacion.total_credito = liquidacion.calculo_total_credito()
             liquidacion.total_liquidacion = liquidacion.calcular_total_liquidacion()
@@ -151,8 +158,8 @@ def vista_liq_mensual(request, idliquidacion):
             })
             try:
                 transition = Transition.objects.get(process=liquidacion.estado_actual.process, currentState=liquidacion.estado_actual)
-                liquidacion.estado_actual = transition.nextState
-                liquidacion.save()
+                #liquidacion.estado_actual = transition.nextState
+                #liquidacion.save()
             except MultipleObjectsReturned:
                 advertencia = 'Seleccione una accion para continuar'
                 context.update({

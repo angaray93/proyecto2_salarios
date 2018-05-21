@@ -349,6 +349,29 @@ class Liquidacion(models.Model):
     tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE, related_name='fk_liquidacion_tipo')
     propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fk_liquidacion_user')
 
+    class Meta:
+        unique_together = (('funcionario', 'mes'),)
+
+    def calculo_total_debito(self):
+        suma_total_debito = self.liquidacionhaber_set.filter(liquidacion=self.pk)\
+            .aggregate(total_debito=Coalesce(
+                Sum(models.F('monto_debito')), 0,
+                output_field=models.DecimalField(decimal_places=2)
+            ))['total_debito'] or 0
+        return suma_total_debito
+
+    def calculo_total_credito(self):
+        suma_total_credito = self.liquidacionhaber_set.filter(liquidacion=self.pk)\
+            .aggregate(total_credito=Coalesce(
+                Sum(models.F('monto_credito')), 0,
+                output_field=models.DecimalField(decimal_places=2)
+            ))['total_credito'] or 0
+        return suma_total_credito
+
+    def calcular_total_liquidacion(self):
+        total = round((self.total_credito - self.total_debito), 0)
+        return total
+
 
 class LiquidacionType(models.Model):
     id = models.AutoField(primary_key=True)
@@ -446,7 +469,7 @@ class Liquidacionhaber(models.Model):
                 Sum(models.F('monto')), 0,
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_credito'] or 0
-        return suma_monto_credito
+        return suma_monto_credito + self.haber.movimiento.categoria_salarial.asignacion
 
     def suma_detalles_debito(self):
         suma_detalle_debito = self.detalleliquidacion_set.filter(liquidacion_haber=self.id, variable__tipo='D')\
@@ -454,7 +477,6 @@ class Liquidacionhaber(models.Model):
                 Sum(models.F('total_detalle')), 0,
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_debito'] or 0
-        print('suma_detalle_debito', suma_detalle_debito)
         return suma_detalle_debito
 
     def suma_detalles_credito(self):
@@ -463,11 +485,10 @@ class Liquidacionhaber(models.Model):
                 Sum(models.F('total_detalle')), 0,
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_credito'] or 0
-        print('suma_detalle_credito', suma_detalle_credito)
         return suma_detalle_credito
 
     def calcular_total(self):
-        total = round((self.haber.movimiento.categoria_salarial.asignacion + self.monto_credito) - self.monto_debito, 0)
+        total = round((self.monto_credito) - self.monto_debito, 0)
         return total
 
 

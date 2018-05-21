@@ -25,17 +25,19 @@
                     <th class="centrartexto">Cedula</th>
                     <th>Funcionario</th>
                     <th>Mes</th>
+                    <th>Categoria Salarial</th>
                     <th class="centrartexto">Acciones</th>
                 </thead>
                 <tbody>
                 {% for item in lista %}
                     <tr>
-                        <td>{{ item.funcionario.cedula }}</td>
-                        <td>{{ item.funcionario }}</td>
-                        <td>{{ item.mes }}</td>
+                        <td>{{ item.liquidacion.funcionario.cedula }}</td>
+                        <td>{{ item.liquidacion.funcionario }}</td>
+                        <td>{{ item.liquidacion.mes }}</td>
+                        <td>{{ item.liquidacion.categoria_salarial.codigo }}</td>
                         <td class="centrartexto">
                             <button title="Editar" class="btn btn-outline-primary" type="button"
-                               name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacion' item.pk %}')">
+                               name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                             <a title="Editar" class="btn btn-outline-primary" type="button"
                             href =""><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
@@ -45,7 +47,6 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-
             </table>
         </div>
     </div>

@@ -34,10 +34,25 @@
                 <div class="col-12">
                     <div class="row">
                         <div class="col-md-3 col-sm-3 btn_sep">
-                            <button type="submit" form="liqhaber_form"
+                            <button type="submit" form="liqmensual_form"
+                                    name="descartar" value="Descartar"
+                                    formaction=""
+                                    class="btn" style="width: 100%">
+                                Descartar
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-3 btn_sep">
+                            <button type="submit" form="liqmensual_form"
+                                    name="confirmar" value="Confirmar"
+                                    class="btn" style="width: 100%">
+                                Confirmar
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-3 btn_sep">
+                            <button type="submit" form="liqmensual_form"
                                     name="guardar" value="Guardar"
                                     class="btn" style="width: 100%">
-                                Guardar
+                                Guardar Borrador
                             </button>
                         </div>
                     </div>
@@ -101,11 +116,11 @@
                     <tbody>
                         {% for detalle in detalles_list %}
                             <tr class='clickable-row'>
-                                <td></td>
-                                <td></td>
+                                <td>{{ detalle.variable }}</td>
+                                <td>{{ detalle.total_detalle }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-outline-primary btn-edit" type="button"
-                                            onclick="">
+                                            onclick="location.href='{% url 'liquidacion:detalleliquidacion-delete' detalle.pk %}'">
                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                     </button>
                                 </td>

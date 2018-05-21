@@ -43,6 +43,5 @@ urlpatterns = [
     path('liquidacionhaber/<int:idliquidacionhaber>/detalle/nuevo/', views.vista_detalleliquidacion, name='detalleliquidacion-add'),
     path('liquidacionhaber/<int:idliquidacionhaber>/detalle/<int:iddetalleliq>', views.vista_detalleliquidacion,
          name='detalleliquidacion-edit'),
-
-    #path('movimiento/<int:idmovimiento>/constante/<int:idconstante>', views.constante_vista, name='borrar_constante'),
+    path('detalle/<int:pk>/delete/', views.delete_detalleliquidacion, name='detalleliquidacion-delete'),
 ]

@@ -42,13 +42,22 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
             detalleliquidacion.monto = detalleliquidacion.calcular_monto()
             detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
             detalleliquidacion.save()
+
             if detalleliquidacion.variable.tipo == 'D':
-                detalleliquidacion.liquidacion_haber.suma_detalles_debito()
+                suma_detalles_debito = detalleliquidacion.liquidacion_haber.suma_detalles_debito()
+                detalleliquidacion.liquidacion_haber.monto_debito += suma_detalles_debito
             else:
-                detalleliquidacion.liquidacion_haber.suma_detalles_credito()
-            #detalleliquidacion.liquidacion_haber.subTotal = round(detalleliquidacion.liquidacion_haber.monto_credito
-             #                                                     - detalleliquidacion.liquidacion_haber.monto_debito, 0)
-            #detalleliquidacion.liquidacion_haber.save()
+                suma_detalles_credito = detalleliquidacion.liquidacion_haber.suma_detalles_credito()
+                detalleliquidacion.liquidacion_haber.monto_credito += suma_detalles_credito
+            detalleliquidacion.liquidacion_haber.save()
+            detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
+            detalleliquidacion.liquidacion_haber.save()
+
+            detalleliquidacion.liquidacion_haber.liquidacion.total_credito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_credito()
+            detalleliquidacion.liquidacion_haber.liquidacion.total_debito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_debito()
+            detalleliquidacion.liquidacion_haber.liquidacion.total_liquidacion = detalleliquidacion.liquidacion_haber.liquidacion.calcular_total_liquidacion()
+            detalleliquidacion.liquidacion_haber.liquidacion.save()
+
             return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[detalleliquidacion.liquidacion_haber.pk]))
         else:
             # TODO Implementar sistema de errores
@@ -76,6 +85,26 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
     return render(request, 'liquidacionmensual/detalleliquidacion_form.html', context)
 
 
+def delete_detalleliquidacion(request, pk):
+    detalleliquidacion = get_object_or_404(DetalleLiquidacion, pk=pk)
+    tipo = detalleliquidacion.variable.tipo
+    monto_detalle = detalleliquidacion.total_detalle
+    liquidacion_haber = Liquidacionhaber.objects.get(pk=detalleliquidacion.liquidacion_haber.pk)
+    detalleliquidacion.delete()
+    if tipo == 'D':
+        liquidacion_haber.monto_debito -= monto_detalle
+    else:
+        liquidacion_haber.monto_credito -= monto_detalle
+    liquidacion_haber.save()
+    liquidacion_haber.subTotal = liquidacion_haber.calcular_total()
+    liquidacion_haber.save()
+    liquidacion_haber.liquidacion.total_credito = liquidacion_haber.liquidacion.calculo_total_credito()
+    liquidacion_haber.liquidacion.total_debito = liquidacion_haber.liquidacion.calculo_total_debito()
+    liquidacion_haber.liquidacion.save()
+    liquidacion_haber.liquidacion.total_liquidacion = liquidacion_haber.liquidacion.calcular_total_liquidacion()
+    liquidacion_haber.liquidacion.save()
+    return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[liquidacion_haber.pk]))
+
 def vista_liq_mensual(request, idliquidacion):
     context = {}
     advertencia = liquidacion= None
@@ -99,7 +128,7 @@ def vista_liq_mensual(request, idliquidacion):
         if idliquidacion :
             liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
             haberes = Haber.objects.filter(movimiento__funcionario=liquidacion.funcionario)
-            if liquidacion.estado_actual.name == 'Nuevo':
+            '''if liquidacion.estado_actual.name == 'Nuevo':
                 for haber in haberes:
                     liq_haber = Liquidacionhaber(
                         haber=haber,
@@ -107,10 +136,13 @@ def vista_liq_mensual(request, idliquidacion):
                     )
                     liq_haber.monto_debito = liq_haber.suma_constante_debito()
                     liq_haber.monto_credito = liq_haber.suma_constante_credito()
-                    liq_haber.subTotal = round((liq_haber.haber.movimiento.categoria_salarial.asignacion + liq_haber.monto_credito)
-                                               - liq_haber.monto_debito, 0)
-                    liq_haber.save()
+                    liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
+                    liq_haber.save()'''
             liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion)
+            '''liquidacion.total_debito = liquidacion.calculo_total_debito()
+            liquidacion.total_credito = liquidacion.calculo_total_credito()
+            liquidacion.total_liquidacion = liquidacion.calcular_total_liquidacion()
+            liquidacion.save()'''
             form = LiqMensualForm(instance=liquidacion)
             context.update({
                 'form': form ,
@@ -141,24 +173,46 @@ def parametros_liq_mensual(request):
             funcionarios = Movimiento.objects\
                 .filter(division__departamento=depto, estado__name='Activo')\
                 .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
-            tipo = LiquidacionType.objects.get(nombre='Mensual')
-            proceso = Process.objects.get(name='Liquidacion Mensual')
-            initial_state_type = StateType.objects.get(name='Inicio')
-            initial_state = State.objects.get(process=proceso, stateType=initial_state_type)
             for mov in funcionarios:
-                funcionario = Funcionario.objects.get(pk = mov['funcionario__idFuncionario'])
-                liquidacion = Liquidacion(
-                    fechacreacion=datetime.datetime.now(),
-                    ultimamodificacion = datetime.datetime.now(),
-                    mes = mes,
-                    inicio_periodo = fechainicio,
-                    fin_periodo = fechafin,
-                    funcionario = funcionario,
-                    estado_actual = initial_state,
-                    tipo = tipo,
-                    propietario = request.user,
+                try:
+                    liquidacion = Liquidacion.objects.get(funcionario__idFuncionario=mov['funcionario__idFuncionario'],
+                                                          mes=mes)
+                except Liquidacion.DoesNotExist:
+                    liquidacion = None
+                if liquidacion == None:
+                    tipo = LiquidacionType.objects.get(nombre='Mensual')
+                    proceso = Process.objects.get(name='Liquidacion Mensual')
+                    initial_state_type = StateType.objects.get(name='Inicio')
+                    initial_state = State.objects.get(process=proceso, stateType=initial_state_type)
+                    funcionario = Funcionario.objects.get(pk = mov['funcionario__idFuncionario'])
+                    liquidacion = Liquidacion(
+                        fechacreacion=datetime.datetime.now(),
+                        ultimamodificacion = datetime.datetime.now(),
+                        mes = mes,
+                        inicio_periodo = fechainicio,
+                        fin_periodo = fechafin,
+                        funcionario = funcionario,
+                        estado_actual = initial_state,
+                        tipo = tipo,
+                        propietario = request.user,
+                    )
+                    liquidacion.save()
+                haber = Haber.objects.get(movimiento__funcionario=liquidacion.funcionario,
+                                               movimiento__division__departamento__pk=depto)
+                liq_haber = Liquidacionhaber(
+                    haber=haber,
+                    liquidacion=liquidacion
                 )
+                liq_haber.monto_debito = liq_haber.suma_constante_debito()
+                liq_haber.monto_credito = liq_haber.suma_constante_credito()
+                liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
+                liq_haber.save()
+                #liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion)
+                liquidacion.total_debito = liquidacion.calculo_total_debito()
+                liquidacion.total_credito = liquidacion.calculo_total_credito()
+                liquidacion.total_liquidacion = liquidacion.calcular_total_liquidacion()
                 liquidacion.save()
+
             context.update({
                 'lista': True,
                 'form': form
@@ -178,12 +232,15 @@ def liq_pendientes_list(request, iddpto, mes):
     context = {}
     estado = State.objects.get(stateType__name='Inicio', process__name='Liquidacion Mensual')
     departamento = Departamento.objects.get(pk=iddpto)
+    divisones = Division.objects.filter(departamento__iddepartamento=iddpto)
     funcionarios = Movimiento.objects \
         .filter(division__departamento=departamento, estado__name='Activo') \
         .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
-    liquidaciones = Liquidacion.objects.filter(mes=mes, estado_actual=estado, funcionario__idFuncionario__in= funcionarios)
+    liquidaciones = Liquidacion.objects.filter(mes=mes, estado_actual=estado, funcionario__idFuncionario__in=funcionarios)
+    liquidacion_haberes = Liquidacionhaber.objects.filter(liquidacion__in=liquidaciones,
+                                                          haber__movimiento__division__in=divisones)
 
-    return render(request, 'liquidacionmensual/liqmensual_list.html', {'lista': liquidaciones, 'dpto': departamento})
+    return render(request, 'liquidacionmensual/liqmensual_list.html', {'lista': liquidacion_haberes, 'dpto': departamento})
 
 
 def vista_liquidacionhaber(request, idliquidacionhaber):
@@ -197,6 +254,17 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
             constantes = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
             detalles_list = DetalleLiquidacion.objects.filter(liquidacion_haber=liq_haber)
             form = LiquidacionhaberForm(instance=liq_haber)
+            if liq_haber.liquidacion.estado_actual.name == 'Nuevo':
+                try:
+                    transition = Transition.objects.get(process=liq_haber.liquidacion.estado_actual.process,
+                                                        currentState=liq_haber.liquidacion.estado_actual)
+                    liq_haber.liquidacion.estado_actual = transition.nextState
+                    liq_haber.liquidacion.save()
+                except MultipleObjectsReturned:
+                    advertencia = 'Seleccione una accion para continuar'
+                    context.update({
+                        'advertencia': advertencia,
+                    })
             context.update({
                 'form': form ,
                 'liq_haber': liq_haber,

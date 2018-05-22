@@ -30,28 +30,12 @@
     <div class="row mt-2"> <!-- botones -->
         <div class="col-12">
             <div class="row">
-                <div class="col-md-3 col-sm-3 btn_sep">
-                    <button type="submit" form="liquidacion_form"
-                            name="boton" value="Descartar"
-                            formaction="{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}"
+                <div class="col-md-6 col-sm-6 btn_sep">
+                    <button type="button"
+                            name="boton" value="liquidaciongeneral"
+                            onclick="location.href=('{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}')"
                             class="btn" style="width: 100%">
-                        Descartar
-                    </button>
-                </div>
-                <div class="col-md-3 col-sm-3 btn_sep">
-                    <button type="submit" form="liquidacion_form"
-                            name="boton" value="Confirmar"
-                            formaction="{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}"
-                            class="btn" style="width: 100%">
-                        Confirmar
-                    </button>
-                </div>
-                <div class="col-md-3 col-sm-3 btn_sep">
-                    <button type="submit" form="liquidacion_form"
-                            name="boton" value="Guardar"
-                            formaction="{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}"
-                            class="btn" style="width: 100%">
-                        Guardar Borrador
+                        Ir a Liquidacion Completa
                     </button>
                 </div>
             </div>

@@ -105,6 +105,7 @@ def delete_detalleliquidacion(request, pk):
     liquidacion_haber.liquidacion.save()
     return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[liquidacion_haber.pk]))
 
+
 def vista_liq_mensual(request, idliquidacion):
     context = {}
     advertencia = liquidacion= None
@@ -114,8 +115,19 @@ def vista_liq_mensual(request, idliquidacion):
         form = LiqMensualForm(request.POST, instance=liquidacion)
         if form.is_valid():
             liquidacion = form.save()
-            if request.POST.get('boton', ''):
-                print(request.POST.get('boton', ''))
+            proceso = liquidacion.estado_actual.process
+            estado_actual = liquidacion.estado_actual
+            if request.POST.get('boton', '') == 'Descartado':
+                transicion = Transition.objects.get(process=proceso, currentState=estado_actual, nextState__stateType__name='Cancelado')
+            else:
+                if request.POST.get('boton', '') == 'Confirmado':
+                    transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
+                                                        nextState__stateType__name='Completado')
+                else:
+                    transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
+                                                        nextState__stateType__name='Pendiente')
+            liquidacion.estado_actual = transicion.nextState
+            liquidacion.save()
 
             return redirect(reverse('liquidacion:editar_liquidacion', args=[liquidacion.pk]))
         else:
@@ -126,7 +138,7 @@ def vista_liq_mensual(request, idliquidacion):
             })
         return render(request, 'liquidacionmensual/liqmensual_form.html', context)
     else:
-        if idliquidacion :
+        if idliquidacion:
             liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
             haberes = Haber.objects.filter(movimiento__funcionario=liquidacion.funcionario)
             '''if liquidacion.estado_actual.name == 'Nuevo':
@@ -140,12 +152,9 @@ def vista_liq_mensual(request, idliquidacion):
                     liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
                     liq_haber.save()'''
             liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
-            #print(liq_haberes)
             movimientos = Movimiento.objects.filter(pk__in = Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
             constantes = Constante.objects.filter(movimiento__pk__in=Subquery(movimientos.values('pk')))
-            #print(constantes)
             detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
-            #print(detalles)
             '''liquidacion.total_debito = liquidacion.calculo_total_debito()
             liquidacion.total_credito = liquidacion.calculo_total_credito()
             liquidacion.total_liquidacion = liquidacion.calcular_total_liquidacion()
@@ -155,6 +164,8 @@ def vista_liq_mensual(request, idliquidacion):
                 'form': form ,
                 'liquidacion': liquidacion,
                 'liq_haberes': liq_haberes,
+                'constantes': constantes,
+                'detalles': detalles,
             })
             try:
                 transition = Transition.objects.get(process=liquidacion.estado_actual.process, currentState=liquidacion.estado_actual)
@@ -205,7 +216,7 @@ def parametros_liq_mensual(request):
                     )
                     liquidacion.save()
                 haber = Haber.objects.get(movimiento__funcionario=liquidacion.funcionario,
-                                               movimiento__division__departamento__pk=depto)
+                                               movimiento__division__departamento__pk=depto, estado__name='Activo')
                 liq_haber = Liquidacionhaber(
                     haber=haber,
                     liquidacion=liquidacion
@@ -352,8 +363,15 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     haber = None
                     if movimiento.movimiento_padre:
                         #----------------------------Haberes----------------------------------#
-                        haber = Haber.objects.get(movimiento=movimiento.movimiento_padre)
-                        haber.movimiento = movimiento
+                        haber_padre = Haber.objects.get(movimiento=movimiento.movimiento_padre)
+                        #haber.movimiento = movimiento
+                        haber_padre.estado = movimiento.movimiento_padre.estado
+                        haber_padre.save()
+                        haber = Haber(
+                            movimiento = movimiento,
+                            estado = movimiento.estado
+                        )
+                        haber.save()
                         # ---------------------------Vacaciones-------------------------------#
                         try:
                             vacaciones_padre = Vacaciones.objects.get(movimiento=movimiento_padre)
@@ -370,7 +388,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                         if movimiento.tieneAguinaldo is True:
                             aguinaldo = Aguinaldo(movimiento = movimiento)
                             aguinaldo.save()
-                        movimiento.movimiento_padre.estado = State.objects.get(nombre='Inactivo', process=proceso)
+                        movimiento.movimiento_padre.estado = State.objects.get(name='Inactivo', process=proceso)
                         movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
                         #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
                         movimiento.movimiento_padre.save()

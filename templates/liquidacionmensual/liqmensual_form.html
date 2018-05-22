@@ -34,7 +34,7 @@
             <div class="row">
                 <div class="col-md-3 col-sm-3 btn_sep">
                     <button type="submit" form="liquidacion_form"
-                            name="boton" value="Descartar"
+                            name="boton" value="Descartado"
                             formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
                             class="btn" style="width: 100%">
                         Descartar
@@ -42,7 +42,7 @@
                 </div>
                 <div class="col-md-3 col-sm-3 btn_sep">
                     <button type="submit" form="liquidacion_form"
-                            name="boton" value="Confirmar"
+                            name="boton" value="Confirmado"
                             formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
                             class="btn" style="width: 100%">
                         Confirmar
@@ -50,7 +50,7 @@
                 </div>
                 <div class="col-md-3 col-sm-3 btn_sep">
                     <button type="submit" form="liquidacion_form"
-                            name="boton" value="Guardar"
+                            name="boton" value="Borrador"
                             formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
                             class="btn" style="width: 100%">
                         Guardar Borrador
@@ -121,39 +121,63 @@
         <div class="col-lg-12">
         <table id="tabla_liqhaberes" class="table table-hover">
             {% for item in liq_haberes %}
-            {% ifchanged item.pk %}
-            <thead class="thead-dark">
-                <tr>
-                    <th>{{ item.haber.movimiento.categoria_salarial }}</th>
-                    <th>Monto Creditos: {{ item.monto_credito }}</th>
-                    <th>Monto Debitos: {{ item.monto_debito }}</th>
-                    <th>Subtotal: {{ item.subTotal }}</th>
-                </tr>
-            </thead>
-            <thead class="thead-dark">
-                <tr>
-                    <th class="text-center">Concepto</th>
-                    <th class="text-center">Debitos</th>
-                    <th class="text-center">Creditos</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for con in constantes %}
-
-                {% endfor %}
-
-
-
-
-
-
-                <tr class='clickable-row'>
-                    <td>{{ item.haber.movimiento.categoria_salarial }}</td>
-                    <td>{{ item.haber.movimiento.categoria_salarial }}</td>
-                    <td>{{ item.haber.movimiento.categoria_salarial }}</td>
-                </tr>
-            </tbody>
-            {% endifchanged %}
+                {% ifchanged item.pk %}
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Categoria Salarial: {{ item.haber.movimiento.categoria_salarial }}</th>
+                        <th>Monto Creditos: {{ item.monto_credito }}</th>
+                        <th>Monto Debitos: {{ item.monto_debito }}</th>
+                        <th>Subtotal: {{ item.subTotal }}</th>
+                        <th>
+                            <button class="btn btn-outline-primary" type="button"
+                               name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                        </th>
+                    </tr>
+                </thead>
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="2" class="text-center">Concepto</th>
+                        <th class="text-center">Creditos</th>
+                        <th class="text-center">Debitos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Asignacion Salarial</td>
+                        <td>Gs. {{ item.haber.movimiento.categoria_salarial.asignacion }}</td>
+                        <td> - </td>
+                    </tr>
+                    {% for con in constantes %}
+                        {% if con.movimiento == item.haber.movimiento %}
+                            <tr>
+                                <td colspan="2">{{ con.tipo.nombre }}</td>
+                                {% if con.tipo.tipo == 'C' %}
+                                    <td>Gs. {{ con.monto }}</td>
+                                    <td> - </td>
+                                {% else %}
+                                    <td> - </td>
+                                    <td>Gs. {{ con.monto }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% for det in detalles %}
+                        {% if det.liquidacion_haber == item %}
+                            <tr>
+                                <td colspan="2">{{ det.variable.motivo }}</td>
+                                {% if det.variable.tipo == 'C' %}
+                                    <td>Gs. {{ det.total_detalle }}</td>
+                                    <td> - </td>
+                                {% else %}
+                                    <td> - </td>
+                                    <td>Gs. {{ det.total_detalle }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+                {% endifchanged %}
             {% endfor %}
         </table>
         </div>

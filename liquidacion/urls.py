@@ -44,4 +44,6 @@ urlpatterns = [
     path('liquidacionhaber/<int:idliquidacionhaber>/detalle/<int:iddetalleliq>', views.vista_detalleliquidacion,
          name='detalleliquidacion-edit'),
     path('detalle/<int:pk>/delete/', views.delete_detalleliquidacion, name='detalleliquidacion-delete'),
+    path('liquidacion/<int:idliquidacion>/carga_vacaciones/', views.vacaciones_form, name='cargar_vacaciones'),
+
 ]

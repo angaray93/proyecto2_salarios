@@ -24,6 +24,67 @@ def index(request):
     return render(request, 'index.html')
 
 
+def vacaciones_form(request, idliquidacion):
+    liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
+    vacaciones = Vacaciones.objects.get(movimiento__funcionario=liquidacion.funcionario,
+                                        movimiento__estado__name='Activo')
+    print(vacaciones)
+    context = {}
+    pago = None
+    if request.POST:
+        vacaciones_liq = Vacacionesliquidacion(
+            liquidacion=liquidacion,
+            vacaciones
+
+        )
+        form = VacacionesliquidacionForm(request.POST, instance=vacaciones)
+        if form.is_valid():
+            pago = form.save()
+            return redirect(reverse('liquidacion:nuevo_pago', args=[pago.movimiento.pk]))
+        else:
+            # TODO Implementar sistema de errores
+            context.update({
+                'errors': form.errors,
+                'form': form
+            })
+            return render(request, 'pago_form.html', context)
+    else:
+        if idpago:
+            pago = get_object_or_404(Constante, pk=idpago)
+            form = PagoForm(request.POST, instance=idpago)
+            context.update({
+                'pago': pago,
+                'form': form
+            })
+        else:
+            movimiento = Movimiento.objects.get(pk=idmovimiento)
+            pagos = Pago.objects.filter(movimiento=movimiento)
+            form = PagoForm(initial={
+                'movimiento': movimiento,
+            })
+            context.update({
+                'movimiento': movimiento,
+                'pagos': pagos,
+                'form': form,
+            })
+        return render(request, 'pago_form.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return render(request, 'index.html')
+
+
+
 @login_required()
 def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None):
     context = {}
@@ -123,6 +184,7 @@ def vista_liq_mensual(request, idliquidacion):
                 if request.POST.get('boton', '') == 'Confirmado':
                     transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
                                                         nextState__stateType__name='Completado')
+
                 else:
                     transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
                                                         nextState__stateType__name='Pendiente')

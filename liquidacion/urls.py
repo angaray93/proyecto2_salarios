@@ -12,6 +12,7 @@ urlpatterns = [
     #path('categoriasalarial_list', views.categoriasalarial_list, name='categoriasalarial_list'),
     #path('categoriasalarial/create/', views.vista_categoriasalarial, name='nueva_categoria'),
     path('opciones_proceso', views.opciones_proceso, name='opciones_proceso'),
+    path('opciones_vacaciones', views.opciones_vacaciones, name='opciones_vacaciones'),
     path('funcionario/<int:idfuncionario>/movimiento/nuevo/', views.movimiento_vista, name='nuevo_movimiento'),
     path('movimiento_padre/<int:idpadre>/', views.movimiento_vista, name='modificar_movimiento'),
     path('movimiento/<int:idmovimiento>', views.movimiento_vista, name='editar_movimiento'),
@@ -44,6 +45,6 @@ urlpatterns = [
     path('liquidacionhaber/<int:idliquidacionhaber>/detalle/<int:iddetalleliq>', views.vista_detalleliquidacion,
          name='detalleliquidacion-edit'),
     path('detalle/<int:pk>/delete/', views.delete_detalleliquidacion, name='detalleliquidacion-delete'),
-    path('liquidacion/<int:idliquidacion>/carga_vacaciones/', views.vacaciones_form, name='cargar_vacaciones'),
+    path('carga_vacaciones/', views.vacaciones_form, name='cargar_vacaciones'),
 
 ]

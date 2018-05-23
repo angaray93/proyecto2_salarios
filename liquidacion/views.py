@@ -24,22 +24,21 @@ def index(request):
     return render(request, 'index.html')
 
 
-def vacaciones_form(request, idliquidacion):
-    liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
-    vacaciones = Vacaciones.objects.get(movimiento__funcionario=liquidacion.funcionario,
-                                        movimiento__estado__name='Activo')
+def vacaciones_form(request, idvacaciones):
+    #liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
+    vacaciones = Vacaciones.objects.filter(movimiento__funcionario__idFuncionario = 2, dias_restantes__gt = 0)\
+        .order_by('-inicio')
     print(vacaciones)
     context = {}
     pago = None
     if request.POST:
-        vacaciones_liq = Vacacionesliquidacion(
-            liquidacion=liquidacion,
-            vacaciones
-
+        vacacionesusadas = Vacacionesusadas(
+            vacaciones = vacaciones,
+            #vacaciones =
         )
-        form = VacacionesliquidacionForm(request.POST, instance=vacaciones)
+        form = VacacionesusadasForm(request.POST, instance=vacacionesusadas)
         if form.is_valid():
-            pago = form.save()
+            vacacionesusadas = form.save()
             return redirect(reverse('liquidacion:nuevo_pago', args=[pago.movimiento.pk]))
         else:
             # TODO Implementar sistema de errores
@@ -47,42 +46,21 @@ def vacaciones_form(request, idliquidacion):
                 'errors': form.errors,
                 'form': form
             })
-            return render(request, 'pago_form.html', context)
+            return render(request, 'vacaciones/vacaciones_form.html', context)
     else:
-        if idpago:
-            pago = get_object_or_404(Constante, pk=idpago)
-            form = PagoForm(request.POST, instance=idpago)
+        if idvacaciones:
+            vacacionesusadas = Vacacionesusadas.objects.get(pk=idvacaciones)
+            form = VacacionesusadasForm(request.POST, instance=vacacionesusadas)
             context.update({
-                'pago': pago,
+                'vacacionesusadas': vacacionesusadas,
                 'form': form
             })
         else:
-            movimiento = Movimiento.objects.get(pk=idmovimiento)
-            pagos = Pago.objects.filter(movimiento=movimiento)
-            form = PagoForm(initial={
-                'movimiento': movimiento,
-            })
+            form = VacacionesusadasForm()
             context.update({
-                'movimiento': movimiento,
-                'pagos': pagos,
                 'form': form,
             })
-        return render(request, 'pago_form.html', context)
-
-
-
-
-
-
-
-
-
-
-
-
-
-    return render(request, 'index.html')
-
+    return render(request, 'vacaciones/vacaciones_form.html', context)
 
 
 @login_required()
@@ -249,14 +227,14 @@ def parametros_liq_mensual(request):
             depto = form.cleaned_data['departamento']
             fechafin = form.cleaned_data['hasta']
             fechainicio = form.cleaned_data['desde']
-            mes = fechafin.month
+            mes = Mes.objects.get(numero=fechafin.month)
             funcionarios = Movimiento.objects\
                 .filter(division__departamento=depto, estado__name='Activo')\
                 .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
             for mov in funcionarios:
                 try:
                     liquidacion = Liquidacion.objects.get(funcionario__idFuncionario=mov['funcionario__idFuncionario'],
-                                                          mes=mes)
+                                                          mes__numero=mes.numero)
                 except Liquidacion.DoesNotExist:
                     liquidacion = None
                 if liquidacion == None:
@@ -297,7 +275,7 @@ def parametros_liq_mensual(request):
                 'lista': True,
                 'form': form
             })
-            return redirect(reverse('liquidacion:liq_pendientes_list', args=[depto, mes]))
+            return redirect(reverse('liquidacion:liq_pendientes_list', args=[depto, mes.numero]))
         else:
             context.update({
                 'errors': form.errors,
@@ -521,6 +499,9 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
 
 def opciones_proceso(request):
     return render(request, 'proceso/opciones_proceso.html')
+
+def opciones_vacaciones(request):
+    return render(request, 'vacaciones/opciones_vacaciones.html')
 
 
 def busqueda_funcionarios(request):

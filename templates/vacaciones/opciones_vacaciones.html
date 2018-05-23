@@ -1,0 +1,26 @@
+<div class="modal-dialog">
+    <div class="modal-content" id="opciones_vacaciones">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:cargar_vacaciones' %}"
+                             id="" style="width: 100%">Carga de vacaciones utilizadas</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:buscar_movimiento' %}"
+                             id="" style="width: 100%">Consulta de estado de vacaciones</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+</div>

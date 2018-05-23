@@ -82,7 +82,7 @@
                             {{ liquidacion.fechacreacion|date:"d/m/Y H:i" }}</li>
                             <input type="hidden" name="fechacreacion" value="{{ liquidacion.fechacreacion|date:"Y-m-d H:i" }}">
                         <br/>
-                        <li class="list-inline-item"><strong>Mes: </strong>{{ liquidacion.mes }}</li>
+                        <li class="list-inline-item"><strong>Mes: </strong>{{ liquidacion.mes.nombre }}</li>
                             <input type="hidden" name="mes" value="{{ liquidacion.mes }}">
                         <br/>
                         <li class="list-inline-item">
@@ -110,6 +110,17 @@
                     </ul>
                 </div>
             </div>
+            <hr>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label for="division">Vacaciones (Cantidad de dias utilizados durante el presente periodo):</label>
+                         <div class="input-group">
+                               {{ form.vacaciones_usadas }}
+                         </div>
+                    </div>
+                </div>
+          </div>
         </div>
     </div> <!-- Fin cuerpo -->
 <hr>

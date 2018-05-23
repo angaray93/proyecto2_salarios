@@ -236,7 +236,7 @@ class Vacaciones(models.Model):
         return resultado
 
     def calculo_diasusados(self):
-        cantidad_mes = self.vacacionesliquidacion_set.usados
+        cantidad_mes = self.vacacionesusadas_set.usados
         resultado = self.diasusados + cantidad_mes
         return resultado
 
@@ -250,12 +250,22 @@ class Vacaciones(models.Model):
         return resultado
 
 
-class Vacacionesliquidacion(models.Model):
+class Vacacionesusadas(models.Model):
     id = models.AutoField(primary_key=True)
-    usados = models.IntegerField(default=0)
+    diasusados = models.IntegerField(default=0)
     # -----------------------------------Relationships-----------------------------------------#
-    vacaciones = models.ForeignKey('Vacaciones', on_delete=models.CASCADE)
-    liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE)
+    vacaciones = models.ForeignKey('Vacaciones', on_delete=models.CASCADE, null=True, blank=True)
+    mes = models.ForeignKey('Mes', on_delete=models.DO_NOTHING)
+
+
+class Mes(models.Model):
+    id = models.AutoField(primary_key=True)
+    numero = models.IntegerField(default=0)
+    nombre = models.CharField(max_length=50, default='', unique=True)
+    year = models.IntegerField(default=2018)
+
+    class Meta:
+        unique_together = (('nombre', 'year'),)
 
 
 class Constante(models.Model):
@@ -364,15 +374,16 @@ class Liquidacion(models.Model):
     id = models.AutoField(primary_key=True)
     fechacreacion = models.DateTimeField()
     ultimamodificacion = models.DateTimeField()
-    mes = models.IntegerField()
+    mes = models.ForeignKey('Mes', on_delete=models.DO_NOTHING, default=1)
     total_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
     total_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default= 0)
     total_liquidacion = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True , default=0)
     inicio_periodo = models.DateTimeField()
     fin_periodo = models.DateTimeField()
+    vacaciones_usadas = models.IntegerField(default=0)
     #-----------------------------------Relationships-----------------------------------------#
     haberes = models.ManyToManyField('Haber', through='Liquidacionhaber', through_fields=('liquidacion', 'haber'), null=True)
-    vacaciones = models.ManyToManyField('Vacaciones', through='Vacacionesliquidacion', through_fields=('liquidacion', 'vacaciones'),null=True)
+    #vacaciones = models.ManyToManyField('Vacaciones', through='Vacacionesusadas', through_fields=('liquidacion', 'vacaciones'),null=True)
     funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_liq_funcionario')
     estado_actual = models.ForeignKey('State', on_delete=models.CASCADE, related_name='fk_liquidacion_estado')
     tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE, related_name='fk_liquidacion_tipo')

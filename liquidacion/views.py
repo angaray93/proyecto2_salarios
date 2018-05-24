@@ -158,23 +158,43 @@ def vista_liq_mensual(request, idliquidacion):
             estado_actual = liquidacion.estado_actual
             if request.POST.get('boton', '') == 'Descartado':
                 transicion = Transition.objects.get(process=proceso, currentState=estado_actual, nextState__stateType__name='Cancelado')
+                liquidacion.estado_actual = transicion.nextState
+                liquidacion.save()
             else:
                 if request.POST.get('boton', '') == 'Confirmado':
                     transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
                                                         nextState__stateType__name='Completado')
+                    liquidacion.estado_actual = transicion.nextState
+                    liquidacion.save()
+                    # -------------------------------VACACIONES---------------------------------------------#
+                    vacacion_periodo = Vacaciones.objects.get(movimiento__funcionario=liquidacion.funcionario,
+                                                              anho=datetime.datetime.today().year)
+                    vacacion_periodo.diasobtenidos = vacacion_periodo.calculo_diasobtenidos()
+                    vacacion_periodo.save()
+
+                    vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
+                                                                       dias_restantes__gt=0).order_by('-inicio')[:2]
+                    first = vacaciones_funcionario.first()
+                    if first.dias_restantes > liquidacion.vacaciones_usadas:
+                        first.diasusados += liquidacion.vacaciones_usadas
+                        first.save()
+                        vacacion_liquidacion = Vacacionesusadas(
+                            diasusados = liquidacion.vacaciones_usadas,
+                            vacaciones = first,
+                            mes = liquidacion.mes
+                        )
+                        vacacion_liquidacion.save()
+
+                    else:
+                        print('CERO')
 
                 else:
                     transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
                                                         nextState__stateType__name='Pendiente')
-            liquidacion.estado_actual = transicion.nextState
-            liquidacion.save()
-            #-------------------------------VACACIONES---------------------------------------------#
-            vacacion_periodo = Vacaciones.objects.get(movimiento__funcionario = liquidacion.funcionario, anho=datetime.datetime.today().year)
-            vacacion_periodo.diasobtenidos = vacacion_periodo.calculo_diasobtenidos()
-            vacacion_periodo.save()
+                    liquidacion.estado_actual = transicion.nextState
+                    liquidacion.save()
 
-            vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario = liquidacion.funcionario, dias_restantes__gt = 0)\
-                .order_by('-inicio')
+
             return redirect(reverse('liquidacion:editar_liquidacion', args=[liquidacion.pk]))
         else:
             # TODO Implementar sistema de errores

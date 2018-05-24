@@ -83,7 +83,7 @@
                             <input type="hidden" name="fechacreacion" value="{{ liquidacion.fechacreacion|date:"Y-m-d H:i" }}">
                         <br/>
                         <li class="list-inline-item"><strong>Mes: </strong>{{ liquidacion.mes.nombre }}</li>
-                            <input type="hidden" name="mes" value="{{ liquidacion.mes }}">
+                            <input type="hidden" name="mes" value="{{ liquidacion.mes.pk }}">
                         <br/>
                         <li class="list-inline-item">
                             <strong>Periodo: Del </strong>{{ liquidacion.inicio_periodo|date:"d/m/Y" }}

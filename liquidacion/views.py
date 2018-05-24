@@ -168,7 +168,13 @@ def vista_liq_mensual(request, idliquidacion):
                                                         nextState__stateType__name='Pendiente')
             liquidacion.estado_actual = transicion.nextState
             liquidacion.save()
+            #-------------------------------VACACIONES---------------------------------------------#
+            vacacion_periodo = Vacaciones.objects.get(movimiento__funcionario = liquidacion.funcionario, anho=datetime.datetime.today().year)
+            vacacion_periodo.diasobtenidos = vacacion_periodo.calculo_diasobtenidos()
+            vacacion_periodo.save()
 
+            vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario = liquidacion.funcionario, dias_restantes__gt = 0)\
+                .order_by('-inicio')
             return redirect(reverse('liquidacion:editar_liquidacion', args=[liquidacion.pk]))
         else:
             # TODO Implementar sistema de errores
@@ -180,25 +186,15 @@ def vista_liq_mensual(request, idliquidacion):
     else:
         if idliquidacion:
             liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
+            if liquidacion.estado_actual.stateType.name == 'Pendiente':
+                transicion = Transition.objects.get(process=liquidacion.estado_actual.process, currentState=liquidacion.estado_actual)
+                liquidacion.estado_actual = transicion.nextState
+                liquidacion.save()
             haberes = Haber.objects.filter(movimiento__funcionario=liquidacion.funcionario)
-            '''if liquidacion.estado_actual.name == 'Nuevo':
-                for haber in haberes:
-                    liq_haber = Liquidacionhaber(
-                        haber=haber,
-                        liquidacion=liquidacion
-                    )
-                    liq_haber.monto_debito = liq_haber.suma_constante_debito()
-                    liq_haber.monto_credito = liq_haber.suma_constante_credito()
-                    liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
-                    liq_haber.save()'''
             liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
             movimientos = Movimiento.objects.filter(pk__in = Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
             constantes = Constante.objects.filter(movimiento__pk__in=Subquery(movimientos.values('pk')))
             detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
-            '''liquidacion.total_debito = liquidacion.calculo_total_debito()
-            liquidacion.total_credito = liquidacion.calculo_total_credito()
-            liquidacion.total_liquidacion = liquidacion.calcular_total_liquidacion()
-            liquidacion.save()'''
             form = LiqMensualForm(instance=liquidacion)
             context.update({
                 'form': form ,
@@ -209,8 +205,6 @@ def vista_liq_mensual(request, idliquidacion):
             })
             try:
                 transition = Transition.objects.get(process=liquidacion.estado_actual.process, currentState=liquidacion.estado_actual)
-                #liquidacion.estado_actual = transition.nextState
-                #liquidacion.save()
             except MultipleObjectsReturned:
                 advertencia = 'Seleccione una accion para continuar'
                 context.update({
@@ -294,10 +288,9 @@ def liq_pendientes_list(request, iddpto, mes):
     funcionarios = Movimiento.objects \
         .filter(division__departamento=departamento, estado__name='Activo') \
         .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
-    liquidaciones = Liquidacion.objects.filter(mes=mes, estado_actual=estado, funcionario__idFuncionario__in=funcionarios)
+    liquidaciones = Liquidacion.objects.filter(mes__numero=mes, estado_actual=estado, funcionario__idFuncionario__in=funcionarios)
     liquidacion_haberes = Liquidacionhaber.objects.filter(liquidacion__in=liquidaciones,
                                                           haber__movimiento__division__in=divisones)
-
     return render(request, 'liquidacionmensual/liqmensual_list.html', {'lista': liquidacion_haberes, 'dpto': departamento})
 
 

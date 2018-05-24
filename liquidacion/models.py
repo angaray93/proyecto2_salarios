@@ -231,7 +231,7 @@ class Vacaciones(models.Model):
     movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE, related_name= 'vacaciones_movimiento')
 
     def calculo_diasobtenidos(self):
-        cantidad_mes = 30/12
+        cantidad_mes = Decimal(30/12)
         resultado = self.diasobtenidos + cantidad_mes
         return resultado
 

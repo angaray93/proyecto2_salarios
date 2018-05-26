@@ -1,4 +1,4 @@
-from datetime import timedelta, timezone
+from datetime import timedelta, timezone, date, time
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -163,66 +163,102 @@ def vista_liq_mensual(request, idliquidacion):
                 liquidacion.save()
             else:
                 if request.POST.get('boton', '') == 'Confirmado':
-                    transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
-                                                        nextState__stateType__name='Completado')
-                    liquidacion.estado_actual = transicion.nextState
-                    liquidacion.save()
-                    # -------------------------------VACACIONES---------------------------------------------#
-                    #vacacion_periodo = Vacaciones.objects.get(movimiento__funcionario=liquidacion.funcionario,
-                    #                                          anho=datetime.datetime.today().year)
-                    #vacacion_periodo.diasobtenidos = vacacion_periodo.calculo_diasobtenidos()
-                    #vacacion_periodo.save()
-
-                    vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
-                                                                       dias_restantes__gt=0).order_by('inicio')[:2]
-                    print(vacaciones_funcionario)
-                    first = vacaciones_funcionario.first()
-                    print(vacaciones_funcionario[0], vacaciones_funcionario[1])
-
-                    if first.dias_restantes > liquidacion.vacaciones_usadas:
-                        first.diasusados += liquidacion.vacaciones_usadas
-                        first.save()
-                        first.dias_restantes = first.calculo_diasrestantes()
-                        first.save()
-                        vacacion_liquidacion = Vacacionesusadas(
-                            diasusados = liquidacion.vacaciones_usadas,
-                            vacaciones = first,
-                            mes = liquidacion.mes
-                        )
-                        vacacion_liquidacion.save()
+                    #transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
+                    #                                    nextState__stateType__name='Completado')
+                    #liquidacion.estado_actual = transicion.nextState
+                    #liquidacion.save()
+                    # -------------------------------AGUINALDO----------------------------------------------#
+                    liq_haberes = Liquidacionhaber.objects.filter(liquidacion = liquidacion)
+                    if liquidacion.mes.numero == 1:
+                        for liq in liq_haberes:
+                            nuevo_aguinaldo = Aguinaldo(
+                                anho = datetime.datetime.today().year,
+                                movimiento = liq.haber.movimiento
+                            )
+                            nuevo_aguinaldo.save()
+                            nuevo_aguinaldo.acumulado += liq.subTotal
+                            nuevo_aguinaldo.total = nuevo_aguinaldo.calculo_total()
+                            nuevo_aguinaldo.save()
                     else:
-                        print('ENTRA AL ELSE')
-                        aux1 = liquidacion.vacaciones_usadas
-                        first.diasusados += first.dias_restantes
-                        first.save()
-                        vacacion_liquidacion = Vacacionesusadas(
-                            diasusados= first.dias_restantes,
-                            vacaciones=first,
-                            mes=liquidacion.mes
-                        )
-                        vacacion_liquidacion.save()
-                        aux2 = aux1 - first.dias_restantes
-                        first.dias_restantes = first.calculo_diasrestantes()
-                        first.save()
+                        for liq in liq_haberes:
+                            aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
+                                                              anho=datetime.datetime.today().year)
+                            aguinaldo.save()
+                            aguinaldo.acumulado += liq.subTotal
+                            aguinaldo.total = aguinaldo.calculo_total()
+                            aguinaldo.save()
 
-                        print(vacaciones_funcionario[1])
-                        second = vacaciones_funcionario[1]
-                        second.diasusados += aux2
-                        second.save()
-                        vacacion_liquidacion2 = Vacacionesusadas(
-                            diasusados = aux2,
-                            vacaciones = second,
-                            mes = liquidacion.mes
-                        )
-                        vacacion_liquidacion2.save()
-                        second.dias_restantes = second.calculo_diasrestantes()
-                        second.save()
 
+                    # -------------------------------VACACIONES---------------------------------------------#
+                    f = ~Q(movimiento__motivo__nombre = 'Contrato') \
+                        & Q(tieneVacaciones = True) \
+                        & Q(funcionario = liquidacion.funcionario)
+
+                    lista_movimientos = Movimiento.objects.filter(f).order_by('fechainicio')
+                    primera_fecha = lista_movimientos.first().fechainicio
+                    past_year = datetime.datetime.today().year - 1
+                    f = date(past_year, primera_fecha.month , primera_fecha.day )
+                    h = time(23, 59)
+                    fechainicio = datetime.datetime.combine(f, h)
+
+                    if primera_fecha.month == liquidacion.mes.numero :
+                        nueva_vacacion = Vacaciones(
+                        anho = past_year,
+                        inicio = fechainicio,
+                        movimiento = lista_movimientos.first()
+                        )
+                        nueva_vacacion.save()
+
+                    vacacion_periodo = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
+                                                                       dias_restantes__gt=0).order_by('-inicio')
+                    newest = vacacion_periodo.first()
+                    newest.diasobtenidos = newest.calculo_diasobtenidos()
+                    newest.save()
+
+                    if liquidacion.vacaciones_usadas != 0 :
+                        vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
+                                                                           dias_restantes__gt=0).order_by('inicio')[:2]
+                        first = vacaciones_funcionario.first()
+                        if first.dias_restantes > liquidacion.vacaciones_usadas:
+                            first.diasusados += liquidacion.vacaciones_usadas
+                            first.save()
+                            first.dias_restantes = first.calculo_diasrestantes()
+                            first.save()
+                            vacacion_liquidacion = Vacacionesusadas(
+                                diasusados = liquidacion.vacaciones_usadas,
+                                vacaciones = first,
+                                mes = liquidacion.mes
+                            )
+                            vacacion_liquidacion.save()
+                        else:
+                            first =  vacaciones_funcionario[0]
+                            second =  vacaciones_funcionario[1]
+                            aux1 = liquidacion.vacaciones_usadas
+                            first.diasusados += first.dias_restantes
+                            first.save()
+                            vacacion_liquidacion = Vacacionesusadas(
+                                diasusados= first.dias_restantes,
+                                vacaciones=first,
+                                mes=liquidacion.mes
+                            )
+                            vacacion_liquidacion.save()
+                            aux2 = aux1 - first.dias_restantes
+                            first.dias_restantes = first.calculo_diasrestantes()
+                            first.save()
+                            second.diasusados += aux2
+                            second.save()
+                            vacacion_liquidacion2 = Vacacionesusadas(
+                                diasusados = aux2,
+                                vacaciones = second,
+                                mes = liquidacion.mes
+                            )
+                            vacacion_liquidacion2.save()
+                            second.dias_restantes = second.calculo_diasrestantes()
+                            second.save()
                 else:
                     transicion = Transition.objects.get(process=proceso, currentState=estado_actual, nextState__stateType__name='Pendiente')
                     liquidacion.estado_actual = transicion.nextState
                     liquidacion.save()
-
 
             return redirect(reverse('liquidacion:editar_liquidacion', args=[liquidacion.pk]))
         else:
@@ -445,10 +481,6 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     haber = None
                     if movimiento.movimiento_padre:
                         #----------------------------Haberes----------------------------------#
-                        haber_padre = Haber.objects.get(movimiento=movimiento.movimiento_padre)
-                        #haber.movimiento = movimiento
-                        haber_padre.estado = movimiento.movimiento_padre.estado
-                        haber_padre.save()
                         haber = Haber(
                             movimiento = movimiento,
                             estado = movimiento.estado
@@ -474,6 +506,9 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                         movimiento.movimiento_padre.fechafin = movimiento.fechainicio - timedelta(days=1)
                         #ToDo Dar de baja el haber del viejo movimiento y asignar el del nuevo en su lugar antes de que se guarde
                         movimiento.movimiento_padre.save()
+                        haber_padre = Haber.objects.get(movimiento=movimiento.movimiento_padre)
+                        haber_padre.estado = movimiento.movimiento_padre.estado
+                        haber_padre.save()
                     else:
                         haber = Haber(movimiento = movimiento, estado=movimiento.estado)
                         if movimiento.tieneAguinaldo is True:

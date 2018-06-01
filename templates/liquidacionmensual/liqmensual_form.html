@@ -112,18 +112,17 @@
             </div>
             <hr>
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="form-group">
-                        <label for="division">Vacaciones (Cantidad de dias utilizados durante el presente periodo):</label>
-                         <div class="input-group">
-                               {{ form.vacaciones_usadas }}
-                         </div>
+                <div class="col-lg-6" style="font-size: 14px">
+                    <label>Vacaciones (Cantidad de dias utilizados durante el presente periodo):</label>
+                </div>
+                <div class="col-lg-6">
+                    <div>
+                        {{ form.vacaciones_usadas }}
                     </div>
                 </div>
           </div>
         </div>
     </div> <!-- Fin cuerpo -->
-<hr>
 </form>
 
 <hr>
@@ -135,11 +134,15 @@
                 {% ifchanged item.pk %}
                 <thead class="thead-dark">
                     <tr>
-                        <th>Categoria Salarial: {{ item.haber.movimiento.categoria_salarial }}</th>
-                        <th>Monto Creditos: {{ item.monto_credito }}</th>
-                        <th>Monto Debitos: {{ item.monto_debito }}</th>
-                        <th>Subtotal: {{ item.subTotal }}</th>
-                        <th>
+                        {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
+                            <th colspan="1">Categoria Salarial: {{ item.haber.movimiento.categoria_salarial }}</th>
+                        {% else %}
+                            <th colspan="1">Contrato N° : </th>
+                        {% endif %}
+                        <th colspan="1" >Monto Creditos: Gs.{{ item.monto_credito|floatformat }}</th>
+                        <th colspan="1">Monto Debitos: Gs.{{ item.monto_debito|floatformat }}</th>
+                        <th colspan="1">Subtotal: Gs.{{ item.subTotal|floatformat }}</th>
+                        <th colspan="1" style="background-color: #b9bbbe; border-color: #b9bbbe">
                             <button class="btn btn-outline-primary" type="button"
                                name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
@@ -149,14 +152,18 @@
                 <thead class="thead-dark">
                     <tr>
                         <th colspan="2" class="text-center">Concepto</th>
-                        <th class="text-center">Creditos</th>
-                        <th class="text-center">Debitos</th>
+                        <th colspan="1" class="text-center">Creditos</th>
+                        <th colspan="1" class="text-center">Debitos</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td colspan="2">Asignacion Salarial</td>
-                        <td>Gs. {{ item.haber.movimiento.categoria_salarial.asignacion }}</td>
+                        {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
+                            <td>Gs. {{ item.haber.movimiento.categoria_salarial.asignacion }}</td>
+                        {% else %}
+                            <td>Gs. {{ item.pago.monto|floatformat }}</td>
+                        {% endif %}
                         <td> - </td>
                     </tr>
                     {% for con in constantes %}
@@ -164,11 +171,11 @@
                             <tr>
                                 <td colspan="2">{{ con.tipo.nombre }}</td>
                                 {% if con.tipo.tipo == 'C' %}
-                                    <td>Gs. {{ con.monto }}</td>
+                                    <td>Gs. {{ con.monto|floatformat }}</td>
                                     <td> - </td>
                                 {% else %}
                                     <td> - </td>
-                                    <td>Gs. {{ con.monto }}</td>
+                                    <td>Gs. {{ con.monto|floatformat }}</td>
                                 {% endif %}
                             </tr>
                         {% endif %}
@@ -178,11 +185,11 @@
                             <tr>
                                 <td colspan="2">{{ det.variable.motivo }}</td>
                                 {% if det.variable.tipo == 'C' %}
-                                    <td>Gs. {{ det.total_detalle }}</td>
+                                    <td>Gs. {{ det.total_detalle|floatformat }}</td>
                                     <td> - </td>
                                 {% else %}
                                     <td> - </td>
-                                    <td>Gs. {{ det.total_detalle }}</td>
+                                    <td>Gs. {{ det.total_detalle|floatformat }}</td>
                                 {% endif %}
                             </tr>
                         {% endif %}

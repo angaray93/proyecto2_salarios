@@ -17,12 +17,12 @@
 
 {% block content %}
 {% render_breadcrumbs %}
-<title>{{ lista }}</title>
+<title></title>
     <div class="col-12 col-sm-10 recuadro">
         <div class="row">
             <div class="col-12">
                 <div class="col-12 d-flex align-self-start">
-                    <h5>Liquidaciones Salariales -  Mes : {{ mes.nombre }} - Departamento: "{{ dpto }}"</h5>
+                    <h5>Liquidaciones Pendientes del funcionario: {{ funcionario.nombres }} {{ funcionario.apellidos }}</h5>
                 </div>
             </div>
         </div>
@@ -39,9 +39,9 @@
                 <tbody>
                 {% for item in lista %}
                     <tr>
-                        <td>{{ item.liquidacion.funcionario.cedula }}</td>
-                        <td>{{ item.liquidacion.funcionario }}</td>
-                        <td>{{ item.liquidacion.mes.nombre }}</td>
+                        <td>{{ item.funcionario.cedula }}</td>
+                        <td>{{ item.funcionario }}</td>
+                        <td>{{ item.mes.nombre }}</td>
                         <td class="centrartexto">
                             <button title="Editar" class="btn btn-outline-primary" type="button"
                                name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">

@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb " Consultar movimientos " 'liquidacion:buscar_movimientos_funcionario' %}
+    {% breadcrumb " Generacion de Liquidacion Mensual " 'liquidacion:parametros_liq_mensual' %}
 {% endblock %}
 
 {% block head %}
@@ -26,9 +26,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="col-12 d-flex align-self-start">
-                        {% if vista == 'buscar_movimientos_funcionario' %}
-                            <h5>Consulta de Movimientos</h5>
-                        {% endif %}
+                        <h5>Liquidación Mensual por Departamento</h5>
                     </div>
                 </div>
             </div>

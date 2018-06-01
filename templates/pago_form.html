@@ -94,5 +94,32 @@
 
 </div>
 
+<footer>
+    <script>
+        $(document).ready(function (event) {
+            var mes_select = $('#mes-select');
+            $.ajax({
+                url: '{% url 'liquidacion:traer_mes' %}',
+                dataType: 'json',
+                data: {},
+                success: function (data) {
+                    if ($.trim(data)) {
+                        mes_select.empty().append('<option value=' + 0 + ' selected >' + 'Todos' + '</option>');
+                        $.each(data, function (key, value) {
+                            mes_select.append('<option value=' + value.id + '>' + value.value + '</option>')
+                        });
+                    } else {
+                        mes_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                    }
+                },
+                error: function (data) {
+                    mes_select.empty().append('<option value=' + 0 + ' selected disabled="true">' + 'No hay datos' + '</option>');
+                }
+            })
+        });
+    </script>
+
+</footer>
+
 
 {% endblock %}

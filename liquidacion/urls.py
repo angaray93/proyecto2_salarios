@@ -38,7 +38,7 @@ urlpatterns = [
     path('liquidacionm/seleccion/', views.parametros_liq_mensual, name='parametros_liq_mensual'),
     path('ajax/traer_departamentos/', views.traer_departamentos, name='traer_departamentos'),
     path('ajax/traer_funcionarios/', views.traer_funcionarios, name='traer_funcionarios'),
-    path('liqpendientes/dpto/<int:iddpto>/mes/<int:mes>/', views.liq_pendientes_list, name='liq_pendientes_list'),
+    path('liqpendientes/dpto/<int:iddpto>/mes/<int:mes>/anho/<int:anho>/', views.liq_pendientes_list, name='liq_pendientes_list'),
     path('editar_liquidacion/<int:idliquidacion>/', views.vista_liq_mensual, name='editar_liquidacion'),
     path('liquidacion_haber/<int:idliquidacionhaber>/', views.vista_liquidacionhaber, name='editar_liquidacionhaber'),
     path('liquidacionhaber/<int:idliquidacionhaber>/detalle/nuevo/', views.vista_detalleliquidacion, name='detalleliquidacion-add'),
@@ -46,5 +46,10 @@ urlpatterns = [
          name='detalleliquidacion-edit'),
     path('detalle/<int:pk>/delete/', views.delete_detalleliquidacion, name='detalleliquidacion-delete'),
     path('carga_vacaciones/', views.vacaciones_form, name='cargar_vacaciones'),
+    path('liquidacion/pendientes/', views.liq_pendientes_filtro, name='liq_pendientes_filtro'),
+    path('liqpendientes/funcionario/<int:funcionario>/mes/<int:mes>/', views.liq_funcionarios_list, name='liq_funcionarios_list'),
+    path('ajax/traer_mes/', views.traer_mes, name='traer_mes'),
+    path('liquidaciones/periodo/', views.liquidaciones_periodo, name='liquidaciones_periodo'),
+    path('confirmar_liquidaciones/', views.confirmar_liquidaciones, name='confirmar_liquidaciones'),
 
 ]

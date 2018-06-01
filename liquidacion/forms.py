@@ -10,10 +10,31 @@ from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 from django.forms.widgets import TimeInput
 
+
+class LiquidacionesPendientesForm(forms.Form):
+    your_name = forms.CharField(label='Your name', max_length=100, required=False)
+
+
+class LiqPendientesForm(forms.Form):
+
+    funcionario = forms.CharField(label='Funcionario', required=True, widget=forms.TextInput(attrs={'class': 'form-control',
+                                                              'name': 'funcionario',
+                                                              }))
+
+    mes = forms.IntegerField(label='Mes', required=True, widget=forms.Select(attrs={'class': 'form-control',
+                                                                                          'name': 'mes',
+                                                                                          'id': 'mes-select',
+                                                                                          }))
+
 class VacacionesusadasForm(forms.ModelForm):
     class Meta:
         model = Vacacionesusadas
         exclude = ['vacaciones']
+        widgets = {
+            'diasusados': forms.NumberInput(attrs={
+                'class': 'form-control',
+            }),
+        }
 
 
 class DetalleLiquidacionForm(forms.ModelForm):
@@ -151,6 +172,7 @@ class PagoForm(ModelForm):
         widgets = {
             'mes': forms.Select(attrs={
                 'class': 'form-control',
+                'name': 'mes-select',
             }),
             'monto': forms.NumberInput(attrs={
                 'class': 'form-control',

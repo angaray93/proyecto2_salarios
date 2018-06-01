@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load humanize %}
+{% load l10n %}
+{% load table_tags %}
+
+{% block extrastyles %}{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb " Liquidaciones Pendientes " 'liquidacion:index' %}
+{% endblock %}
+
+{% block content %}
+{% render_breadcrumbs %}
+
+<div class="col-12 col-sm-10 recuadro">
+    <div class="row">
+        <div class="col-md-3 col-sm-3 btn_sep">
+            <button type="submit" form="liquidacion_form"
+                    name="boton" value="Descartado"
+                    onclick="location.href='{% url 'liquidacion:confirmar_liquidaciones' %}'"
+                    class="btn" style="width: 100%">
+                Descartar
+            </button>
+        </div>
+    </div>
+
+
+{% render_table liquidacion_table %}
+
+</div>
+
+
+{% endblock %}

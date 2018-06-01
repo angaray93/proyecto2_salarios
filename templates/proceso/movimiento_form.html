@@ -33,7 +33,7 @@
         {% endfor %}
 
         <div class="row"> <!-- cabecera-->
-            <div class="col-10">
+            <div class="col-12">
                 <div class="row">
                     <div class="col-4 d-flex align-items-center">
                         {% if movimiento %}
@@ -42,7 +42,7 @@
                             <span class="h4">Nuevo Movimiento</span>
                         {% endif %}
                     </div>
-                    <div class="col-8">
+                    <div class="col-4">
                         <ul class="list-inline">
                             {% if movimiento %}
                                 <li class="list-inline-item">Funcionario: {{ movimiento.funcionario }}</li>
@@ -51,38 +51,54 @@
                             {% endif %}
                         </ul>
                     </div>
-                </div>
-            </div>
-            <div class="col-2 d-flex justify-content-end align-items-center">
-            {% if movimiento %}
-                <ul class="list-inline">
-                    {% if perms.liquidacion.change_movimiento %}
-                    <li class="list-inline-item">
-                        <button type="submit" class="btn btn-secondary btn-lg active" name="guardar"
-                        formaction="{% url 'liquidacion:editar_movimiento' movimiento.pk %}">
-                            Guardar
-                        </button>
-                    </li>
+                    {% if movimiento %}
+                        <div class="col-2">
+                            <ul class="list-inline">
+                                {% if perms.liquidacion.change_movimiento %}
+                                <li class="list-inline-item">
+                                    <button type="submit" class="btn btn-success btn-lg active" name="guardar"
+                                    formaction="{% url 'liquidacion:editar_movimiento' movimiento.pk %}">
+                                        Guardar
+                                    </button>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="col-2">
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                {% if movimiento.motivo.nombre == 'Contrato' %}
+                                    <button type="button" class="btn btn-secondary active"
+                                        onclick="location.href='{% url 'liquidacion:nuevo_pago' movimiento.pk %}'">
+                                        Agregar Pagos
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="btn btn-secondary fa fa-arrow-right"
+                                        onclick="location.href='{% url 'liquidacion:nueva_constante' movimiento.pk %}'">Siguiente</button>
+                                {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                    <div class="col-4">
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                            {% if not movimiento_padre %}
+                                <button type="submit" class="btn btn-success btn-lg active" name="guardar"
+                                        formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}" aria-pressed="true">
+                                    Guardar
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-success btn-lg active" name="guardar"
+                                        formaction="{% url 'liquidacion:modificar_movimiento' movimiento_padre.pk %}" aria-pressed="true">
+                                    Guardar
+                                </button>
+                            {% endif %}
+                            </li>
+                        </ul>
+                    </div>
                     {% endif %}
-                    <li class="list-inline-item">
-                        <button type="button" class="btn btn-secondary fa fa-arrow-right" title="Volver a la propuesta"
-                            onclick="location.href='{% url 'liquidacion:nueva_constante' movimiento.pk %}'">Siguiente</button>
-                    </li>
-                </ul>
-            {% else %}
-                <div class="row separador"></div>
-                {% if not movimiento_padre %}
-                    <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
-                            formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}" aria-pressed="true">
-                        Guardar
-                    </button>
-                {% else %}
-                    <button type="submit" class="btn btn-primary btn-sm active" name="guardar"
-                            formaction="{% url 'liquidacion:modificar_movimiento' movimiento_padre.pk %}" aria-pressed="true">
-                        Guardar
-                    </button>
-                {% endif %}
-            {% endif %}
+                </div>
             </div>
         </div>
     <!-- Fin cabecera -->
@@ -516,6 +532,15 @@
 <footer>
 
     <script>
+        $(document).ready(function () {
+            var opcion = $.trim($("#categoria_salarial").val());
+            if ( opcion == 'None') {
+                $('#categoria_salarial').val('---');
+            }
+            $("#btnCategoria").prop("disabled", true );
+            $("#tieneVacaciones").prop("disabled", true );
+        });
+
         $('#id_motivo').on('change', function() {
             var valor = "Contrato";
             var opcion = $.trim($('#id_motivo').find('option:selected').text());

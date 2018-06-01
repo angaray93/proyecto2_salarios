@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'liquidacion',
     'django_bootstrap_breadcrumbs',
     'django_popup_view_field',
+    'crispy_forms',
+    'reset_migrations',
+    'table',
 
 ]
 

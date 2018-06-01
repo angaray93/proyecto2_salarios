@@ -1,4 +1,4 @@
-<div class="modal-dialog modal-sm">
+<div class="modal-dialog">
     <div class="modal-content" id="opciones_proceso_modal">
 
       <div class="modal-header">
@@ -15,6 +15,14 @@
                         <li class="list-group-item">
                           <a class="btn btn-primary" href="{% url 'liquidacion:buscar_movimiento' %}"
                              id="" style="width: 100%">Modificacion de Movimiento</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:parametros_liq_mensual' %}"
+                             id="" style="width: 100%">Generacion de Liquidacion Mensual</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:liq_pendientes_filtro' %}"
+                             id="" style="width: 100%">Consulta de Liquidaciones Pendientes</a>
                         </li>
                     </ul>
                 </div>

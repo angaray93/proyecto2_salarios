@@ -93,10 +93,10 @@ class Movimiento(models.Model):
 
 class Pago(models.Model):
     id = models.AutoField(primary_key=True)
-    mes = models.CharField(max_length=10 ,choices=MES_OPTIONS, blank=True, null=True)
     monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     pagado = models.BooleanField(default=False)
     # -----------------------------------Relationships-----------------------------------------#
+    mes = models.ForeignKey('Mes', on_delete=models.DO_NOTHING, default=1)
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_pago_movimiento')
 
 
@@ -152,7 +152,7 @@ class Aguinaldo(models.Model):
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='aguinaldo_movimiento')
 
     def calculo_total(self):
-        resultado = Decimal(self.acumulado / 12)
+        resultado = round(Decimal(self.acumulado / 12) * self.cantidad_meses, 0)
         return resultado
 
 
@@ -264,11 +264,14 @@ class Vacacionesusadas(models.Model):
 class Mes(models.Model):
     id = models.AutoField(primary_key=True)
     numero = models.IntegerField(default=0)
-    nombre = models.CharField(max_length=50, default='', unique=True)
+    nombre = models.CharField(max_length=50, default='')
     year = models.IntegerField(default=2018)
 
     class Meta:
         unique_together = (('nombre', 'year'),)
+
+    def __str__(self):
+        return '%s - %s' % (self.nombre, self.year)
 
 
 class Constante(models.Model):
@@ -383,10 +386,9 @@ class Liquidacion(models.Model):
     total_liquidacion = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True , default=0)
     inicio_periodo = models.DateTimeField()
     fin_periodo = models.DateTimeField()
-    vacaciones_usadas = models.IntegerField(default=0)
+    vacaciones_usadas = models.IntegerField(default=0, blank=True)
     #-----------------------------------Relationships-----------------------------------------#
     haberes = models.ManyToManyField('Haber', through='Liquidacionhaber', through_fields=('liquidacion', 'haber'), null=True)
-    #vacaciones = models.ManyToManyField('Vacaciones', through='Vacacionesusadas', through_fields=('liquidacion', 'vacaciones'),null=True)
     funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_liq_funcionario')
     estado_actual = models.ForeignKey('State', on_delete=models.CASCADE, related_name='fk_liquidacion_estado')
     tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE, related_name='fk_liquidacion_tipo')
@@ -443,7 +445,11 @@ class DetalleLiquidacion(models.Model):
 
     def calcular_monto(self):
         if self.monto == 0 :
-            monto = round(self.liquidacion_haber.haber.movimiento.categoria_salarial.asignacion / self.parametro.valor_numerico, 0)
+            if self.liquidacion_haber.haber.movimiento.motivo.nombre != 'Contrato':
+                monto = round(self.liquidacion_haber.haber.movimiento.categoria_salarial.asignacion / self.parametro.valor_numerico, 0)
+            else:
+                pago = Pago.objects.get(movimiento=self.liquidacion_haber.haber.movimiento, mes=self.liquidacion_haber.liquidacion.mes)
+                monto = round(pago.monto / self.parametro.valor_numerico, 0)
         else:
             monto = self.monto
         return monto
@@ -495,6 +501,7 @@ class Liquidacionhaber(models.Model):
     monto_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
     monto_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
     subTotal = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    pago = models.ForeignKey('Pago', on_delete=models.CASCADE, null=True, blank=True, related_name='fk_liqhaber_pago')
 
     class Meta:
         unique_together = (('haber', 'liquidacion'),)
@@ -513,7 +520,11 @@ class Liquidacionhaber(models.Model):
                 Sum(models.F('monto')), 0,
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_credito'] or 0
-        return suma_monto_credito + self.haber.movimiento.categoria_salarial.asignacion
+        if self.haber.movimiento.motivo.nombre != 'Contrato':
+            return suma_monto_credito + self.haber.movimiento.categoria_salarial.asignacion
+        else:
+            pago = Pago.objects.get(mes=self.liquidacion.mes, movimiento=self.haber.movimiento)
+            return suma_monto_credito + pago.monto
 
     def suma_detalles_debito(self):
         suma_detalle_debito = self.detalleliquidacion_set.filter(liquidacion_haber=self.id, variable__tipo='D')\

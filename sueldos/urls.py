@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import django.contrib
+import table
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
@@ -24,4 +25,5 @@ urlpatterns = [
     path('liquidacion/', include('django.contrib.auth.urls')),
     path('liquidacion/', include('liquidacion.urls')),
     path('django_popup_view_field/', include('django_popup_view_field.urls', namespace="django_popup_view_field")),
+    path('table/', include('table.urls')),
 ]

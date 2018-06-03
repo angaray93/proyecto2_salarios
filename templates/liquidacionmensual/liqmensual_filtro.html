@@ -43,6 +43,16 @@
             {% endif %}
 
             <div class="row">
+                <div class="col-lg-10">
+                    {% for message in messages %}
+                        <div class="alert alert-danger">{{ message }}
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="desde">Desde:</label>

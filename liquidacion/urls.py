@@ -51,5 +51,6 @@ urlpatterns = [
     path('ajax/traer_mes/', views.traer_mes, name='traer_mes'),
     path('liquidaciones/periodo/', views.liquidaciones_periodo, name='liquidaciones_periodo'),
     path('confirmar_liquidaciones/', views.confirmar_liquidaciones, name='confirmar_liquidaciones'),
+    path('consulta_vacaciones/', views.consulta_vacaciones, name='consulta_vacaciones'),
 
 ]

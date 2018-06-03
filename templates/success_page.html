@@ -13,19 +13,22 @@
 </div>
 <hr>
 <div class="row">
-  		<div class="col-md-4 text-left">
+
+    {% if tipo == 'Contrato' %}
+        <div class="col-md-4 text-left">
 		   <button type="submit" id="submitForm" class="btn btn-primary"
                     onclick="location.href='{% url 'liquidacion:nuevo_pago' idmovimiento %}'">Agregar Pagos</button>
         </div>
+    {% else %}
         <div class="col-md-4 text-center">
 		   <button type="submit" id="submitForm" class="btn btn-primary"
            onclick="location.href='{% url 'liquidacion:nueva_constante' idmovimiento %}'">Agregar Debitos y Creditos</button>
         </div>
-        <div class="col-md-4 text-right">
-            <button type="submit" id="submitForm" class="btn btn-primary"
-                   onclick="location.href='{% url 'liquidacion:movimiento_resumen' idmovimiento %}'">Ver</button>
-
-    	</div>
+    {% endif %}
+    <div class="col-md-4 text-right">
+        <button type="submit" id="submitForm" class="btn btn-primary"
+               onclick="location.href='{% url 'liquidacion:movimiento_resumen' idmovimiento %}'">Ver</button>
+    </div>
   </div>
 </div>
 {% endblock %}

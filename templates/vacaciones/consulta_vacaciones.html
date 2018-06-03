@@ -1,0 +1,115 @@
+{% extends "index.html" %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load l10n %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb " Liquidaciones Pendientes " 'liquidacion:liq_pendientes_filtro' %}
+{% endblock %}
+
+{% block head %}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    {% block title %}
+        <title>Liquidaciones Pendientes</title>
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+{% render_breadcrumbs %}
+
+    <div class="col-12 col-sm-10 recuadro">
+        <form method="get">
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="col-12 d-flex align-self-start">
+                        <h5>Liquidaciones Pendientes del funcionario: </h5>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            {% if advertencia %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ advertencia }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="funcionario">Nro. de Documento de Identidad:</label>
+                        <div class="input-group">
+                            {{ form.funcionario }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 align-self-end pb-3">
+                    <button type="submit" class="btn btn-success" name="q" value="true"
+                            formaction="{% url 'liquidacion:consulta_vacaciones' %}">
+                        Generar
+                    </button>
+                </div>
+            </div>
+
+            {% if form.errors %}
+                <div class="row mt-0">
+                    <div class="col-md-4">
+                        <strong style="color:red">{{ form.cedula.errors.as_text }}</strong>
+                    </div>
+                </div>
+            {% endif %}
+
+        </form>
+
+        <div class="row mt-3 mb-3"></div>
+
+        {% if sin_datos %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ sin_datos }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+
+        {% if listado_vacaciones %}
+            <table id="tabla-vac" class="table">
+                <thead class="thead-light">
+                    <th class="centrartexto">Año</th>
+                    <th>Cantidad de dias obtenidos</th>
+                    <th>Cantidad de dias usados</th>
+                    <th>Dias restantes del periodo</th>
+                </thead>
+                <tbody>
+                {% for item in listado_vacaciones %}
+                    <tr>
+                        <td class="centrartexto">{{ item.anho }}</td>
+                        <td>{{ item.diasobtenidos }}</td>
+                        <td>{{ item.diasusados }}</td>
+                        <td>{{ item.dias_restantes }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+</div>
+
+<footer>
+    <script>
+
+    </script>
+
+</footer>
+
+{% endblock %}

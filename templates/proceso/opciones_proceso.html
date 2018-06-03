@@ -21,8 +21,12 @@
                              id="" style="width: 100%">Generacion de Liquidacion Mensual</a>
                         </li>
                         <li class="list-group-item">
-                          <a class="btn btn-primary" href="{% url 'liquidacion:liq_pendientes_filtro' %}"
-                             id="" style="width: 100%">Consulta de Liquidaciones Pendientes</a>
+                          <a class="btn btn-primary" href="{% url 'liquidacion:liquidaciones_periodo' %}"
+                             id="" style="width: 100%">Consulta de Liquidaciones Pendientes del periodo </a>
+                        </li>
+                         <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:confirmar_liquidaciones' %}"
+                             id="" style="width: 100%">Consulta de Liquidaciones Confirmadas del periodo</a>
                         </li>
                     </ul>
                 </div>

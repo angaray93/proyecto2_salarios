@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 #from django.forms import *
-from django.forms import ModelForm, NumberInput
+from django.forms import ModelForm, NumberInput, IntegerField
 from django.forms.widgets import SelectDateWidget, DateInput
 from django.forms.fields import DateField
 from liquidacion.models import *
@@ -10,6 +10,10 @@ from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 from django.forms.widgets import TimeInput
 
+class VacacionesFuncionarioForm(forms.Form):
+
+    funcionario = IntegerField(label='Nro. de Documento de Identidad', required=True,
+                               widget=forms.TextInput(attrs={'class': 'form-control',}))
 
 class LiquidacionesPendientesForm(forms.Form):
     your_name = forms.CharField(label='Your name', max_length=100, required=False)

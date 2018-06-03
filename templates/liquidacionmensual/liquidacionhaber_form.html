@@ -23,6 +23,16 @@
 </div>
 {% endif %}
 
+<div class="row">
+    <div class="col-lg-10">
+        {% for message in messages %}
+            <div class="alert alert-danger">{{ message }}
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
     <div class="row"><!--titulo-->
         <div class="col-8">
             {% if liq_haber.haber.movimiento.motivo.nombre != 'Contrato' %}

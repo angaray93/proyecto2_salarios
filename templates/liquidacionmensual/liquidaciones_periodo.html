@@ -36,18 +36,25 @@
         </div>
     </div>
     <hr>
-    <div class="row">
-        <div class="col-md-3 col-sm-3 btn_sep">
-            <button type="submit" form="liquidacion_form"
-                    name="boton" value="Descartado"
-                    onclick="location.href='{% url 'liquidacion:confirmar_liquidaciones' %}'"
-                    class="btn" style="width: 100%">
-                Confirmar Todas
-            </button>
+    {% if liquidacion_table %}
+        <div class="row">
+            <div class="col-md-3 col-sm-3 btn_sep">
+                <button type="submit" form="liquidacion_form"
+                        name="boton" value="Descartado"
+                        onclick="location.href='{% url 'liquidacion:confirmar_liquidaciones' %}'"
+                        class="btn" style="width: 100%">
+                    Confirmar Todas
+                </button>
+            </div>
         </div>
+        {% render_table liquidacion_table %}
+    {% else %}
+    <div class="row">
+        <p>
+            Liquidaciones Confirmadas con exito !
+        </p>
     </div>
-    {% render_table liquidacion_table %}
-
+    {% endif %}
 {% endif %}
 </div>
 {% endblock %}

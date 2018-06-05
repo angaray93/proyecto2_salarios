@@ -52,5 +52,8 @@ urlpatterns = [
     path('liquidaciones/periodo/', views.liquidaciones_periodo, name='liquidaciones_periodo'),
     path('confirmar_liquidaciones/', views.confirmar_liquidaciones, name='confirmar_liquidaciones'),
     path('consulta_vacaciones/', views.consulta_vacaciones, name='consulta_vacaciones'),
+    path('liquidaciones/confirmadas/periodo/', views.confirmadas_periodo, name='confirmadas_periodo'),
+    path('liquidaciond/seleccion/', views.param_liq_definitiva, name='param_liq_definitiva'),
+    path('liquidacion_baja/movimiento/<int:idmovimiento>/', views.generar_liq_definitiva, name='generar_liq_definitiva'),
 
 ]

@@ -32,6 +32,16 @@
     <div class="row mt-2"> <!-- botones -->
         <div class="col-12">
             <div class="row">
+                {% if liquidacion.tipo.nombre == 'Definitiva' %}
+                <div class="col-md-3 col-sm-3 btn_sep">
+                    <button type="submit" form="liquidacion_form"
+                            name="boton" value="Definitiva"
+                            formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
+                            class="btn" style="width: 100%">
+                        Confirmar
+                    </button>
+                </div>
+                {% else %}
                 <div class="col-md-3 col-sm-3 btn_sep">
                     <button type="submit" form="liquidacion_form"
                             name="boton" value="Descartado"
@@ -56,6 +66,7 @@
                         Guardar Borrador
                     </button>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div><!-- fin botones -->
@@ -159,12 +170,16 @@
                 <tbody>
                     <tr>
                         <td colspan="2">Asignacion Salarial</td>
-                        {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
-                            <td>Gs. {{ item.haber.movimiento.categoria_salarial.asignacion }}</td>
+                        {% if item.liquidacion.tipo.nombre == 'Definitiva' %}
+                            <td>Gs. {{ item.salario_proporcional|floatformat }}</td>
                         {% else %}
-                            <td>Gs. {{ item.pago.monto|floatformat }}</td>
+                            {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
+                                <td>Gs. {{ item.haber.movimiento.categoria_salarial.asignacion }}</td>
+                            {% else %}
+                                <td>Gs. {{ item.pago.monto|floatformat }}</td>
+                            {% endif %}
+                            <td> - </td>
                         {% endif %}
-                        <td> - </td>
                     </tr>
                     {% for con in constantes %}
                         {% if con.movimiento == item.haber.movimiento %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load humanize %}
+{% load l10n %}
+{% load table_tags %}
+
+{% block extrastyles %}{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb " Liquidaciones Pendientes " 'liquidacion:index' %}
+{% endblock %}
+
+{% block content %}
+{% render_breadcrumbs %}
+
+<div class="col-12 col-sm-10 recuadro">
+    <div class="row">
+        <div class="col-12">
+            <div class="col-12 d-flex align-self-start">
+                <h5>Liquidaciones Salariales Confirmadas del presente periodo</h5>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-3 col-sm-3 btn_sep">
+
+        </div>
+    </div>
+    {% render_table liquidacion_table %}
+
+</div>
+{% endblock %}

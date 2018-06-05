@@ -109,7 +109,7 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="form-group">
-                <label for="tipo">Tipo de Movimiento:</label>
+                <label for="tipo">Tipo:</label>
                 <div class="input-group">
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
@@ -133,7 +133,7 @@
         </div>
         <div class="col-lg-6">
             <div class="form-group">
-                <label for="motivo">Motivo del Movimiento:</label>
+                <label for="motivo">Motivo:</label>
                 <div class="input-group">
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
@@ -151,6 +151,27 @@
                                 <i class="fa fa-plus" aria-hidden="true"></i>
                             </button></a>
                         </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="fila_codigo">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="codigo">Codigo de Movimiento:</label>
+                <div class="input-group">
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="codigo" class="form-control"
+                               value="{{ movimiento.codigo }}" disabled/>
+                            <input type="hidden" name="codigo" value="{{ movimiento.codigo }}">
+                        {% else %}
+                           {{ form.codigo }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.codigo }}
                     {% endif %}
                 </div>
             </div>
@@ -539,6 +560,7 @@
             }
             $("#btnCategoria").prop("disabled", true );
             $("#tieneVacaciones").prop("disabled", true );
+            $("#fila_codigo").hide();
         });
 
         $('#id_motivo').on('change', function() {
@@ -548,9 +570,11 @@
             if ( opcion == valor) {
                 $("#btnCategoria").prop("disabled", true );
                 $("#tieneVacaciones").prop("disabled", true );
+                $("#fila_codigo").show();
             } else {
                 $("#btnCategoria").prop("disabled", false );
                 $("#tieneVacaciones").prop("disabled", false );
+                $("#fila_codigo").hide();
             }
         });
 

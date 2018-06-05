@@ -10,6 +10,12 @@ from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 from django.forms.widgets import TimeInput
 
+class LiquidacionDefinitivaForm(forms.Form):
+
+    funcionario = IntegerField(label='Nro. de Documento de Identidad', required=True,
+                               widget=forms.TextInput(attrs={'class': 'form-control',}))
+
+
 class VacacionesFuncionarioForm(forms.Form):
 
     funcionario = IntegerField(label='Nro. de Documento de Identidad', required=True,
@@ -91,6 +97,9 @@ class MovimientoForm(forms.ModelForm):
         model = Movimiento
         exclude = ['movimiento_padre','funcionario','estado','esPrimero']
         widgets = {
+            'codigo': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
             'categoria_salarial': forms.Select(attrs={
                 'class': 'form-control'
             }),

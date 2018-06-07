@@ -168,33 +168,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td colspan="2">Asignacion Salarial</td>
-                        {% if item.liquidacion.tipo.nombre == 'Definitiva' %}
-                            <td>Gs. {{ item.salario_proporcional|floatformat }}</td>
-                        {% else %}
-                            {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
-                                <td>Gs. {{ item.haber.movimiento.categoria_salarial.asignacion }}</td>
-                            {% else %}
-                                <td>Gs. {{ item.pago.monto|floatformat }}</td>
-                            {% endif %}
-                            <td> - </td>
-                        {% endif %}
-                    </tr>
-                    {% for con in constantes %}
-                        {% if con.movimiento == item.haber.movimiento %}
-                            <tr>
-                                <td colspan="2">{{ con.tipo.nombre }}</td>
-                                {% if con.tipo.tipo == 'C' %}
-                                    <td>Gs. {{ con.monto|floatformat }}</td>
-                                    <td> - </td>
-                                {% else %}
-                                    <td> - </td>
-                                    <td>Gs. {{ con.monto|floatformat }}</td>
-                                {% endif %}
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
                     {% for det in detalles %}
                         {% if det.liquidacion_haber == item %}
                             <tr>

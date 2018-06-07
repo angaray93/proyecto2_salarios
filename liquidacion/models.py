@@ -154,10 +154,11 @@ class Aguinaldo(models.Model):
 
     def calculo_acumulado(self, mes):
         if self.movimiento.motivo.nombre != 'Contrato':
-            resultado = Decimal(self.movimiento.categoria_salarial.asignacion) / Decimal(12)
+            liquidacion = Liquidacionhaber.objects.get(haber__movimiento=self.movimiento, liquidacion__mes__pk=mes)
+            resultado = Decimal(liquidacion.liquidacion.total_liquidacion) / Decimal(12)
             return round(resultado,0)
         else:
-            pago = Pago.objects.get(movimiento=self.movimiento, mes=mes)
+            pago = Pago.objects.get(movimiento=self.movimiento, mes__pk=mes)
             resultado = Decimal(pago.monto) / Decimal(12)
             return round(resultado,0)
 
@@ -474,8 +475,10 @@ class Liquidacionhaber(models.Model):
             pago = Pago.objects.get(mes=self.liquidacion.mes, movimiento=self.haber.movimiento)
             resultado =  suma_monto_credito + pago.monto
         if self.liquidacion.tipo.nombre != 'Definitiva':
+            print('suma_constante_credito', resultado)
             return round(resultado)
         else:
+            print('suma_constante_credito', resultado)
             return round((resultado / 30) * self.liquidacion.dias_trabajados)
 
     def suma_credito_baja(self):
@@ -492,6 +495,7 @@ class Liquidacionhaber(models.Model):
                 Sum(models.F('total_detalle')), 0,
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_debito'] or 0
+        print('suma_detalle_debito', suma_detalle_debito)
         return suma_detalle_debito
 
     def suma_detalles_credito(self):
@@ -500,6 +504,7 @@ class Liquidacionhaber(models.Model):
                 Sum(models.F('total_detalle')), 0,
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_credito'] or 0
+        print('suma_detalle_credito', suma_detalle_credito)
         return suma_detalle_credito
 
     def calcular_total(self):
@@ -521,12 +526,13 @@ class LiquidacionType(models.Model):
 
 class DetalleLiquidacion(models.Model):
     id = models.AutoField(primary_key=True)
-    cantidad = models.DecimalField(max_digits=5, decimal_places=1, default=1, blank=True,)
-    monto = models.DecimalField(max_digits=10, decimal_places=1, default=0, blank=True,)
+    cantidad = models.DecimalField(max_digits=5, decimal_places=1, default=1, blank=True)
+    monto = models.DecimalField(max_digits=10, decimal_places=1, default=0, blank=True)
     total_detalle = models.DecimalField(max_digits=10, decimal_places=1, default=0, blank=True, null=True)
     #-----------------------------------Relationships-----------------------------------------#
     parametro = models.ForeignKey('Parametro', on_delete=models.CASCADE, related_name='fk_detalle_funcionario')
     variable = models.ForeignKey('Variable', on_delete=models.CASCADE, related_name='fk_detalle_variable')
+    constante = models.ForeignKey('Constante', on_delete=models.DO_NOTHING, blank=True, null=True)
     liquidacion_haber = models.ForeignKey('Liquidacionhaber', on_delete=models.CASCADE, db_column='liquidacion_haber_id')
 
     class Meta:
@@ -541,6 +547,14 @@ class DetalleLiquidacion(models.Model):
                 monto = round(pago.monto / self.parametro.valor_numerico, 0)
         else:
             monto = self.monto
+        return monto
+
+    def calcular_monto_constante(self):
+        if self.monto == 0 :
+            monto = round(self.liquidacion_haber.subTotal * (self.constante.tipo.porcentaje / 100 ), 0)
+        else:
+            monto = self.monto
+        print('calcular_monto_constante', monto)
         return monto
 
     def calcular_monto_baja(self):

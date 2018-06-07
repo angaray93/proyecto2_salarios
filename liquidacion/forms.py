@@ -50,13 +50,13 @@ class VacacionesusadasForm(forms.ModelForm):
 class DetalleLiquidacionForm(forms.ModelForm):
     class Meta:
         model = DetalleLiquidacion
-        exclude = ['liquidacion','total']
+        exclude = ['liquidacion','total', 'salario_proporcional', 'pago']
 
 
 class LiquidacionhaberForm(forms.ModelForm):
     class Meta:
         model = Liquidacionhaber
-        exclude = ['haber' ,'liquidacion']
+        fields = '__all__'
 
 
 class LiqMensualForm(forms.ModelForm):

@@ -46,14 +46,25 @@
             {% endif %}
 
         </div>
+        {% if liq_haber.liquidacion.tipo.nombre == 'Mensual' %}
         <div class="col-4">
-            <button type="button"
-                    name="boton" value="liquidaciongeneral"
-                    onclick="location.href=('{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}')"
+            <button type="submit" form="liqhaber_form"
+                    name="boton" value="Guardar"
+                    formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
                     class="btn" style="width: 100%">
-                Ir a Liquidacion Completa
+                Guardar
             </button>
         </div>
+        {% else %}
+        <div class="col-4">
+            <button type="submit" form="liqhaber_form"
+                    name="boton" value="Finalizar"
+                    formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
+                    class="btn" style="width: 100%">
+                Finalizar
+            </button>
+        </div>
+        {% endif %}
     </div> <!--fin titulo-->
     <hr>
 
@@ -101,8 +112,13 @@
  <form method="post" id="liqhaber_form">
     {% csrf_token %}
         <!-- Campos ocultos -->
-        <input type="hidden" name="haber" value="{{ liq_haber.haber }}">
-        <input type="hidden" name="liquidacion" value="{{ liq_haber.liquidacion }}">
+        <input type="hidden" name="haber" value="{{ liq_haber.haber.pk }}">
+        <input type="hidden" name="liquidacion" value="{{ liq_haber.liquidacion.pk }}">
+        <input type="hidden" name="salario_proporcional" value="{{ liq_haber.salario_proporcional|unlocalize }}">
+        {% if liq_haber.pago %}
+            <input type="hidden" name="pago" value="{{ liq_haber.pago.pk }}">
+        {% endif %}
+
         <div class="row separador"></div>
         <div class="row mt-2">
             <div class="col-12 col-sm-4">
@@ -111,7 +127,7 @@
                     {% if liq_haber %}
                         <input type="text" class="form-control"
                                value="{{ liq_haber.monto_debito|floatformat }}" disabled/>
-                        <input type="hidden" name="monto_debito" value="{{ liq_haber.monto_debito|floatformat }}">
+                        <input type="hidden" name="monto_debito" value="{{ liq_haber.monto_debito|unlocalize }}">
                     {% endif %}
                 </div>
             </div>
@@ -121,7 +137,7 @@
                     {% if liq_haber %}
                         <input type="text" class="form-control"
                                value="{{ liq_haber.monto_credito|floatformat }}" disabled/>
-                        <input type="hidden" name="monto_credito" value="{{ liq_haber.monto_credito|floatformat }}">
+                        <input type="hidden" name="monto_credito" value="{{ liq_haber.monto_credito|unlocalize }}">
                     {% endif %}
                 </div>
             </div>
@@ -131,7 +147,7 @@
                 {% if liq_haber %}
                     <input type="text" class="form-control"
                            value="{{ liq_haber.subTotal|floatformat }}" disabled/>
-                    <input type="hidden" name="subTotal" value="{{ liq_haber.subTotal }}">
+                    <input type="hidden" name="subTotal" value="{{ liq_haber.subTotal|unlocalize }}">
                 {% endif %}
             </div>
         </div>

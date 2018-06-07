@@ -94,9 +94,7 @@ def generar_liq_definitiva(request, idmovimiento):
         liquidacion.total_liquidacion = liquidacion.calcular_total_liquidacion()
         liquidacion.save()
 
-    return redirect(reverse('liquidacion:editar_liquidacion', args=[liquidacion.pk]))
-
-    #return render(request, 'liquidacionmensual/liqmensual_form.html', context)
+    return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[liq_haber.pk]))
 
 
 @login_required()
@@ -405,14 +403,14 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
                 messages.error(request, "Ya existe un detalle con la misma descripcion")
                 return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[liquidacionhaber.pk]))
 
-            if detalleliquidacion.liquidacion_haber.liquidacion.tipo.nombre == 'Definitiva':
+            '''if detalleliquidacion.liquidacion_haber.liquidacion.tipo.nombre == 'Definitiva':
                 detalleliquidacion.monto = detalleliquidacion.calcular_monto_baja()
             else:
                 detalleliquidacion.monto = detalleliquidacion.calcular_monto()
             detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
-            detalleliquidacion.save()
+            detalleliquidacion.save()'''
 
-            if detalleliquidacion.variable.tipo == 'D':
+            '''if detalleliquidacion.variable.tipo == 'D':
                 suma_detalles_debito = detalleliquidacion.liquidacion_haber.suma_detalles_debito()
                 detalleliquidacion.liquidacion_haber.monto_debito += suma_detalles_debito
             else:
@@ -425,7 +423,7 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
             detalleliquidacion.liquidacion_haber.liquidacion.total_credito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_credito()
             detalleliquidacion.liquidacion_haber.liquidacion.total_debito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_debito()
             detalleliquidacion.liquidacion_haber.liquidacion.total_liquidacion = detalleliquidacion.liquidacion_haber.liquidacion.calcular_total_liquidacion()
-            detalleliquidacion.liquidacion_haber.liquidacion.save()
+            detalleliquidacion.liquidacion_haber.liquidacion.save()'''
 
             return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[detalleliquidacion.liquidacion_haber.pk]))
         else:
@@ -508,7 +506,7 @@ def vista_liq_mensual(request, idliquidacion):
                                 movimiento = liq.haber.movimiento
                             )
                             nuevo_aguinaldo.save()
-                            nuevo_aguinaldo.acumulado += nuevo_aguinaldo.calculo_acumulado(liquidacion.mes)
+                            nuevo_aguinaldo.acumulado += nuevo_aguinaldo.calculo_acumulado(liquidacion.mes.pk)
                             nuevo_aguinaldo.save()
                             nuevo_aguinaldo.total = nuevo_aguinaldo.calculo_total()
                             nuevo_aguinaldo.save()
@@ -524,7 +522,7 @@ def vista_liq_mensual(request, idliquidacion):
                                                                   anho=datetime.datetime.today().year)
                                 aguinaldo.save()
                                 aguinaldo.cantidad_meses += 1
-                                aguinaldo.acumulado += aguinaldo.calculo_acumulado(liquidacion.mes)
+                                aguinaldo.acumulado += aguinaldo.calculo_acumulado(liquidacion.mes.pk)
                                 aguinaldo.save()
                                 aguinaldo.total = aguinaldo.calculo_total()
                                 aguinaldo.save()
@@ -623,31 +621,6 @@ def vista_liq_mensual(request, idliquidacion):
                 # -------------------------------AGUINALDO----------------------------------------------#
                 liq = Liquidacionhaber.objects.get(liquidacion=liquidacion)
                 print('movimiento id', liq.haber.movimiento)
-                if liquidacion.mes.numero == 1:
-                    nuevo_aguinaldo = Aguinaldo(
-                        anho=datetime.datetime.today().year,
-                        movimiento=liq.haber.movimiento
-                    )
-                    nuevo_aguinaldo.save()
-                    nuevo_aguinaldo.acumulado += nuevo_aguinaldo.calculo_acumulado(liquidacion.mes)
-                    nuevo_aguinaldo.save()
-                    nuevo_aguinaldo.total = nuevo_aguinaldo.calculo_total()
-                    nuevo_aguinaldo.save()
-                else:
-                    try:
-                        aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
-                                                          anho=datetime.datetime.today().year)
-                    except:
-                        aguinaldo = None
-                    if aguinaldo is not None:
-                        aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
-                                                          anho=datetime.datetime.today().year)
-                        aguinaldo.save()
-                        aguinaldo.cantidad_meses += 1
-                        aguinaldo.acumulado += (liq.salario_proporcional / 12) * 1
-                        aguinaldo.save()
-                        aguinaldo.total = aguinaldo.calculo_total()
-                        aguinaldo.save()
 
                 fin_fecha = liquidacion.fin_periodo
                 estado_inactivo = State.objects.get(process__name='Alta de Movimiento',
@@ -680,13 +653,13 @@ def vista_liq_mensual(request, idliquidacion):
                             movimiento=lista_movimientos.first()
                         )
                         nueva_vacacion.save()
-
-                    vacacion_periodo = Vacaciones.objects.filter(
-                        movimiento__funcionario=liquidacion.funcionario).order_by('-inicio')
-                    newest = vacacion_periodo.first()
-                    newest.diasobtenidos = newest.calculo_diasobtenidos()
-                    newest.dias_restantes = newest.calculo_diasrestantes()
-                    newest.save()
+                        if primera_fecha.day == liquidacion.fechacreacion.day :
+                            vacacion_periodo = Vacaciones.objects.filter(
+                                movimiento__funcionario=liquidacion.funcionario).order_by('-inicio')
+                            newest = vacacion_periodo.first()
+                            newest.diasobtenidos = newest.calculo_diasobtenidos()
+                            newest.dias_restantes = newest.calculo_diasrestantes()
+                            newest.save()
 
                 if liquidacion.vacaciones_usadas != 0:
                     vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
@@ -821,7 +794,6 @@ def parametros_liq_mensual(request):
                     if haber.movimiento.motivo.nombre == 'Contrato':
                         try:
                             pago = Pago.objects.get(movimiento=haber.movimiento, mes=liquidacion.mes)
-
                         except Pago.DoesNotExist:
                             pago = None
                         if pago is not None:
@@ -835,9 +807,8 @@ def parametros_liq_mensual(request):
                             haber=haber,
                             liquidacion=liquidacion,
                         )
-
-                    liq_haber.monto_debito = liq_haber.suma_constante_debito()
-                    liq_haber.monto_credito = liq_haber.suma_constante_credito()
+                    liq_haber.monto_debito = liq_haber.suma_detalles_debito()
+                    liq_haber.monto_credito = liq_haber.suma_detalles_credito()
                     liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
                     try:
                         liq_haber.save()
@@ -846,10 +817,62 @@ def parametros_liq_mensual(request):
                                                 "para el mes")
                         return redirect(reverse('liquidacion:parametros_liq_mensual'))
 
-                liquidacion.total_debito = liquidacion.calculo_total_debito()
-                liquidacion.total_credito = liquidacion.calculo_total_credito()
-                liquidacion.total_liquidacion = liquidacion.calcular_total_liquidacion()
-                liquidacion.save()
+                    if liq_haber.haber.movimiento.motivo.nombre == 'Contrato':
+                        salario_mes = DetalleLiquidacion(
+                            cantidad=1,
+                            monto=Decimal(liq_haber.pago.monto),
+                            total_detalle=Decimal(liq_haber.pago.monto),
+                            parametro=Parametro.objects.get(descripcion='Monto'),
+                            variable=Variable.objects.get(motivo='Asignacion Salarial'),
+                            liquidacion_haber=liq_haber,
+                            constante= Constante.objects.get(tipo__nombre='Asignacion Salarial', movimiento= liq_haber.haber.movimiento)
+                        )
+                    else:
+                        salario_mes = DetalleLiquidacion(
+                            cantidad=1,
+                            monto=liq_haber.haber.movimiento.categoria_salarial.asignacion,
+                            total_detalle=liq_haber.haber.movimiento.categoria_salarial.asignacion,
+                            parametro=Parametro.objects.get(descripcion='Monto'),
+                            variable=Variable.objects.get(motivo='Asignacion Salarial'),
+                            liquidacion_haber=liq_haber,
+                            constante=Constante.objects.get(tipo__nombre='Asignacion Salarial')
+                        )
+                    salario_mes.save()
+
+                    constantes_movimiento = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
+                    for constante in constantes_movimiento:
+                        if constante.tipo.nombre != 'Asignacion Salarial':
+                            if constante.tipo.porcentaje:
+                                detalleliquidacion = DetalleLiquidacion(
+                                    cantidad = 1,
+                                    monto = 0,
+                                    parametro = Parametro.objects.get(descripcion='Monto'),
+                                    variable = Variable.objects.get(motivo=constante.tipo.nombre),
+                                    liquidacion_haber = liq_haber,
+                                    constante=constante,
+                                )
+                            else:
+                                detalleliquidacion = DetalleLiquidacion(
+                                    cantidad=1,
+                                    monto=constante.monto,
+                                    parametro=Parametro.objects.get(descripcion='Monto'),
+                                    variable=Variable.objects.get(motivo=constante.tipo.nombre),
+                                    liquidacion_haber=liq_haber,
+                                    constante=constante,
+                                )
+                            detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                            detalleliquidacion.save()
+                            if detalleliquidacion.variable.tipo == 'D':
+                                detalleliquidacion.liquidacion_haber.monto_debito = detalleliquidacion.liquidacion_haber.suma_detalles_debito()
+                            else:
+                                detalleliquidacion.liquidacion_haber.monto_credito = detalleliquidacion.liquidacion_haber.suma_detalles_credito()
+                            detalleliquidacion.liquidacion_haber.save()
+                            detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
+                            detalleliquidacion.liquidacion_haber.save()
+                            detalleliquidacion.liquidacion_haber.liquidacion.total_credito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_credito()
+                            detalleliquidacion.liquidacion_haber.liquidacion.total_debito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_debito()
+                            detalleliquidacion.liquidacion_haber.liquidacion.total_liquidacion = detalleliquidacion.liquidacion_haber.liquidacion.calcular_total_liquidacion()
+                            detalleliquidacion.liquidacion_haber.liquidacion.save()
 
             context.update({
                 'lista': True,
@@ -887,7 +910,79 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
     context = {}
     advertencia = liq_haber= None
     if request.method == 'POST':
-        print('POST')
+        if idliquidacionhaber:
+            liq = get_object_or_404(Liquidacionhaber, pk=idliquidacionhaber)
+            form = LiquidacionhaberForm(request.POST, instance=liq)
+            if form.is_valid():
+                liq.save()
+                if request.POST.get('boton', '') == 'Finalizar':
+                    if liq.liquidacion.mes.numero == 1:
+                        nuevo_aguinaldo = Aguinaldo(
+                            anho=datetime.datetime.today().year,
+                            movimiento=liq.haber.movimiento
+                        )
+                        nuevo_aguinaldo.save()
+                        nuevo_aguinaldo.acumulado += nuevo_aguinaldo.calculo_acumulado(liq.liquidacion.mes)
+                        nuevo_aguinaldo.save()
+                        nuevo_aguinaldo.total = nuevo_aguinaldo.calculo_total()
+                        nuevo_aguinaldo.save()
+                    else:
+                        try:
+                            aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
+                                                              anho=datetime.datetime.today().year)
+                        except:
+                            aguinaldo = None
+                        if aguinaldo is not None:
+                            aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
+                                                              anho=datetime.datetime.today().year)
+                            aguinaldo.save()
+                            aguinaldo.cantidad_meses += 1
+                            aguinaldo.acumulado += (liq.salario_proporcional / 12) * 1
+                            aguinaldo.save()
+                            aguinaldo.total = aguinaldo.calculo_total()
+                            aguinaldo.save()
+                if request.POST.get('boton', '') == 'Guardar':
+                    detalles = DetalleLiquidacion.objects.filter(liquidacion_haber=liq)
+
+                    for detalleliquidacion in detalles:
+                        if not detalleliquidacion.constante :
+                            detalleliquidacion.monto = detalleliquidacion.calcular_monto()
+                            detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                            detalleliquidacion.save()
+
+                            if detalleliquidacion.variable.tipo == 'D':
+                                detalleliquidacion.liquidacion_haber.monto_debito += detalleliquidacion.total_detalle
+                            else:
+                                detalleliquidacion.liquidacion_haber.monto_credito += detalleliquidacion.total_detalle
+                            detalleliquidacion.liquidacion_haber.save()
+                            detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
+                            detalleliquidacion.liquidacion_haber.save()
+
+                    for detalleliquidacion in detalles :
+                        if detalleliquidacion.constante and detalleliquidacion.constante.tipo.porcentaje:
+                            detalleliquidacion.monto = detalleliquidacion.calcular_monto_constante()
+                            detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                            detalleliquidacion.save()
+
+                    liq.monto_credito = liq.suma_detalles_credito()
+                    liq.monto_debito = liq.suma_detalles_debito()
+                    liq.save()
+                    liq.subTotal = liq.calcular_total()
+                    liq.save()
+
+                    liq.liquidacion.total_credito = liq.liquidacion.calculo_total_credito()
+                    liq.liquidacion.total_debito = liq.liquidacion.calculo_total_debito()
+                    liq.liquidacion.total_liquidacion = liq.liquidacion.calcular_total_liquidacion()
+                    liq.liquidacion.save()
+
+                return redirect(reverse('liquidacion:editar_liquidacion', args=[liq.liquidacion.pk]))
+            else:
+                context.update({
+                    'errors': form.errors,
+                    'form': form
+                })
+            #return redirect(reverse('liquidacion:editar_liquidacion', args=[liq.liquidacion.pk]))
+            return render(request, 'liquidacionmensual/liquidacionhaber_form.html', context)
     else:
         if idliquidacionhaber :
             liq_haber = get_object_or_404(Liquidacionhaber, pk=idliquidacionhaber)
@@ -983,7 +1078,12 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             form = MovimientoForm(request.POST, instance=movimiento)
             if form.is_valid():
                 movimiento = form.save()
-                #-------------------------------------------------------------------------#
+                salario = Constante(
+                    finito = False,
+                    movimiento = movimiento,
+                    tipo = MovimientoType.objects.get(nombre='Asignacion Salarial')
+                )
+                salario.save()                #-------------------------------------------------------------------------#
                 if movimiento.motivo.nombre != 'Contrato':
                     haber = None
                     if movimiento.movimiento_padre:

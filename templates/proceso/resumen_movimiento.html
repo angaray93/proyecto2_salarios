@@ -14,29 +14,30 @@
 
 <div class="col-12 col-sm-10 recuadro">
 
-<div class="row">
-    <div class="col-12 d-flex align-items-center">
-        <span class="h5">Detalles de {{ movimiento.motivo }} de Funcionario : {{ movimiento.funcionario }}</span>
+<div class="row text-center">
+    <div class="col-12 text-center">
+        <h4><strong>Información de cargo</strong></h4>
+        <h5>Funcionario: <strong>{{ movimiento.funcionario }}</strong></h5>
     </div>
 </div>
+<br>
 
-<div id="accordion">
+<div id="accordion" >
     <div class="card">
     <div class="card-header" id="headingOne">
     <h5 class="mb-0">
-    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+    <button class="btn btn-link text-dark" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
         Datos Administrativos
     </button>
     </h5>
     </div>
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-    <div class="card-body">
-        <ul class="list-group">
+    <div class="card-body" style="background-color: #b9bbbe">
+        <ul class="list-group" >
             <li class="list-group-item">Tipo: {{ movimiento.tipo }}</li>
             <li class="list-group-item">Motivo : {{ movimiento.motivo }}</li>
             <li class="list-group-item">Objeto de Gasto : {{ movimiento.og }}</li>
             <li class="list-group-item">Inicio de Vigencia : {{ movimiento.fechainicio }}</li>
-
         </ul>
     </div>
     </div>
@@ -44,13 +45,13 @@
     <div class="card">
     <div class="card-header" id="headingTwo">
     <h5 class="mb-0">
-    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+    <button class="btn btn-link text-dark collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
       Categoria Salarial
     </button>
     </h5>
     </div>
     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-    <div class="card-body">
+    <div class="card-body" style="background-color: #b9bbbe">
         <ul class="list-group">
             <li class="list-group-item">Codigo: {{ movimiento.categoria_salarial.codigo }}</li>
             <li class="list-group-item">Cargo : {{ movimiento.categoria_salarial.cargo }}</li>
@@ -62,13 +63,13 @@
     <div class="card">
     <div class="card-header" id="headingThree">
     <h5 class="mb-0">
-    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+    <button class="btn btn-link text-dark collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
       Detalles del Cargo
     </button>
     </h5>
     </div>
     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-    <div class="card-body">
+    <div class="card-body" style="background-color: #b9bbbe">
     <ul class="list-group">
         <li class="list-group-item">Dependencia: {{ movimiento.division }}</li>
         <li class="list-group-item">Funcion : {{ movimiento.funcion }} </li>
@@ -81,30 +82,26 @@
     <div class="card">
     <div class="card-header" id="headingFour">
     <h5 class="mb-0">
-    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+    <button class="btn btn-link text-dark collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
         Debitos y Creditos
     </button>
     </h5>
     </div>
     <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
-    <div class="card-body">
+    <div class="card-body" style="background-color: #b9bbbe">
         {% if constantes %}
             <table id="tabla_constantes" class="table">
-            <thead>
-                <tr>
-                    <th class="text-center">Descripcion</th>
+            <thead class="">
+                <tr class="bg-secondary text-white">
+                    <th  class="text-center">Descripcion</th>
                     <th class="text-center">Tipo</th>
-                    <th class="text-center">Porcentaje</th>
-                    <th class="text-center">Monto</th>
                 </tr>
             </thead>
             <tbody>
                 {% for constante in constantes %}
-                    <tr class='clickable-row'>
-                        <td class="text-center">{{ constante.tipo.nombre }}</td>
+                    <tr class='clickable-row bg-light'>
+                        <td>{{ constante.tipo.nombre }}</td>
                         <td class="text-center">{{ constante.tipo.tipo }}</td>
-                        <td class="text-center">{{ constante.tipo.porcentaje }}</td>
-                        <td class="text-center">Gs. {{ constante.monto|intcomma }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -117,91 +114,6 @@
     </div>
     </div>
     </div>
-    <div class="card">
-    <div class="card-header" id="headingFive">
-    <h5 class="mb-0">
-    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-        Aguinaldo
-    </button>
-    </h5>
-    </div>
-    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
-    <div class="card-body">
-        {% if aguinaldos %}
-            <table id="tabla_aguinaldo" class="table">
-            <thead>
-                <tr>
-                    <th class="text-center">Año</th>
-                    <th class="text-center">Cantidad de meses</th>
-                    <th class="text-center">Total a la fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for aguinaldo in aguinaldos %}
-                    <tr class='clickable-row'>
-                        <td class="text-center">{{ aguinaldo.anho }}</td>
-                        <td class="text-center">{{ aguinaldo.cantidad_meses }}</td>
-                        <td class="text-center">{{ aguinaldo.total }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-             <ul class="list-group">
-                <li class="list-group-item">No hay resultados</li>
-            </ul>
-        {% endif %}
-    </div>
-    </div>
-    </div>
-    <div class="card">
-    <div class="card-header" id="headingSix">
-    <h5 class="mb-0">
-    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-        Vacaciones
-    </button>
-    </h5>
-    </div>
-    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordion">
-    <div class="card-body">
-        {% if vacaciones %}
-            <table id="tabla_vacaciones" class="table">
-            <thead>
-                <tr>
-                    <th class="text-center">Año</th>
-                    <th class="text-center">Inicio</th>
-                    <th class="text-center">Fin</th>
-                    <th class="text-center">Dias obtenidos</th>
-                    <th class="text-center">Dias usados</th>
-                    <th class="text-center">Monto a la fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for vacacion in vacaciones %}
-                    <tr class='clickable-row'>
-                        <td class="text-center">{{ vacacion.anho }}</td>
-                        <td class="text-center">{{ vacacion.inicio }}</td>
-                        {% if vacacion.fin is None %}
-                            <td class="text-center"> - </td>
-                        {% else %}
-                            <td class="text-center">{{ vacacion.fin }}</td>
-                        {% endif %}
-                        <td class="text-center">{{ vacacion.diasobtenidos }}</td>
-                        <td class="text-center">{{ vacacion.diasusados }}</td>
-                        <td class="text-center">{{ vacacion.monto }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-             <ul class="list-group">
-                <li class="list-group-item">No hay resultados</li>
-            </ul>
-        {% endif %}
-    </div>
-    </div>
-    </div>
-
 </div>
 </div>
 {% endblock %}

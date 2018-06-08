@@ -22,17 +22,14 @@
     <div class="col-12 col-sm-10 recuadro">
         <form method="POST">
         {% csrf_token %}
-
             <div class="row">
                 <div class="col-12">
                     <div class="col-12 d-flex align-self-start">
-                        <h5>Liquidación Mensual por Departamento</h5>
+                        <h5>Liquidación Salarial Mensual por Departamento</h5>
                     </div>
                 </div>
             </div>
-
             <hr>
-
             {% if advertencia %}
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ advertencia }}
@@ -41,33 +38,61 @@
                     </button>
                 </div>
             {% endif %}
-
             <div class="row">
                 <div class="col-lg-10">
                     {% for message in messages %}
+                        {% if message.error %}
                         <div class="alert alert-danger">{{ message }}
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                         </div>
+                        {% endif %}
+                            <div class="alert alert-warning">{{ message }}
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            </div>
                     {% endfor %}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="desde">Desde:</label>
+                <div class="form-group">
+                    <label for="desde">Inicio del periodo:</label>
                         <div class="input-group">
-                            {{ form.desde }}
+                            {% if form.desde.errors %}
+                            <ol>
+                            {% for error in form.desde.errors %}
+                            <li><strong>{{ error|escape }}</strong></li>
+                            {% endfor %}
+                            </ol>
+                            {% endif %}
+                            <input type="date" id="id_desde" name="desde" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" disabled>
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="hasta">Hasta:</label>
-                        <div class="input-group">
-                            {{ form.hasta }}
+                        <label for="hasta">Fin del periodo:</label>
+                            <div class="input-group">
+                            {% if form.hasta.errors %}
+                            <ol>
+                            {% for error in form.hasta.errors %}
+                            <li><strong>{{ error|escape }}</strong></li>
+                            {% endfor %}
+                            </ol>
+                            {% endif %}
+                            <input type="date" id="id_hasta" name="hasta" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" disabled>
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                            </div>
                         </div>
-                    </div>
                 </div>
             </div>
             <div class="row">
@@ -82,7 +107,7 @@
                 <div class="col-md-6 align-self-end pb-3">
                     <button type="submit" class="btn btn-success" name="q" value="true"
                             formaction="{% url 'liquidacion:parametros_liq_mensual' %}">
-                        Generar
+                        Crear Liquidaciones
                     </button>
                 </div>
             </div>
@@ -139,6 +164,23 @@
 
 
 <footer>
+    <script>
+        function cargarFec() {
+            var fecha_inicio = document.getElementById("fec-ini").value;
+            var hora_inicio = document.getElementById("hora-ini").value;
+            var min_ini = document.getElementById("min-ini").value;
+            var fecha_fin = document.getElementById("fec-fin").value;
+            var hora_fin = document.getElementById("hora-fin").value;
+            var min_fin = document.getElementById("min-fin").value;
+            document.getElementById("fechainicio").value = fecha_inicio + " " + hora_inicio + ":" + min_ini;
+            document.getElementById("fechafin").value = fecha_fin + " " + hora_fin + ":" + min_fin;
+        }
+    </script>
+    <script>
+        $(function () {
+            $(".datepicker").datepicker({dateFormat: "yy-mm-dd"});
+        });
+    </script>
     <script type="text/javascript">
         {% if lista %}
             $(document).ready(function () {
@@ -155,12 +197,12 @@
                     data: {},
                     success: function (data) {
                         if ($.trim(data)) {
-                            departamento_select.empty().append('<option value=' + 0 + ' selected >' + 'Todos' + '</option>');
+                            departamento_select.empty().append('<option value=' + 0 + ' selected >' + '------' + '</option>');
                             $.each(data, function (key, value) {
                                 departamento_select.append('<option value=' + value.id + '>' + value.value + '</option>')
                             });
                         } else {
-                            departamento_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                            departamento_select.empty().append('<option value=' + 0 + ' selected>' + '------' + '</option>');
                         }
                     },
                     error: function (data) {

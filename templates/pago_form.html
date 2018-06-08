@@ -15,20 +15,43 @@
 
 <form method="post" id="pago_form">
         {% csrf_token %}
-        <div class="row"> <!-- cabecera-->
-            <div class="col-10 d-flex align-items-center">
-                <span class="h4">Pagos del Contrato</span>
-            </div>
-            <div class="col-2 d-flex justify-content-end align-items-center">
-                <div class="row separador"></div>
-                <button type="button" class="btn btn-secondary" name="finalizar"
-                        onclick="location.href='{% url 'liquidacion:movimiento_resumen' movimiento.pk %}'">
-                    Finalizar
-                </button>
+        <div class="row text-center">
+            <div class="col-12 text-center">
+                <h4>Creación de Alta de Funcionario</h4>
             </div>
         </div>
-    <!-- Fin cabecera -->
+        <br>
+        <div class="row"> <!-- cabecera-->
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-10">
+                        <ul class="list-inline">
+                            {% if movimiento %}
+                                <li class="list-inline-item">Funcionario: <strong>{{ movimiento.funcionario }}</strong></li>
+                            {% else %}
+                                <li class="list-inline-item">Funcionario: <strong>{{ funcionario }}</strong></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-2 d-flex justify-content-end align-items-center">
+                        <div class="row separador"></div>
+                        <button type="button" class="btn btn-secondary" name="finalizar"
+                                onclick="location.href='{% url 'liquidacion:movimiento_resumen' movimiento.pk %}'">
+                            Finalizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <hr>
+        <div class="row"> <!-- cabecera-->
+            <div class="col-10 d-flex align-items-center">
+                <span class="h4">Pagos del Contrato N° {{ movimiento.codigo }}</span>
+            </div>
+
+        </div>
+    <!-- Fin cabecera -->
+        <br>
         <div class="row">
             <div class="col-lg-5">
                 <div class="form-group">
@@ -40,7 +63,7 @@
             </div>
             <div class="col-lg-5">
                 <div class="form-group">
-                    <label for="monto">Monto:</label>
+                    <label for="monto">Monto (En Guaraníes):</label>
                     <div class="input-group">
                         {{ form.monto }}
                     </div>

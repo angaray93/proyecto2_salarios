@@ -1,76 +1,61 @@
-<div class="modal-dialog modal-lg">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Detalle de Liquidacion</h3>
-        <button type="button" class="close" data-dismiss="modal">×</button>
+<div class="modal-dialog">
+    <div class="modal-content" style="background-color: #b9bbbe">
+        <div class="modal-header text-center">
+            <h4 class="modal-title w-100 font-weight-bold">Detalle de Liquidacion</h4>
+            <button type="button" class="close" data-dismiss="modal">×</button>
         </div>
 
         <div class="modal-body">
         <form role="form" method="post" action="{% url 'liquidacion:detalleliquidacion-add' liquidacion_haber.pk %}">
             {% csrf_token %}
         <input type="hidden" name="liquidacion_haber" value="{{ liquidacion_haber.pk }}">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="row mt-2">
-                        <div class="col-4">
-                            <div class="form-group">
-                                <label for="variable">Descripcion:</label>
-                                {% if detalleliquidacion %}
-                                    <input type="text" id="variable" class="form-control"
-                                           value="{{ detalleliquidacion.variable }}" disabled/>
-                                    <input type="hidden" name="variable" value="{{ detalleliquidacion.variable.pk }}">
-                                {% else %}
-                                    {{ form.variable }}
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="form-group">
-                                <label for="parametro">Parametro:</label>
-                                {% if detalleliquidacion %}
-                                    <input type="text" id="parametro" class="form-control"
-                                           value="{{ detalleliquidacion.parametro }}" disabled/>
-                                    <input type="hidden" name="parametro" value="{{ detalleliquidacion.parametro.pk }}">
-                                {% else %}
-                                    {{ form.parametro }}
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="form-group">
-                                <label for="cantidad">Cantidad:</label>
-                                {% if detalleliquidacion %}
-                                    <input type="text" id="cantidad" class="form-control"
-                                           value="{{ detalleliquidacion.cantidad }}" disabled/>
-                                    <input type="hidden" name="cantidad" value="{{ detalleliquidacion.cantidad }}">
-                                {% else %}
-                                    {{ form.cantidad }}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="monto">Monto:</label>
-                                {% if detalleliquidacion %}
-                                    <input type="text" id="monto" class="form-control"
-                                           value="{{ detalleliquidacion.monto }}" disabled/>
-                                    <input type="hidden" name="monto" value="{{ detalleliquidacion.monto }}">
-                                {% else %}
-                                    {{ form.monto }}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="variable">Descripcion:</label>
+                {% if detalleliquidacion %}
+                    <input type="text" id="variable" class="form-control"
+                           value="{{ detalleliquidacion.variable }}" disabled/>
+                    <input type="hidden" name="variable" value="{{ detalleliquidacion.variable.pk }}">
+                {% else %}
+                    {{ form.variable }}
+                {% endif %}
             </div>
-
-            <div class="col-lg-12 text-right">
-                <button type="submit" class="btn btn-success" name="guardar"
+            <div class="form-group">
+                <label for="parametro">Parametro:</label>
+                {% if detalleliquidacion %}
+                    <input type="text" id="parametro" class="form-control"
+                           value="{{ detalleliquidacion.parametro }}" disabled/>
+                    <input type="hidden" name="parametro" value="{{ detalleliquidacion.parametro.pk }}">
+                {% else %}
+                    {{ form.parametro }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="cantidad">Cantidad:</label>
+                {% if detalleliquidacion %}
+                    <input type="text" id="cantidad" class="form-control"
+                           value="{{ detalleliquidacion.cantidad }}" disabled/>
+                    <input type="hidden" name="cantidad" value="{{ detalleliquidacion.cantidad }}">
+                {% else %}
+                    {{ form.cantidad }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="monto">Monto:</label>
+                {% if detalleliquidacion %}
+                    <input type="text" id="monto" class="form-control"
+                           value="{{ detalleliquidacion.monto }}" disabled/>
+                    <input type="hidden" name="monto" value="{{ detalleliquidacion.monto }}">
+                {% else %}
+                    {{ form.monto }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                <button type="submit" class="btn btn-primary btn-block" name="guardar"
                         formaction="{% url 'liquidacion:detalleliquidacion-add' liquidacion_haber.pk %}">
                     Guardar
                 </button>
+                </div>
             </div>
         </form>
         </div>

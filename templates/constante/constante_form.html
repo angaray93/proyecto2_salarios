@@ -15,23 +15,47 @@
 
 <form method="post" id="constante_form">
         {% csrf_token %}
-        <div class="row"> <!-- cabecera-->
-            <div class="col-8 d-flex align-items-center">
-                <span class="h4">Debitos y Creditos de Salario</span>
-            </div>
-            <div class="col-2 d-flex justify-content-end align-items-center">
-                <div class="row separador"></div>
-                <button type="submit" id="submitForm" class="btn btn-primary"
-                   onclick="location.href='{% url 'liquidacion:movimiento_resumen' movimiento.pk %}'">Ver movimiento</button>
-            </div>
-            <div class="col-2 d-flex justify-content-end align-items-center">
-                <div class="row separador"></div>
-                <button type="submit" class="btn btn-success" name="guardar"
-                        formaction="{% url 'liquidacion:nueva_constante' movimiento.pk %}">
-                    Guardar
-                </button>
+        <div class="row text-center">
+            <div class="col-12 text-center">
+                <h4>Alta de Funcionario</h4>
+                <h5><strong>Debitos y Creditos de Salario</strong></h5>
             </div>
         </div>
+        <br>
+        <div class="row"> <!-- cabecera-->
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-6">
+                        <ul class="list-inline">
+                            {% if movimiento %}
+                                <li class="list-inline-item">Funcionario: <strong>{{ movimiento.funcionario }}</strong></li>
+                                <li class="list-inline-item">Categoria Salarial: <strong>{{ movimiento.categoria_salarial.codigo }}</strong></li>
+                            {% else %}
+                                <li class="list-inline-item">Funcionario: <strong>{{ funcionario }}</strong></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-4">
+                        <ul class="list-inline">
+                            {% if movimiento %}
+                                <li class="list-inline-item">Cargo: <strong>{{ movimiento.categoria_salarial.cargo }}</strong></li>
+                                <li class="list-inline-item">Departamento: <strong>{{ movimiento.division.departamento }}</strong></li>
+                            {% else %}
+                                <li class="list-inline-item">Funcionario: <strong>{{ funcionario }}</strong></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-2 d-flex justify-content-end align-items-center">
+                        <div class="row separador"></div>
+                        <button type="button" class="btn btn-secondary" name="finalizar"
+                                onclick="location.href='{% url 'liquidacion:movimiento_resumen' movimiento.pk %}'">
+                            Finalizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <!-- Fin cabecera -->
         <hr>
         <div class="row">
@@ -43,7 +67,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="form-group">
                     <label for="monto">Monto:</label>
                     <div class="input-group">
@@ -51,19 +75,14 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="custom-control custom-checkbox mr-sm-2">
-                    <input type="checkbox" class="custom-control-input" id="finito" name="finito">
-                    <label class="custom-control-label" for="finito">Es finito:</label>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group" id="cantidad_veces">
-                    <label for="cantidad_veces">Numero de aplicaciones:</label>
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <label for="monto"></label>
                     <div class="input-group">
-                        {{ form.cantidad_veces }}
+                        <button type="submit" class="btn btn-success" name="guardar"
+                        formaction="{% url 'liquidacion:nueva_constante' movimiento.pk %}">
+                            Agregar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -78,26 +97,14 @@
                 <tr>
                     <th class="text-center">Descripcion</th>
                     <th class="text-center">Tipo</th>
-                    <th class="text-center">Porcentaje</th>
-                    <th class="text-center">Monto</th>
-                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for constante in constantes %}
                     <tr class='clickable-row'>
                         <td>{{ constante.tipo.nombre }}</td>
-                        <td>{{ constante.tipo.tipo }}</td>
-                        <td>{{ constante.porcentaje }}</td>
-                        <td>Gs. {{ constante.monto|intcomma }}</td>
-                        <td class="text-center">
-                            <a href="#">
-                              <span class="glyphicon glyphicon-eye-open"></span>
-                            </a>
-                            <button class="btn btn-outline-primary btn-edit" type="button"
-                                onclick="">
-                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                        </td>
+                        <td class="text-center">{{ constante.tipo.tipo }}</td>
+
                     </tr>
                 {% endfor %}
             </tbody>

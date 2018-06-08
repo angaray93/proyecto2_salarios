@@ -19,11 +19,23 @@
 {% render_breadcrumbs %}
 <title>{{ lista }}</title>
     <div class="col-12 col-sm-10 recuadro">
+        <div class="row text-center">
+            <div class="col-12 text-center">
+                    <h4>Lista de Liquidaciones Salariales</h4>
+            </div>
+        </div>
+
+        <br>
+
         <div class="row">
-            <div class="col-12">
-                <div class="col-12 d-flex align-self-start">
-                    <h5>Liquidaciones Salariales -  Mes : {{ mes.nombre }} - Departamento: "{{ dpto }}"</h5>
-                </div>
+            <div class="col-4 text-center">
+                    <h6>Departamento: <strong>{{ dpto }}</strong></h6>
+            </div>
+            <div class="col-4 text-center">
+                    <h6>Mes : <strong>{{ mes.nombre }}</strong></h6>
+            </div>
+            <div class="col-4 text-center">
+                    <h6>Año : <strong>{{ mes.year|unlocalize }}</strong></h6>
             </div>
         </div>
 
@@ -32,18 +44,18 @@
             <table id="tabla" class="table">
                 <thead class="thead-light">
                     <th class="centrartexto">Cedula</th>
-                    <th>Funcionario</th>
-                    <th>Mes</th>
-                    <th class="centrartexto">Acciones</th>
+                    <th class="centrartexto">Funcionario</th>
+                    <th class="centrartexto">Mes</th>
+                    <th class="centrartexto">Editar</th>
                 </thead>
                 <tbody>
                 {% for item in lista %}
-                    <tr>
-                        <td>{{ item.liquidacion.funcionario.cedula }}</td>
-                        <td>{{ item.liquidacion.funcionario }}</td>
-                        <td>{{ item.liquidacion.mes.nombre }}</td>
+                    <tr class="table-dark text-dark">
+                        <td class="centrartexto">{{ item.liquidacion.funcionario.cedula }}</td>
+                        <td class="centrartexto">{{ item.liquidacion.funcionario }}</td>
+                        <td class="centrartexto">{{ item.liquidacion.mes.nombre }}</td>
                         <td class="centrartexto">
-                            <button title="Editar" class="btn btn-outline-primary" type="button"
+                            <button title="Editar" class="btn btn-secondary" type="button"
                                name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                         </td>
@@ -53,9 +65,5 @@
             </table>
         </div>
     </div>
-
-    <footer>
-
-    </footer>
 
 {% endblock %}

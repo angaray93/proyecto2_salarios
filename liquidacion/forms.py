@@ -51,6 +51,20 @@ class DetalleLiquidacionForm(forms.ModelForm):
     class Meta:
         model = DetalleLiquidacion
         exclude = ['liquidacion','total', 'salario_proporcional', 'pago']
+        widgets = {
+            'variable': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'parametro': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'cantidad': forms.NumberInput(attrs={
+                'class': 'form-control',
+            }),
+            'monto': forms.NumberInput(attrs={
+                'class': 'form-control',
+            }),
+        }
 
 
 class LiquidacionhaberForm(forms.ModelForm):
@@ -63,6 +77,12 @@ class LiqMensualForm(forms.ModelForm):
     class Meta:
         model = Liquidacion
         exclude = ['ultimamodificacion' ,'propietario', 'tipo', 'haberes']
+        widgets = {
+            'vacaciones_usadas': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'size' : "30",
+            }),
+        }
 
 
 class PreLiqMensualForm(forms.Form):

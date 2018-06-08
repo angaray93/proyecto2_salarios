@@ -11,6 +11,14 @@
 {% render_breadcrumbs %}
 <div class="col-12 col-sm-10 recuadro">
     <div class="row">
+        <div class="col-12">
+            <div class="col-12 d-flex align-self-start">
+                <h5>Selección de Funcionario</h5>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
         <form method="get">
             <input type="text" name="q" placeholder="Ingrese un numero de cedula" value="{{ request.GET.q }}"/>
             <button type="submit" class="btn">Buscar</button>
@@ -20,7 +28,7 @@
     <div class="row separador_fila">
                 <div class="col-lg-12">
                     <table class="table table-hover table-striped table-sm">
-                            <thead class="thead-dark">
+                            <thead class="thead-light">
                                 <tr>
                                     <th class="text-center">Nro. de Documento de Identidad</th>
                                     <th class="text-center">Nombres</th>

@@ -25,7 +25,7 @@
                 <div class="col-12">
                     <div class="col-12 d-flex align-self-start">
                         {% if vista == 'buscar_movimientos_funcionario' %}
-                            <h5>Consulta de Movimientos</h5>
+                            <h5>Consulta de Movimientos de Funcionario</h5>
                         {% endif %}
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                     {% if vista == 'buscar_movimientos_funcionario' %}
                         <button type="submit" class="btn btn-success" name="q" value="true"
                                 formaction="{% url 'liquidacion:buscar_movimientos_funcionario' %}">
-                            Generar reporte
+                            Consultar
                         </button>
                     {% endif %}
                 </div>

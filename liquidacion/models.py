@@ -1,6 +1,6 @@
 import datetime
 from django.db.models import Sum, Max, Q
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -146,21 +146,21 @@ class Division(models.Model):
 class Aguinaldo(models.Model):
     id = models.AutoField(primary_key=True)
     anho = models.IntegerField(default=datetime.datetime.today().year)
-    cantidad_meses = models.DecimalField(default=0, max_digits=2, decimal_places=1, blank=True, null=True)
-    acumulado = models.DecimalField(max_digits=15, decimal_places=2, default=0, blank=True, null=True)
-    total = models.DecimalField(max_digits=15, decimal_places=2, default=0, blank=True, null=True)
+    cantidad_meses = models.DecimalField(default=0, max_digits=3, decimal_places=1, blank=True, null=True)
+    acumulado = models.DecimalField(default=0, max_digits=12, decimal_places=2, blank=True, null=True)
+    total = models.DecimalField(default=0, max_digits=12, decimal_places=2, blank=True, null=True)
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='aguinaldo_movimiento')
 
     def calculo_acumulado(self, mes):
         if self.movimiento.motivo.nombre != 'Contrato':
             liquidacion = Liquidacionhaber.objects.get(haber__movimiento=self.movimiento, liquidacion__mes__pk=mes)
-            resultado = Decimal(liquidacion.liquidacion.total_liquidacion) / Decimal(12)
-            return round(resultado,0)
+            resultado = liquidacion.liquidacion.total_liquidacion / Decimal(12)
         else:
             pago = Pago.objects.get(movimiento=self.movimiento, mes__pk=mes)
-            resultado = Decimal(pago.monto) / Decimal(12)
-            return round(resultado,0)
+            resultado = pago.monto / 12
+        return round(resultado)
+            #.quantize(Decimal('1.00'))
 
     def calculo_total(self):
         resultado = self.acumulado
@@ -295,11 +295,11 @@ class Constante(models.Model):
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_constante_movimiento')
     tipo = models.ForeignKey('ConstanteType', on_delete=models.CASCADE, related_name='fk_constante_tipo')
 
-    def calcular_monto(self):
+    '''def calcular_monto(self):
         if self.tipo.porcentaje != 0 and self.tipo.porcentaje is not None:
             return ((self.movimiento.categoria_salarial.asignacion * self.tipo.porcentaje) / Decimal(100))
         else:
-            return self.monto
+            return self.monto'''
 
 
 class ConstanteType(models.Model):
@@ -313,7 +313,7 @@ class ConstanteType(models.Model):
         verbose_name_plural = "Tipos de Constante"
 
     def __str__(self):
-        if self.porcentaje != 0 :
+        if self.porcentaje is not None :
             return '%s %s %s %s' % (self.nombre ,' - ', self.porcentaje, '%')
         else:
             return '%s ' % (self.nombre)
@@ -394,7 +394,7 @@ class Liquidacion(models.Model):
     mes = models.ForeignKey('Mes', on_delete=models.DO_NOTHING, default=1)
     total_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
     total_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default= 0)
-    total_liquidacion = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True , default=0)
+    total_liquidacion = models.IntegerField(default=0, blank=True, null=True)
     inicio_periodo = models.DateTimeField()
     fin_periodo = models.DateTimeField(null=True, blank=True)
     dias_trabajados = models.IntegerField(default=0, blank=True, null=True)
@@ -434,10 +434,10 @@ class Liquidacionhaber(models.Model):
     id = models.AutoField(primary_key=True)
     haber = models.ForeignKey('Haber', on_delete=models.CASCADE)
     liquidacion = models.ForeignKey('Liquidacion', on_delete=models.CASCADE)
-    salario_proporcional = models.DecimalField(max_digits=15, decimal_places=1, blank=True, null=True, default=0)
-    monto_credito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
-    monto_debito = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True, default=0)
-    subTotal = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    salario_proporcional = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, default=0)
+    monto_credito = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, default=0)
+    monto_debito = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, default=0)
+    subTotal = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, default=0)
     pago = models.ForeignKey('Pago', on_delete=models.CASCADE, null=True, blank=True, related_name='fk_liqhaber_pago')
 
     class Meta:

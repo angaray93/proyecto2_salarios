@@ -10,7 +10,7 @@
 {% block breadcrumbs %}
     {{ block.super }}
     {% if movimiento %}
-        {% breadcrumb " Modificacion de Movimiento " 'liquidacion:editar_movimiento' movimiento.pk %}
+            {% breadcrumb movimiento.motivo 'liquidacion:editar_movimiento' movimiento.pk %}
     {% else %}
         {% breadcrumb " Nuevo Movimiento " 'liquidacion:nuevo_movimiento' %}
     {% endif %}
@@ -32,22 +32,26 @@
             {{ hidden_field }}
         {% endfor %}
 
+        <div class="row text-center">
+            <div class="col-12 text-center">
+                {% if not movimiento %}
+                    <h4>Creación de Alta de Funcionario</h4>
+                {% else %}
+                    <h3>Edición de movimiento</h3>
+                    <h4>{{ movimiento.motivo.nombre }} {{ movimiento.codigo }}</h4>
+                {% endif %}
+            </div>
+        </div>
+        <br>
         <div class="row"> <!-- cabecera-->
             <div class="col-12">
                 <div class="row">
-                    <div class="col-4 d-flex align-items-center">
-                        {% if movimiento %}
-                            <span class="h4">Movimiento #{{ movimiento.pk }}</span>
-                        {% else %}
-                            <span class="h4">Nuevo Movimiento</span>
-                        {% endif %}
-                    </div>
-                    <div class="col-4">
+                    <div class="col-8">
                         <ul class="list-inline">
                             {% if movimiento %}
-                                <li class="list-inline-item">Funcionario: {{ movimiento.funcionario }}</li>
+                                <li class="list-inline-item">Funcionario: <strong>{{ movimiento.funcionario }}</strong></li>
                             {% else %}
-                                <li class="list-inline-item">Funcionario: {{ funcionario }}</li>
+                                <li class="list-inline-item">Funcionario: <strong>{{ funcionario }}</strong></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -56,7 +60,7 @@
                             <ul class="list-inline">
                                 {% if perms.liquidacion.change_movimiento %}
                                 <li class="list-inline-item">
-                                    <button type="submit" class="btn btn-success btn-lg active" name="guardar"
+                                    <button type="submit" class="btn btn-secondary" name="guardar"
                                     formaction="{% url 'liquidacion:editar_movimiento' movimiento.pk %}">
                                         Guardar
                                     </button>
@@ -68,28 +72,29 @@
                             <ul class="list-inline">
                                 <li class="list-inline-item">
                                 {% if movimiento.motivo.nombre == 'Contrato' %}
-                                    <button type="button" class="btn btn-secondary active"
+                                    <button type="button" class="btn btn-primary active"
                                         onclick="location.href='{% url 'liquidacion:nuevo_pago' movimiento.pk %}'">
                                         Agregar Pagos
                                     </button>
+
                                 {% else %}
-                                    <button type="button" class="btn btn-secondary fa fa-arrow-right"
+                                    <button type="button" class="btn btn-primary fa fa-arrow-right"
                                         onclick="location.href='{% url 'liquidacion:nueva_constante' movimiento.pk %}'">Siguiente</button>
                                 {% endif %}
                                 </li>
                             </ul>
                         </div>
                     {% else %}
-                    <div class="col-4">
+                    <div class="col-2">
                         <ul class="list-inline">
                             <li class="list-inline-item">
                             {% if not movimiento_padre %}
-                                <button type="submit" class="btn btn-success btn-lg active" name="guardar"
+                                <button type="submit" class="btn btn-primary" name="guardar"
                                         formaction="{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}" aria-pressed="true">
                                     Guardar
                                 </button>
                             {% else %}
-                                <button type="submit" class="btn btn-success btn-lg active" name="guardar"
+                                <button type="submit" class="btn btn-primary" name="guardar"
                                         formaction="{% url 'liquidacion:modificar_movimiento' movimiento_padre.pk %}" aria-pressed="true">
                                     Guardar
                                 </button>
@@ -158,9 +163,9 @@
     </div>
 
     <div class="row" id="fila_codigo">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <div class="form-group">
-                <label for="codigo">Codigo de Movimiento:</label>
+                <label for="codigo">Codigo o Numero Identificador:</label>
                 <div class="input-group">
                     {% if movimiento %}
                         {% if not perms.liquidacion.change_movimiento %}
@@ -322,8 +327,18 @@
                                disabled
                            {% endif %}
                         />
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" disabled>
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </button>
+                        </span>
                     {% else %}
                         <input type="date" id="id_fechainicio" name="fechainicio" class="form-control">
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" disabled>
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </button>
+                        </span>
                     {% endif %}
                 </div>
             </div>
@@ -331,6 +346,7 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="id_fechafin">Fecha de Fin:</label>
+                <div class="input-group">
                     {% if form.fechafin.errors %}
                     <ol>
                     {% for error in form.fechafin.errors %}
@@ -347,7 +363,13 @@
                         />
                     {% else %}
                         <input type="date" id="id_fechafin" name="fechafin" class="form-control">
+                        <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                        </span>
                     {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -374,6 +396,7 @@
                     {% else %}
                         {{ form.horaEntrada }}
                     {% endif %}
+
                 </div>
                 </div>
             </div>

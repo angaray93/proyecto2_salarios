@@ -25,9 +25,11 @@
 
 <form method="post" id="liquidacion_form">
     {% csrf_token %}
-    <div class="row"><!--titulo-->
-        <h4>Liquidacion Salarial Mensual</h4> <!--fin titulo-->
-    </div> <!--fin titulo-->
+    <div class="row text-center">
+        <div class="col-12 text-center">
+            <h5><strong>Liquidacion Salarial N° {{ liquidacion.pk }}</strong></h5>
+        </div>
+    </div><!--fin titulo-->
     <hr>
     <div class="row mt-2"> <!-- botones -->
         <div class="col-12">
@@ -42,27 +44,27 @@
                     </button>
                 </div>
                 {% else %}
-                <div class="col-md-3 col-sm-3 btn_sep">
+                <div class="col-md-4 col-sm-3 btn_sep">
                     <button type="submit" form="liquidacion_form"
                             name="boton" value="Descartado"
                             formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
-                            class="btn" style="width: 100%">
+                            class="btn btn-secondary" style="width: 100%">
                         Descartar
                     </button>
                 </div>
-                <div class="col-md-3 col-sm-3 btn_sep">
+                <div class="col-md-4 col-sm-3 btn_sep">
                     <button type="submit" form="liquidacion_form"
                             name="boton" value="Confirmado"
                             formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
-                            class="btn" style="width: 100%">
+                            class="btn btn-success" style="width: 100%">
                         Confirmar
                     </button>
                 </div>
-                <div class="col-md-3 col-sm-3 btn_sep">
+                <div class="col-md-4 col-sm-3 btn_sep">
                     <button type="submit" form="liquidacion_form"
                             name="boton" value="Borrador"
                             formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
-                            class="btn" style="width: 100%">
+                            class="btn btn-primary" style="width: 100%">
                         Guardar Borrador
                     </button>
                 </div>
@@ -121,63 +123,75 @@
                     </ul>
                 </div>
             </div>
-                <hr>
-                <div class="row">
-                    <div class="col-lg-6" style="font-size: 14px">
-                        <label>Vacaciones (Cantidad de dias utilizados durante el presente periodo):</label>
-                    </div>
-                    <div class="col-lg-6">
-                        <div>
-                            {{ form.vacaciones_usadas }}
-                        </div>
-                    </div>
-                </div>
+            <hr>
         </div>
     </div> <!-- Fin cuerpo -->
-</form>
+
+<div class="card" style="background-color: #b9bbbe">
+  <div class="card-header">
+    <strong>Vacaciones utilizadas</strong>
+  </div>
+  <div class="card-body" style="background-color: #b9bbbe">
+    <div class="row">
+        <div class="col-5">
+            <label>Cantidad de días :</label>
+        </div>
+        <div class="col-3">
+            {{ form.vacaciones_usadas }}
+        </div>
+    </div>
+  </div>
+</div>
 
 <hr>
 
-<div class="row">
+<div class="card" style="background-color: #b9bbbe">
+  <div class="card-header">
+    <strong>Haberes del funcionario</strong>
+  </div>
+  <div class="card-body" style="background-color: #b9bbbe">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
         <div class="col-lg-12">
-        <table id="tabla_liqhaberes" class="table table-hover">
+        <table id="tabla_liqhaberes" class="table table-hover table-responsive">
             {% for item in liq_haberes %}
                 {% ifchanged item.pk %}
-                <thead class="thead-dark">
-                    <tr>
+                <thead>
+                    <tr class="bg-secondary text-white" style="font-size: 15px">
                         {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
-                            <th colspan="1">Categoria Salarial: {{ item.haber.movimiento.categoria_salarial }}</th>
+                            <th class="text-center">Categoria Salarial: {{ item.haber.movimiento.categoria_salarial }}</th>
                         {% else %}
-                            <th colspan="1">Contrato N° : </th>
+                            <th class="text-center">Contrato N° : </th>
                         {% endif %}
-                        <th colspan="1" >Monto Creditos: Gs.{{ item.monto_credito|floatformat }}</th>
-                        <th colspan="1">Monto Debitos: Gs.{{ item.monto_debito|floatformat }}</th>
-                        <th colspan="1">Subtotal: Gs.{{ item.subTotal|floatformat }}</th>
-                        <th colspan="1" style="background-color: #b9bbbe; border-color: #b9bbbe">
-                            <button class="btn btn-outline-primary" type="button"
+                        <th class="text-center">Creditos: Gs.{{ item.monto_credito|floatformat }}</th>
+                        <th class="text-center">Debitos: Gs.{{ item.monto_debito|floatformat }}</th>
+                        <th class="text-center">Subtotal: Gs.{{ item.subTotal|floatformat }}</th>
+                        <th class="text-center">
+                            <button class="btn btn-secondary" type="button"
                                name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">
-                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                            <i class="fa fa-pencil-square-o" style="font-size:25px" aria-hidden="true"></i></button>
                         </th>
                     </tr>
                 </thead>
-                <thead class="thead-dark">
-                    <tr>
-                        <th colspan="2" class="text-center">Concepto</th>
-                        <th colspan="1" class="text-center">Creditos</th>
-                        <th colspan="1" class="text-center">Debitos</th>
+                <thead>
+                    <tr style="font-size: 15px">
+                        <th colspan="1" class="text-center">Concepto</th>
+                        <th colspan="2" class="text-center">Creditos</th>
+                        <th colspan="2" class="text-center">Debitos</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for det in detalles %}
                         {% if det.liquidacion_haber == item %}
-                            <tr>
-                                <td colspan="2">{{ det.variable.motivo }}</td>
+                            <tr style="font-size: 13px">
+                                <td colspan="1">{{ det.variable.motivo }}</td>
                                 {% if det.variable.tipo == 'C' %}
-                                    <td>Gs. {{ det.total_detalle|floatformat }}</td>
-                                    <td> - </td>
+                                    <td colspan="2" class="text-center">Gs. {{ det.total_detalle|floatformat }}</td>
+                                    <td colspan="2" class="text-center"> - </td>
                                 {% else %}
-                                    <td> - </td>
-                                    <td>Gs. {{ det.total_detalle|floatformat }}</td>
+                                    <td colspan="2" class="text-center"> - </td>
+                                    <td colspan="2" class="text-center">Gs. {{ det.total_detalle|floatformat }}</td>
                                 {% endif %}
                             </tr>
                         {% endif %}
@@ -188,6 +202,14 @@
         </table>
         </div>
     </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+</form>
 
 
 </div>

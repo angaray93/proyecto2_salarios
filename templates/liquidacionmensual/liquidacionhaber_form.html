@@ -32,44 +32,14 @@
         {% endfor %}
     </div>
 </div>
-
-    <div class="row"><!--titulo-->
-        <div class="col-8">
-            {% if liq_haber.haber.movimiento.motivo.nombre != 'Contrato' %}
-            <h4>Rubro : {{ liq_haber.haber.movimiento.categoria_salarial }} -
-                Cargo: {{ liq_haber.haber.movimiento.categoria_salarial.cargo }}</h4> <!--fin titulo-->
-            {% else %}
-            <h4>Contrato N° :  -
-                Cargo: {{ liq_haber.haber.movimiento.funcion }} -
-                Departamento: {{ liq_haber.haber.movimiento.division.departamento.nombre }}
-            </h4> <!--fin titulo-->
-            {% endif %}
-
-        </div>
-        {% if liq_haber.liquidacion.tipo.nombre == 'Mensual' %}
-        <div class="col-4">
-            <button type="submit" form="liqhaber_form"
-                    name="boton" value="Guardar"
-                    formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
-                    class="btn" style="width: 100%">
-                Guardar
-            </button>
-        </div>
-        {% else %}
-        <div class="col-4">
-            <button type="submit" form="liqhaber_form"
-                    name="boton" value="Finalizar"
-                    formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
-                    class="btn" style="width: 100%">
-                Finalizar
-            </button>
-        </div>
-        {% endif %}
-    </div> <!--fin titulo-->
-    <hr>
-
-    <div class="row"> <!-- cabecera-->
+<div class="row"> <!-- cabecera-->
         <div class="col-12" style="font-size: 12px">
+            <div class="row text-center">
+                <div class="col-12 text-center">
+                    <h5><strong>Liquidacion Salarial N° {{ liq_haber.liquidacion.pk }}</strong></h5>
+                </div>
+            </div>
+            <br>
             <div class="row">
                 <div class="col-4 d-flex align-items-center">
                     <ul class="list-inline">
@@ -109,6 +79,48 @@
     </div> <!-- Fin cabecera -->
 <hr>
 
+<div class="row" style="font-size: 13px">
+    {% if liq_haber.haber.movimiento.motivo.nombre != 'Contrato' %}
+        <div class="col-3 text-center">
+            <h6>Categoria Salarial: <strong>{{ liq_haber.haber.movimiento.categoria_salarial }}</strong></h6>
+        </div>
+        <div class="col-3 text-center">
+            <h6>Cargo : <strong>{{ liq_haber.haber.movimiento.categoria_salarial.cargo }}</strong></h6>
+        </div>
+    {% else %}
+        <div class="col-3 text-center">
+            <h6>Contrato N°: <strong>{{ liq_haber.haber.movimiento.codigo }}</strong></h6>
+        </div>
+        <div class="col-3 text-center">
+            <h6>Cargo : <strong>{{ liq_haber.haber.movimiento.funcion }}</strong></h6>
+        </div>
+    {% endif %}
+        <div class="col-3 text-center">
+            <h6>Departamento : <strong>{{ liq_haber.haber.movimiento.division.departamento.nombre }}</strong></h6>
+        </div>
+        {% if liq_haber.liquidacion.tipo.nombre == 'Mensual' %}
+            <div class="col-3">
+                <button type="submit" form="liqhaber_form"
+                        name="boton" value="Guardar"
+                        formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
+                        class="btn btn-success" style="width: 100%">
+                    Finalizar
+                </button>
+            </div>
+        {% else %}
+        <div class="col-3">
+                <button type="submit" form="liqhaber_form"
+                        name="boton" value="Finalizar"
+                        formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
+                        class="btn btn-success" style="width: 100%">
+                    Finalizar
+                </button>
+            </div>
+        {% endif %}
+</div>
+
+<div id="formulario">
+<hr>
  <form method="post" id="liqhaber_form">
     {% csrf_token %}
         <!-- Campos ocultos -->
@@ -154,45 +166,55 @@
     </div>
 
 </form> <!-- FIN FORM -->
+</div>
 <hr>
-    {% if liq_haber %}
+{% if liq_haber %}
+    <div class="card" style="background-color: #b9bbbe">
+      <div class="card-header">
         <div class="row">
-            <div class="col-lg-10">
-                <a onclick="return abrir_modal('{% url 'liquidacion:detalleliquidacion-add' liq_haber.pk %}')"
-                   class="btn btn-primary">
-                        <strong style="color: white">Agregar Detalle</strong>
-                </a>
+            <div class="col-10">
+                <strong>Detalle de débitos y créditos</strong>
+            </div>
+            <div class="col-2" style="">
+                <button class="btn btn-primary btn-sm" type="button"
+                        onclick="return abrir_modal('{% url 'liquidacion:detalleliquidacion-add' liq_haber.pk %}')">
+                    <i class="fa fa-plus" style="font-size:25px" aria-hidden="true">
+                    </i></button>
             </div>
         </div>
-        <hr>
-        <div class="row">
-            <div class="col-lg-12">
-                <table id="tabla_detalleliquidacion" class="table table-hover">
-                    <thead class="thead-light">
-                        <tr>
-                            <th class="text-center">Descripcion</th>
-                            <th class="text-center">Importe</th>
-                            <th class="text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for detalle in detalles_list %}
-                            <tr class='clickable-row'>
-                                <td class="text-center">{{ detalle.variable }}</td>
-                                <td class="text-center">Gs. {{ detalle.total_detalle|floatformat }}</td>
-                                <td class="text-center">
-                                    <button class="btn btn-outline-primary btn-edit" type="button"
-                                            onclick="location.href='{% url 'liquidacion:detalleliquidacion-delete' detalle.pk %}'">
-                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                    </button>
-                                </td>
+      </div>
+      <div class="card-body" style="background-color: #b9bbbe">
+         <div class="row">
+                <div class="col-lg-12">
+                    <table id="tabla_detalleliquidacion" class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="text-center">Descripcion</th>
+                                <th class="text-center">Importe</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            </div>
-    {% endif %}
+                        </thead>
+                        <tbody>
+                            {% for detalle in detalles_list %}
+                                <tr class="text-dark" style="background-color: #c6c8ca; text">
+                                    <td>{{ detalle.variable }}</td>
+                                    <td class="text-center">Gs. {{ detalle.total_detalle|floatformat }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-danger" type="button"
+                                                onclick="location.href='{% url 'liquidacion:detalleliquidacion-delete' detalle.pk %}'">
+                                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+      </div>
+</div>
+
+{% endif %}
 
 </div>
 
@@ -202,7 +224,9 @@
 
 <footer>
     <script>
-
+    $(document).ready(function () {
+        $("#formulario").hide();
+    });
     function abrir_modal(url)
     {
         $('#popup').load(url, function()

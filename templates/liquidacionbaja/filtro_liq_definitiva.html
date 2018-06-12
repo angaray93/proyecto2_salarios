@@ -5,15 +5,12 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb " Liquidaciones Pendientes " 'liquidacion:liq_pendientes_filtro' %}
+    {% breadcrumb " Seleccion de movimiento de funcionario " 'liquidacion:param_liq_definitiva' %}
 {% endblock %}
 
 {% block head %}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    {% block title %}
-        <title></title>
-    {% endblock %}
 {% endblock %}
 
 {% block content %}
@@ -32,14 +29,20 @@
 
             <hr>
 
-            {% if advertencia %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ advertencia }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <div class="row">
+                <div class="col-lg-10">
+                    {% for message in messages %}
+                        {% if message.error %}
+                        <div class="alert alert-danger">{{ message }}
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        </div>
+                        {% endif %}
+                            <div class="alert alert-warning">{{ message }}
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            </div>
+                    {% endfor %}
                 </div>
-            {% endif %}
+            </div>
 
             <div class="row">
                 <div class="col-md-6">

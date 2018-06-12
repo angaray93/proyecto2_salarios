@@ -160,7 +160,6 @@ class Aguinaldo(models.Model):
             pago = Pago.objects.get(movimiento=self.movimiento, mes__pk=mes)
             resultado = pago.monto / 12
         return round(resultado)
-            #.quantize(Decimal('1.00'))
 
     def calculo_total(self):
         resultado = self.acumulado
@@ -406,8 +405,8 @@ class Liquidacion(models.Model):
     tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE, related_name='fk_liquidacion_tipo')
     propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fk_liquidacion_user')
 
-    class Meta:
-        unique_together = (('funcionario', 'mes'),)
+    #class Meta:
+    #    unique_together = (('funcionario', 'mes'),)
 
     def calculo_total_debito(self):
         suma_total_debito = self.liquidacionhaber_set.filter(liquidacion=self.pk)\
@@ -448,7 +447,7 @@ class Liquidacionhaber(models.Model):
             resultado = (self.haber.movimiento.categoria_salarial.asignacion / 30) * self.liquidacion.dias_trabajados
         else:
             pago = Pago.objects.get(movimiento=self.haber.movimiento, mes=self.liquidacion.mes)
-            resultado = (pago / 30) * self.liquidacion.dias_trabajados
+            resultado = (pago.monto / 30) * self.liquidacion.dias_trabajados
         return round(resultado)
 
     def suma_constante_debito(self):

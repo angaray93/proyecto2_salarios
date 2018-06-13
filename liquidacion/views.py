@@ -336,6 +336,7 @@ def confirmadas_periodo(request):
         liquidacion_table = LiquidacionMensualTable(liquidaciones_confirmadas)
         context.update({
             'vista': vista,
+            'lista': liquidaciones_confirmadas,
             'liquidacion_table': liquidacion_table
         })
     return render(request, 'liquidacionmensual/confirmadas_periodo.html', context)
@@ -1275,14 +1276,30 @@ def busqueda_funcionarios(request):
 
 
 def busqueda_movimiento_funcionario(request):
-    choice = request.GET.get("q")
-    queryset_list = Funcionario.objects.all()
-    recibido = request.GET.get("q")
-    if recibido:
-        queryset_list = queryset_list.filter\
-            (Q(nombres__icontains=recibido) | Q(apellidos__icontains=recibido) | Q(cedula__icontains=recibido))
+    vista = 'busqueda_movimiento_funcionario'
+    if request.GET.get('q'):
+        form = LiquidacionDefinitivaForm(request.GET)
+        if not form.has_changed():
+            sin_datos = 'Ingrese todos los datos solicitados'
+            return render(request, 'proceso/seleccion_movimiento_funcionario.html',
+                          {'form': LiquidacionDefinitivaForm(initial=request.GET),
+                           'sin_datos': sin_datos, 'vista': vista})
+        if form.is_valid():
+            context = {}
+            funcionario = form.cleaned_data['funcionario']
+            context.update({
+                'funcionario': funcionario,
+            })
+            funcionarios = Movimiento.objects.filter(funcionario__cedula=funcionario, estado__name='Activo')
 
-    return render(request, 'proceso/seleccion_movimiento_funcionario.html', {'funcionarios': queryset_list})
+            context.update({
+                'form': LiquidacionDefinitivaForm(initial=request.GET),
+                'funcionarios': funcionarios,
+            })
+            return render(request, 'proceso/seleccion_movimiento_funcionario.html', context)
+    else:
+        return render(request, 'proceso/seleccion_movimiento_funcionario.html',
+                      {'form': LiquidacionDefinitivaForm(), 'vista': vista})
 
 
 def get_movimientos(request):

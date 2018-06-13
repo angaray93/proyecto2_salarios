@@ -73,7 +73,7 @@ class Movimiento(models.Model):
     codigo = models.CharField(max_length=20, default='', blank=True, null=True)
     tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo')
     motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo')
-    formapago = models.CharField(max_length=1, default='M',choices=Modalidad_OPTIONS)
+    formapago = models.CharField(max_length=1, default='M',choices=Modalidad_OPTIONS, blank=True)
     fechainicio = models.DateField()
     fechafin = models.DateField(blank=True, null=True)
     esPrimero = models.BooleanField(default=True)

@@ -45,17 +45,11 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="funcionario">Nro. de Documento de Identidad:</label>
-                        <div class="input-group">
-                            {{ form.funcionario }}
-                        </div>
-                    </div>
+                <label for="funcionario" class="explicativo">Ingrese el numero de cedula de identidad del funcionario :</label>
+                <div class="col-6">
+                    {{ form.funcionario }}
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 align-self-end pb-3">
+                <div class="col-6">
                     <button type="submit" class="btn btn-success" name="q" value="true"
                             formaction="{% url 'liquidacion:param_liq_definitiva' %}">
                         Generar
@@ -86,11 +80,7 @@
 
         {% if listado_movimientos %}
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <p>Seleccione el rubro o contrato que desea dar de baja:</p>
-                    </div>
-                </div>
+                <label class="text-center">Seleccione el rubro o contrato que desea dar de baja:</label>
             </div>
             <table id="tabla-vac" class="table">
                 <thead class="thead-light">

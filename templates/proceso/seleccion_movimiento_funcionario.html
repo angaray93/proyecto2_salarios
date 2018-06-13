@@ -13,9 +13,29 @@
 <div class="col-12 col-sm-10 recuadro">
 
 <div class="row">
+    <div class="col-12">
+        <div class="col-12 d-flex align-self-start">
+            <h5>Seleccion de movimiento para Ascenso o Modificacion de funciones </h5>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
     <form method="get">
-        <input type="text" name="q" placeholder="Ingrese un numero de cedula" value="{{ request.GET.q }}"/>
-        <button type="submit" class="btn">Buscar</button>
+        <div class="row">
+            <label for="funcionario" class="explicativo">Ingrese el numero de cedula de identidad del funcionario :</label>
+            <div class="col-6">
+                {{ form.funcionario }}
+            </div>
+            <div class="col-6">
+                <button type="submit" class="btn btn-outline-dark" name="q" value="true"
+                        formaction="{% url 'liquidacion:buscar_movimiento' %}">
+                    Buscar
+                </button>
+            </div>
+        </div>
     </form>
 </div>
 
@@ -24,25 +44,26 @@
     <div class="row separador_fila">
         <div class="col-lg-12">
             <table class="table table-hover table-striped table-sm">
-                <thead class="thead-dark">
+                <thead class="thead-light">
                     <tr>
-                        <th class="text-center">Nro. de Documento de Identidad</th>
-                        <th class="text-center">Nombres</th>
-                        <th class="text-center">Apellidos</th>
-                        <th class="text-center"></th>
+                        <th class="columna-normal text-center">Nombres</th>
+                        <th class="columna-normal text-center">Apellidos</th>
+                        <th class="columna-normal text-center">Tipo de movimiento</th>
+                        <th class="columna-normal text-center">Categoria Salarial</th>
+                        <th class="columna-normal text-center">Seleccionar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for funcionario in funcionarios %}
+                    {% for movimiento in funcionarios %}
                         <tr class='clickable-row'>
-                            <td>{{ funcionario.cedula }}</td>
-                            <td>{{ funcionario.nombres }}</td>
-                            <td>{{ funcionario.apellidos }}</td>
+                            <td class="columna-negrita text-center">{{ movimiento.funcionario.nombres }}</td>
+                            <td class="columna-negrita text-center">{{ movimiento.funcionario.apellidos }}</td>
+                            <td class="columna-negrita text-center">{{ movimiento.motivo.nombre }}</td>
+                            <td class="columna-negrita text-center">{{ movimiento.categoria_salarial.codigo }}</td>
                             <td class="text-center">
-                                <button id="funcionario_btn" value="{{ funcionario.pk }}"
-                                        class="btn btn-secondary btn-edit" type="button">
-                                    <i class="fa fa-check-square-o" aria-hidden="true"></i>
-                                </button>
+                                <button class="btn btn-outline-secondary" type="button"
+                                   name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:modificar_movimiento' movimiento.pk %}')">
+                                <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -53,31 +74,14 @@
  </div>
 {% endif %}
 
-<div class="row separador_fila" id="tablamovimientos">
-        <div class="col-lg-12">
-            <table id="tabla_movimientos" class="table table-hover table-striped table-sm">
-                <thead class="thead-dark">
-                    <tr>
-                        <th class="text-center">Tipo de Movimiento</th>
-                        <th class="text-center">Motivo</th>
-                        <th class="text-center">Categoria Salarial</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-        </div>
-    </div>
 
 <footer>
     <script>
         $(document).ready(function () {
-           $('#tablamovimientos').hide();
+
         });
 
-        $('#funcionario_btn').click(function(e) {
+        $('#xx_btn').click(function(e) {
             e.preventDefault();
             $.ajax({
                 url: '{% url 'liquidacion:get_movimientos' %}',

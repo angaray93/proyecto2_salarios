@@ -206,3 +206,17 @@ a.button:hover {
 .separador_fila {
   margin-top: 10px;
 }
+
+.columna-normal {
+  font-weight: normal;
+  font-size: small;
+  font-style: inherit;
+}
+
+.columna-negrita {
+  font-weight: bold;
+}
+
+.explicativo {
+  font-family: Candara;
+}

@@ -25,8 +25,6 @@
             </div>
         </div>
     </div>
-    {% render_table liquidacion_table %}
-
     {% else %}
     <div class="row">
         <div class="col-12">
@@ -36,7 +34,7 @@
         </div>
     </div>
     <hr>
-    {% if liquidacion_table %}
+    {% if lista %}
         <div class="row">
             <div class="col-md-3 col-sm-3 btn_sep">
                 <button type="submit" form="liquidacion_form"
@@ -47,7 +45,35 @@
                 </button>
             </div>
         </div>
-        {% render_table liquidacion_table %}
+        <!-- Example DataTables Card-->
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead class="thead-light">
+                    <tr>
+                        <th class="columna-normal text-center">Nombres</th>
+                        <th class="columna-normal text-center">Apellidos</th>
+                        <th class="columna-normal text-center">Tipo de movimiento</th>
+                        <th class="columna-normal text-center">Categoria Salarial</th>
+                        <th class="columna-normal text-center">Seleccionar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in lista %}
+                        <tr class='clickable-row'>
+                            <td class="columna-negrita text-center">{{ item.funcionario.nombres }}</td>
+                            <td class="columna-negrita text-center">{{ item.funcionario.apellidos }}</td>
+                            <td class="columna-negrita text-center">{{ item.mes.nombre }}</td>
+                            <td class="columna-negrita text-center">{{ item.mes.year|unlocalize }}</td>
+                            <td class="text-center">
+                                <button class="btn btn-outline-secondary" type="button"
+                                   name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:modificar_movimiento' item.pk %}')">
+                                <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
     {% else %}
     <div class="row">
         <p>

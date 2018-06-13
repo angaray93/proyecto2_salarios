@@ -15,6 +15,35 @@
 
 <form method="post" id="pago_form">
         {% csrf_token %}
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href='{% url 'liquidacion:editar_movimiento' movimiento.pk %}'>Movimiento N° {{ movimiento.pk }}</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documento</a>
+                <div class="dropdown-menu">
+                    {% if documento %}
+                        <a class="dropdown-item" onclick="return abrir_modal('{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}')">Ver documento</a>
+                    {% else %}
+                        <button class="dropdown-item btn btn-link" onclick="return abrir_modal('{% url 'liquidacion:nuevo_documento' movimiento.pk %}')">Crear Nuevo</button>
+                    {% endif %}
+                    <div class="dropdown-divider"></div>
+                </div>
+            </li>
+            <li class="nav-item">
+                {% if movimiento.motivo.nombre == 'Contrato' %}
+                    <a class="nav-link active" href="{% url 'liquidacion:nuevo_pago' movimiento.pk %}">
+                        Pagos
+                    </a>
+                {% else %}
+                    <a class="nav-link" href="{% url 'liquidacion:nueva_constante' movimiento.pk %}">
+                        Debitos y Creditos
+                    </a>
+                {% endif %}
+            </li>
+        </ul>
+
         <div class="row text-center">
             <div class="col-12 text-center">
                 <h4>Creación de Alta de Funcionario</h4>

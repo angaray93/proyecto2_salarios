@@ -21,6 +21,7 @@ from django_popup_view_field.registry import registry_popup_view
 import json
 from liquidacion.tables import LiquidacionMensualTable
 
+from dateutil.relativedelta import relativedelta
 
 def index(request):
     return render(request, 'index.html')
@@ -1215,20 +1216,12 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
     else:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
-            documentos = DocumentoRespaldatorio.objects.filter(movimiento=movimiento)
+            documentos = DocumentoRespaldatorio.objects.get(movimiento=movimiento)
             constantes = Constante.objects.filter(movimiento=movimiento)
             form = MovimientoForm(instance=movimiento)
-            """if movimiento.tieneAguinaldo is True:
-                aguinaldo = Aguinaldo.objects.get(movimiento=movimiento)
-                if not aguinaldo:
-                    aguinaldo = Aguinaldo(movimiento=movimiento)
-                print(aguinaldo)
-                aguinaldo.cantidad_meses = aguinaldo.calcular_cantidad_meses()
-                aguinaldo.save()
-                print(aguinaldo.cantidad_meses)"""
             context.update({
                 'movimiento': movimiento,
-                'documentos': documentos,
+                'documento': documentos,
                 'constantes': constantes,
                 'form': form
             })

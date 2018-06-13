@@ -1,25 +1,23 @@
-<div class="modal-dialog modal-lg">
-    <div class="modal-content" id="documento_modal">
-        {% if documento %}
-        <form class="well" role="form" action="{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}" method="post">
-            <div>
-                <h3>Documento </h3>
-            </div>
-        {% else %}
-        <form role="form" action="{% url 'liquidacion:nuevo_documento' movimiento.pk %}" method="post">
-            <div>
-                <h3>Nuevo Documento</h3>
-            </div>
-        {% endif %}
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">×</button>
-      </div>
-        <div class="modal-body">
+{% load l10n %}
+<div class="modal-dialog">
+    <div class="modal-content" style="background-color: #b9bbbe" id="documento_modal">
+        <div class="modal-header text-center">
+            <h4 class="modal-title w-100 font-weight-bold">Documento Respaldatorio</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div id="modal-body" class="modal-body">
+            {% if documento %}
+            <form class="well" role="form" action="{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}" method="post">
+            {% else %}
+            <form role="form" action="{% url 'liquidacion:nuevo_documento' movimiento.pk %}" method="post">
+            {% endif %}
             {% csrf_token %}
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="tipodoc">Tipo de Documento:</label>
                                 {% if documento %}
@@ -30,7 +28,9 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="codigo">Codigo:</label>
                                 {% if documento %}
@@ -41,20 +41,32 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="fechaemision">Fecha de Emision:</label>
+                                <div class="input-group">
                                 {% if documento %}
-                                    <input type="text" id="fechaemision" class="form-control"
-                                           value="{{ documento.fechaemision }}" disabled/>
+                                    <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
+                                               value="{{ documento.fechaemision|unlocalize }}" placeholder="{{ documento.fechaemision|unlocalize }}" disabled>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="button" disabled>
+                                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
                                 {% else %}
-                                    {{ form.fechaemision }}
+                                    <input type="date" id="id_fechaemision" name="fechaemision" class="form-control">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="button" disabled>
+                                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
                                 {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="autoridadfirmante">Autoridad Firmante:</label>
                                 {% if documento %}
@@ -65,29 +77,33 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="quienfirma">Firmado por:</label>
+                                <div class="input-group">
                                 {% if documento %}
                                     <input type="text" id="quienfirma" class="form-control"
                                            value="{{ documento.quienfirma }}" disabled/>
                                 {% else %}
                                     {{ form.quienfirma }}
                                 {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    {% if not documento %}
-            <div class="modal-footer">
-                <div class="col-lg-12 text-right">
-                    <input type="submit" class="btn btn-primary" name="submit" value="Guardar">
-                </div>
-            </div>
-    {% endif %}
 
+        {% if not documento %}
+                <div class="modal-footer">
+                    <div class="col-lg-12 text-right">
+                        <input type="submit" class="btn btn-primary" name="submit" value="Guardar">
+                    </div>
+                </div>
+        {% endif %}
         </form>
+    </div>
     </div>
 </div>

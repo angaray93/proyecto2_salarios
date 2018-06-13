@@ -21,11 +21,7 @@
 {% render_breadcrumbs %}
 
 <div class="col-12 col-sm-10 recuadro">
-<ul class="nav nav-pills">
-  <li class="active"><a href="#">Inicio</a></li>
-  <li><a href="#">Perfil</a></li>
-  <li><a href="#">Mensajes</a></li>
-</ul>
+
 <form method="post" id="movimiento_form">
         {% csrf_token %}
         {{ form.media }}
@@ -35,6 +31,34 @@
             {{ hidden_field.errors }}
             {{ hidden_field }}
         {% endfor %}
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href='{% url 'liquidacion:editar_movimiento' movimiento.pk %}'>Movimiento N° {{ movimiento.pk }}</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documento</a>
+                <div class="dropdown-menu">
+                    {% if documento %}
+                        <a class="dropdown-item" onclick="return abrir_modal('{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}')">Ver documento</a>
+                    {% else %}
+                        <button class="dropdown-item btn btn-link" onclick="return abrir_modal('{% url 'liquidacion:nuevo_documento' movimiento.pk %}')">Crear Nuevo</button>
+                    {% endif %}
+                    <div class="dropdown-divider"></div>
+                </div>
+            </li>
+            <li class="nav-item">
+                {% if movimiento.motivo.nombre == 'Contrato' %}
+                    <a class="nav-link" href="{% url 'liquidacion:nuevo_pago' movimiento.pk %}">
+                        Pagos
+                    </a>
+                {% else %}
+                    <a class="nav-link" href="{% url 'liquidacion:nueva_constante' movimiento.pk %}">
+                        Debitos y Creditos
+                    </a>
+                {% endif %}
+            </li>
+        </ul>
 
         <div class="row text-center">
             <div class="col-12 text-center">
@@ -47,6 +71,7 @@
             </div>
         </div>
         <br>
+
         <div class="row"> <!-- cabecera-->
             <div class="col-12">
                 <div class="row">
@@ -489,44 +514,9 @@
     </form>
     <hr>
 
-{% if movimiento %}
-    <div class="row">
-        <div class="col-lg-6">
-            <a onclick="return abrir_modal('{% url 'liquidacion:nuevo_documento' movimiento.pk %}')" class="btn btn-primary">
-                Agregar Documento Respaldatorio
-            </a>
-        </div>
-        <div class="row">
-        <div class="col-lg-12">
-        <table id="tabla_documentos" class="table table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th class="text-center">Documento Nro.</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for documento in documentos %}
-                    <tr class='clickable-row'>
-                        <td>{{ documento.codigo }}</td>
-                        <td class="text-center">
-                            <a href="#">
-                              <span class="glyphicon glyphicon-eye-open"></span>
-                            </a>
-                            <button class="btn btn-outline-primary btn-edit" type="button"
-                                onclick="return abrir_modal('{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}')">
-                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        </div>
-    </div>
-</div>
+<div id="popup" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
 
-{% endif %}
-<div id="popup" class="modal fade" role="dialog"></div>
+</div>
 
 <div id="og_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">

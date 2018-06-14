@@ -573,7 +573,7 @@ def vista_liq_mensual(request, idliquidacion):
                     transicion = Transition.objects.get(process=proceso, currentState=estado_actual,
                                                         nextState__stateType__name='Completado')
                     liquidacion.estado_actual = transicion.nextState
-                    #liquidacion.save()
+                    liquidacion.save()
                     # -------------------------------AGUINALDO----------------------------------------------#
                     liq_haberes = Liquidacionhaber.objects.filter(liquidacion = liquidacion)
                     if liquidacion.mes.numero == 1:

@@ -21,7 +21,7 @@ from django_popup_view_field.registry import registry_popup_view
 import json
 from liquidacion.tables import LiquidacionMensualTable
 
-from dateutil.relativedelta import relativedelta
+#from dateutil.relativedelta import relativedelta
 
 def index(request):
     return render(request, 'index.html')
@@ -67,6 +67,7 @@ def generar_liq_definitiva(request, idmovimiento):
             liquidacion.save()
 
         haber = Haber.objects.get(movimiento=movimiento, estado__name='Activo')
+        print('Liquidacion del movimiento numero :', haber.movimiento.pk)
         if haber.movimiento.motivo.nombre == 'Contrato' and haber.movimiento.formapago == 'M':
             try:
                 pago = Pago.objects.get(movimiento=haber.movimiento, mes=liquidacion.mes)
@@ -117,10 +118,12 @@ def generar_liq_definitiva(request, idmovimiento):
             )
         salario_mes.save()
 
+        aguinaldo = Aguinaldo.objects.get(movimiento=liq_haber.haber.movimiento,
+                                          anho=datetime.datetime.now().year)
         if liq_haber.haber.movimiento.tieneAguinaldo is True:
             aguinaldo_prop = DetalleLiquidacion(
                 cantidad=1,
-                monto=0,
+                monto=aguinaldo.total,
                 parametro = Parametro.objects.get(descripcion='Monto'),
                 variable = Variable.objects.get(motivo='Aguinaldo'),
                 liquidacion_haber = liq_haber,
@@ -133,7 +136,6 @@ def generar_liq_definitiva(request, idmovimiento):
             cantidad_vacaciones = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario, movimiento__estado__name='Activo',
                                                          dias_restantes__gt=0).aggregate(dias_acumulados=Sum('dias_restantes'))
             monto_vacaciones = round(cantidad_vacaciones['dias_acumulados'] * (liq_haber.haber.movimiento.categoria_salarial.asignacion / 30))
-            print('monto_vacaciones ',monto_vacaciones)
             constante = Constante.objects.get(tipo__nombre='Vacaciones', movimiento=liq_haber.haber.movimiento)
             constante.monto = monto_vacaciones
             constante.save()
@@ -600,7 +602,8 @@ def vista_liq_mensual(request, idliquidacion):
                                 aguinaldo = None
                             if aguinaldo is not None:
                                 aguinaldo.cantidad_meses += 1
-                                aguinaldo.acumulado += aguinaldo.calculo_acumulado(liquidacion.mes.pk)
+                                aguinaldo.save()
+                                aguinaldo.acumulado += aguinaldo.calculo_acumulado(liq.pk)
                                 aguinaldo.total = aguinaldo.calculo_total()
                                 aguinaldo.save()
 
@@ -731,7 +734,6 @@ def vista_liq_mensual(request, idliquidacion):
                 liquidacion.save()
 
                 liq = Liquidacionhaber.objects.get(liquidacion=liquidacion)
-                print('movimiento id', liq.haber.movimiento)
 
                 fin_fecha = liquidacion.fin_periodo
                 estado_inactivo = State.objects.get(process__name='Alta de Movimiento',
@@ -758,32 +760,49 @@ def vista_liq_mensual(request, idliquidacion):
                 transicion = Transition.objects.get(process=liquidacion.estado_actual.process, currentState=liquidacion.estado_actual)
                 liquidacion.estado_actual = transicion.nextState
                 liquidacion.save()
-            haberes = Haber.objects.filter(movimiento__funcionario=liquidacion.funcionario)
-            liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
-            movimientos = Movimiento.objects.filter(pk__in = Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
-            constantes = Constante.objects.filter(movimiento__pk__in=Subquery(movimientos.values('pk')))
-            detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
-            form = LiqMensualForm(instance=liquidacion)
-            vacaciones_activas = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
-                                                       dias_restantes__gt = 0)
-            if vacaciones_activas.count() > 0 :
-                tieneVacaciones = True
+            if liquidacion.tipo.nombre == 'Mensual':
+                haberes = Haber.objects.filter(movimiento__funcionario=liquidacion.funcionario)
+                liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
+                movimientos = Movimiento.objects.filter(pk__in = Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
+                constantes = Constante.objects.filter(movimiento__pk__in=Subquery(movimientos.values('pk')))
+                detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
+                form = LiqMensualForm(instance=liquidacion)
+                vacaciones_activas = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
+                                                           dias_restantes__gt = 0)
+                if vacaciones_activas.count() > 0 :
+                    tieneVacaciones = True
+                    context.update({
+                        'tieneVacaciones': tieneVacaciones,
+                    })
                 context.update({
-                    'tieneVacaciones': tieneVacaciones,
+                    'form': form ,
+                    'liquidacion': liquidacion,
+                    'liq_haberes': liq_haberes,
+                    'constantes': constantes,
+                    'detalles': detalles,
                 })
-            context.update({
-                'form': form ,
-                'liquidacion': liquidacion,
-                'liq_haberes': liq_haberes,
-                'constantes': constantes,
-                'detalles': detalles,
-            })
-            try:
-                transition = Transition.objects.get(process=liquidacion.estado_actual.process, currentState=liquidacion.estado_actual)
-            except MultipleObjectsReturned:
-                advertencia = 'Seleccione una accion para continuar'
+                try:
+                    transition = Transition.objects.get(process=liquidacion.estado_actual.process, currentState=liquidacion.estado_actual)
+                except MultipleObjectsReturned:
+                    advertencia = 'Seleccione una accion para continuar'
+                    context.update({
+                        'advertencia': advertencia,
+                    })
+            else:
+                liq_haber = Liquidacionhaber.objects.filter(liquidacion=liquidacion)
+                movimientos = Movimiento.objects.filter(
+                    pk__in=Subquery(liq_haber.values('haber__movimiento__idmovimiento')))
+                constantes = Constante.objects.filter(movimiento__pk__in=Subquery(movimientos.values('pk')))
+                detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haber)
+                form = LiqMensualForm(instance=liquidacion)
+                vacaciones_activas = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
+                                                               dias_restantes__gt=0)
                 context.update({
-                    'advertencia': advertencia,
+                    'liquidacion': liquidacion,
+                    'liq_haberes': liq_haber,
+                    'form': form,
+                    'constantes': constantes,
+                    'detalles': detalles,
                 })
     return render(request, 'liquidacionmensual/liqmensual_form.html', context)
 
@@ -967,15 +986,15 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
                 liq.save()
                 if request.POST.get('boton', '') == 'Finalizar':
                     if liq.liquidacion.mes.numero == 1:
-                        nuevo_aguinaldo = Aguinaldo(
+                        aguinaldo = Aguinaldo(
                             anho=datetime.datetime.today().year,
                             movimiento=liq.haber.movimiento
                         )
-                        nuevo_aguinaldo.save()
-                        nuevo_aguinaldo.acumulado += nuevo_aguinaldo.calculo_acumulado(liq.liquidacion.mes.pk)
-                        nuevo_aguinaldo.save()
-                        nuevo_aguinaldo.total = nuevo_aguinaldo.calculo_total()
-                        nuevo_aguinaldo.save()
+                        aguinaldo.save()
+                        aguinaldo.acumulado += aguinaldo.calculo_acumulado(liq.liquidacion.mes.pk)
+                        aguinaldo.save()
+                        aguinaldo.total = aguinaldo.calculo_total()
+                        aguinaldo.save()
                     else:
                         try:
                             aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
@@ -991,9 +1010,46 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
                             aguinaldo.save()
                             aguinaldo.total = aguinaldo.calculo_total()
                             aguinaldo.save()
+
+                    detalles = DetalleLiquidacion.objects.filter(liquidacion_haber=liq)
+                    for detalleliquidacion in detalles:
+                        if not detalleliquidacion.constante:
+                            detalleliquidacion.monto = detalleliquidacion.calcular_monto()
+                            detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                            detalleliquidacion.save()
+
+                            if detalleliquidacion.variable.tipo == 'D':
+                                detalleliquidacion.liquidacion_haber.monto_debito += detalleliquidacion.total_detalle
+                            else:
+                                detalleliquidacion.liquidacion_haber.monto_credito += detalleliquidacion.total_detalle
+                            detalleliquidacion.liquidacion_haber.save()
+                            detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
+                            detalleliquidacion.liquidacion_haber.save()
+
+                    for detalleliquidacion in detalles:
+                        if detalleliquidacion.constante and detalleliquidacion.constante.tipo.porcentaje:
+                            detalleliquidacion.monto = detalleliquidacion.calcular_monto_constante()
+                            detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                            detalleliquidacion.save()
+                        if detalleliquidacion.variable.motivo == 'Aguinaldo':
+                            detalleliquidacion.monto = aguinaldo.calculo_total()
+                            detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                            detalleliquidacion.save()
+
+
+                    liq.monto_credito = liq.suma_detalles_credito()
+                    liq.monto_debito = liq.suma_detalles_debito()
+                    liq.save()
+                    liq.subTotal = liq.calcular_total()
+                    liq.save()
+
+                    liq.liquidacion.total_credito = liq.liquidacion.calculo_total_credito()
+                    liq.liquidacion.total_debito = liq.liquidacion.calculo_total_debito()
+                    liq.liquidacion.total_liquidacion = liq.liquidacion.calcular_total_liquidacion()
+                    liq.liquidacion.save()
+
                 if request.POST.get('boton', '') == 'Guardar':
                     detalles = DetalleLiquidacion.objects.filter(liquidacion_haber=liq)
-
                     for detalleliquidacion in detalles:
                         if not detalleliquidacion.constante :
                             detalleliquidacion.monto = detalleliquidacion.calcular_monto()
@@ -1216,12 +1272,17 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
     else:
         if idmovimiento:
             movimiento = get_object_or_404(Movimiento, pk=idmovimiento)
-            documentos = DocumentoRespaldatorio.objects.get(movimiento=movimiento)
+            try:
+                documentos = DocumentoRespaldatorio.objects.get(movimiento=movimiento)
+                context.update({
+                    'documento': documentos,
+                })
+            except DocumentoRespaldatorio.DoesNotExist:
+                documentos = None
             constantes = Constante.objects.filter(movimiento=movimiento)
             form = MovimientoForm(instance=movimiento)
             context.update({
                 'movimiento': movimiento,
-                'documento': documentos,
                 'constantes': constantes,
                 'form': form
             })

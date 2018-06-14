@@ -152,12 +152,12 @@ class Aguinaldo(models.Model):
     # -----------------------------------Relationships-----------------------------------------#
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='aguinaldo_movimiento')
 
-    def calculo_acumulado(self, mes):
+    def calculo_acumulado(self, idliqhaber):
+        liquidacion = Liquidacionhaber.objects.get(pk=idliqhaber)
         if self.movimiento.motivo.nombre != 'Contrato':
-            liquidacion = Liquidacionhaber.objects.get(haber__movimiento=self.movimiento, liquidacion__mes__pk=mes)
-            resultado = liquidacion.liquidacion.total_liquidacion / Decimal(12)
+            resultado = liquidacion.subTotal / Decimal(12)
         else:
-            pago = Pago.objects.get(movimiento=self.movimiento, mes__pk=mes)
+            pago = liquidacion.pago
             resultado = pago.monto / 12
         return round(resultado)
 

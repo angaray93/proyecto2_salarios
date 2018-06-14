@@ -32,6 +32,7 @@
             {{ hidden_field }}
         {% endfor %}
 
+    {% if movimiento %}
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link active" href='{% url 'liquidacion:editar_movimiento' movimiento.pk %}'>Movimiento N° {{ movimiento.pk }}</a>
@@ -59,6 +60,7 @@
                 {% endif %}
             </li>
         </ul>
+    {% endif %}
 
         <div class="row text-center">
             <div class="col-12 text-center">
@@ -105,7 +107,6 @@
                                         onclick="location.href='{% url 'liquidacion:nuevo_pago' movimiento.pk %}'">
                                         Agregar Pagos
                                     </button>
-
                                 {% else %}
                                     <button type="button" class="btn btn-primary fa fa-arrow-right"
                                         onclick="location.href='{% url 'liquidacion:nueva_constante' movimiento.pk %}'">Siguiente</button>

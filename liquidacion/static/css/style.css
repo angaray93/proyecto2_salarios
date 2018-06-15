@@ -1,3 +1,5 @@
+{% load staticfiles %}
+
 .recuadro {
 	box-shadow: 0px 1px 3px;
 	border-radius: 2px 0px 2px 2px;
@@ -7,6 +9,17 @@
 
 .separador {
 	border-bottom: 1px solid rgb(190, 190, 190);
+}
+
+body {
+  background-image: url( "{% static 'fondo.png' %}");
+}
+
+.center_img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
 
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6,

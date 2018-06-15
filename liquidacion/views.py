@@ -676,11 +676,14 @@ def vista_liq_mensual(request, idliquidacion):
 
                     vacacion_periodo = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario).order_by('-inicio')
 
+                    movimientos = Movimiento.objects.filter(
+                        pk__in=Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
+                    #if vacacion_periodo.movimiento in movimientos:
+
                     newest = vacacion_periodo.first()
                     newest.diasobtenidos = newest.calculo_diasobtenidos()
                     newest.dias_restantes = newest.calculo_diasrestantes()
                     newest.save()
-
                     if liquidacion.vacaciones_usadas > 0 :
                         vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
                                                                            dias_restantes__gt=0).order_by('inicio')[:2]
@@ -985,6 +988,8 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
             if form.is_valid():
                 liq.save()
                 if request.POST.get('boton', '') == 'Finalizar':
+                    liq.editable = False
+                    liq.save()
                     if liq.liquidacion.mes.numero == 1:
                         aguinaldo = Aguinaldo(
                             anho=datetime.datetime.today().year,

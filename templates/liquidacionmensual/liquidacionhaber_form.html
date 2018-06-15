@@ -98,6 +98,7 @@
         <div class="col-3 text-center">
             <h6>Departamento : <strong>{{ liq_haber.haber.movimiento.division.departamento.nombre }}</strong></h6>
         </div>
+{% if liq_haber.editable is True %}
         {% if liq_haber.liquidacion.tipo.nombre == 'Mensual' %}
             <div class="col-3">
                 <button type="submit" form="liqhaber_form"
@@ -117,6 +118,7 @@
                 </button>
             </div>
         {% endif %}
+{% endif %}
 </div>
 
 <div id="formulario">

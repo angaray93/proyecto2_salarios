@@ -27,7 +27,7 @@
 </head>
 
 {% if user.is_authenticated %}
-<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+<body class="fixed-nav bg-dark" id="page-top">
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
     <a class="navbar-brand" href="index.html">SLSB / FP-UNA</a>
@@ -78,7 +78,7 @@
   </ul>
 </div>
   </nav>
-  <div class="content-wrapper">
+  <div class="content-wrapper" style="background-image: url({% static 'img/fondo.png' %})">
     <div class="container-fluid">
     {% block breadcrumbs %}
         {% clear_breadcrumbs %}
@@ -87,8 +87,6 @@
 
     {% block content %}
     {% render_breadcrumbs %}
-
-
     {% endblock %}
     </div>
     <!-- /.container-fluid-->
@@ -126,13 +124,16 @@
   </div>
 </body>
 {% else %}
-
-<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+<body class="fixed-nav bg-dark" background="{% static "img/fondo.png" %}">
   <div class="container">
     <div class="card card-login mx-auto mt-5">
-      <div class="card-header">Sistema de Liquidacion de Salarios y Beneficios</div>
+      <div class="card-header" style="align-content: center">
+          <img id="image" src="{% static "img/fpuna_logo_corporativo4.png" %}" class="rounded mx-auto d-block" />
+          <label class="control-label" for="username"><strong>Sistema de Liquidacion de Salarios y Beneficios
+          </strong></label>
+      </div>
       <div class="card-body">
-            <p>Para continuar, identifiquese:<a href="{% url 'login' %}">Iniciar Sesión</a> </p>
+            <label>Para continuar, favor identifíquese: <a href="{% url 'login' %}">Iniciar Sesión</a></label>
       </div>
     </div>
   </div>

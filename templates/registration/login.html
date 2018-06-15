@@ -17,10 +17,14 @@
   <link href="{% static "css/sb-admin.css" %}" rel="stylesheet">
 </head>
 
-<body class="bg-dark">
+<body class="bg-dark" background="{% static "img/fondo.png" %}">
   <div class="container">
     <div class="card card-login mx-auto mt-5">
-      <div class="card-header">Sistema de Liquidacion de Salarios y Beneficios</div>
+      <div class="card-header" style="align-content: center">
+          <img id="image" src="{% static "img/fpuna_logo_corporativo4.png" %}" class="rounded mx-auto d-block" />
+          <label class="control-label" for="username"><strong>Sistema de Liquidacion de Salarios y Beneficios
+          </strong></label>
+      </div>
       <div class="card-body">
         <form method="post">
           {% csrf_token %}

@@ -438,6 +438,7 @@ class Liquidacionhaber(models.Model):
     monto_debito = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, default=0)
     subTotal = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, default=0)
     pago = models.ForeignKey('Pago', on_delete=models.CASCADE, null=True, blank=True, related_name='fk_liqhaber_pago')
+    editable = models.BooleanField(default=True)
 
     class Meta:
         unique_together = (('haber', 'liquidacion'),)

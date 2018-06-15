@@ -131,9 +131,12 @@
                     <td>{{ movimiento.motivo }}</td>
                     <td>{{ movimiento.categoria_salarial.codigo }}</td>
                     <td class="centrartexto">
-                        <a title="Editar" class="btn btn-outline-primary" type="button"
-                        href ="{% url 'liquidacion:movimiento_resumen' movimiento.pk %}">
-                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                        <button class="btn btn-outline-secondary" type="button"
+                                   name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:movimiento_resumen' movimiento.pk %}')">
+                                <i class="fa fa-eye" aria-hidden="true"></i></button>
+                        <button class="btn btn-outline-secondary" type="button"
+                                   name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_movimiento' movimiento.pk %}')">
+                                <i class="fa fa-edit" aria-hidden="true"></i></button>
                     </td>
                 </tr>
             {% endfor %}

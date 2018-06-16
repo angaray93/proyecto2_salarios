@@ -27,7 +27,18 @@
       </div>
       <div class="card-body">
         <form method="post">
+            {% if form.errors %}
+                <p>Your username and password didn't match. Please try again.</p>
+            {% endif %}
           {% csrf_token %}
+        {% if next %}
+            {% if user.is_authenticated %}
+            <p>Your account doesn't have access to this page. To proceed,
+            please login with an account that has access.</p>
+            {% else %}
+            <strong style="color: red">Favor inicie sesión para continuar</strong>
+            {% endif %}
+        {% endif %}
             <div class="form-group">
                <div class="control-group">
             <label class="control-label" for="username"><strong>Usuario:</strong></label>

@@ -37,16 +37,6 @@
             <li class="nav-item">
                 <a class="nav-link active" href='{% url 'liquidacion:editar_movimiento' movimiento.pk %}'>Movimiento N° {{ movimiento.pk }}</a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documento</a>
-                <div class="dropdown-menu">
-                    {% if documento %}
-                        <a class="dropdown-item" onclick="return abrir_modal('{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}')">Ver documento</a>
-                    {% else %}
-                        <button class="dropdown-item btn btn-link" onclick="return abrir_modal('{% url 'liquidacion:nuevo_documento' movimiento.pk %}')">Crear Nuevo</button>
-                    {% endif %}
-                </div>
-            </li>
             <li class="nav-item">
                 {% if movimiento.motivo.nombre == 'Contrato' %}
                     <a class="nav-link" href="{% url 'liquidacion:nuevo_pago' movimiento.pk %}">
@@ -58,6 +48,16 @@
                     </a>
                 {% endif %}
             </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documento</a>
+                <div class="dropdown-menu">
+                    {% if documento %}
+                        <a class="dropdown-item" onclick="return abrir_modal('{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}')">Ver documento</a>
+                    {% else %}
+                        <button class="dropdown-item btn btn-link" onclick="return abrir_modal('{% url 'liquidacion:nuevo_documento' movimiento.pk %}')">Crear Nuevo</button>
+                    {% endif %}
+                </div>
+            </li>
         </ul>
     {% endif %}
 
@@ -66,8 +66,13 @@
                 {% if not movimiento %}
                     <h4>Creación de Alta de Funcionario</h4>
                 {% else %}
-                    <h3>Edición de movimiento</h3>
-                    <h4>{{ movimiento.motivo.nombre }} {{ movimiento.codigo }}</h4>
+                    {% if movimiento.motivo.nombre == 'Contrato' %}
+                        <h3>Edición de movimiento</h3>
+                        <h4>{{ movimiento.motivo.nombre }} {{ movimiento.codigo }}</h4>
+                    {% else %}
+                        <h3>Edición de movimiento</h3>
+                        <h4>Nombramiento de Funcionario</h4>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -76,7 +81,7 @@
         <div class="row"> <!-- cabecera-->
             <div class="col-12">
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-10">
                         <ul class="list-inline">
                             {% if movimiento %}
                                 <li class="list-inline-item">Funcionario: <strong>{{ movimiento.funcionario }}</strong></li>
@@ -90,27 +95,12 @@
                             <ul class="list-inline">
                                 {% if perms.liquidacion.change_movimiento %}
                                 <li class="list-inline-item">
-                                    <button type="submit" class="btn btn-secondary" name="guardar"
+                                    <button type="submit" class="btn btn-primary" name="guardar"
                                     formaction="{% url 'liquidacion:editar_movimiento' movimiento.pk %}">
                                         Guardar
                                     </button>
                                 </li>
                                 {% endif %}
-                            </ul>
-                        </div>
-                        <div class="col-2">
-                            <ul class="list-inline">
-                                <li class="list-inline-item">
-                                {% if movimiento.motivo.nombre == 'Contrato' %}
-                                    <button type="button" class="btn btn-primary active"
-                                        onclick="location.href='{% url 'liquidacion:nuevo_pago' movimiento.pk %}'">
-                                        Agregar Pagos
-                                    </button>
-                                {% else %}
-                                    <button type="button" class="btn btn-primary fa fa-arrow-right"
-                                        onclick="location.href='{% url 'liquidacion:nueva_constante' movimiento.pk %}'">Siguiente</button>
-                                {% endif %}
-                                </li>
                             </ul>
                         </div>
                     {% else %}

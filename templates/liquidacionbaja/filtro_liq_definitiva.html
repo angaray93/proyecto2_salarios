@@ -45,7 +45,7 @@
             </div>
 
             <div class="row">
-                <label for="funcionario" class="explicativo">Ingrese el numero de cedula de identidad del funcionario :</label>
+                <label for="funcionario">Ingrese el numero de cedula de identidad del funcionario :</label>
                 <div class="col-6">
                     {{ form.funcionario }}
                 </div>
@@ -79,12 +79,14 @@
         {% endif %}
 
         {% if listado_movimientos %}
+
+            <hr>
             <div class="row">
                 <label class="text-center">Seleccione el rubro o contrato que desea dar de baja:</label>
             </div>
             <table id="tabla-vac" class="table">
                 <thead class="thead-light">
-                    <th class="centrartexto">Motivo</th>
+                    <th class="centrartexto" style="font-weight: inherit">Motivo</th>
                     <th>Categoria Salarial o Nro. de Contrato</th>
                     <th>Fecha de inicio</th>
                     <th>Acciones</th>

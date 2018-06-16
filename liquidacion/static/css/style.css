@@ -11,10 +11,6 @@
 	border-bottom: 1px solid rgb(190, 190, 190);
 }
 
-body {
-  background-image: url( "{% static 'fondo.png' %}");
-}
-
 .center_img {
     display: block;
     margin-left: auto;
@@ -25,7 +21,8 @@ body {
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6,
 pre, form, fieldset, input, textarea, p, blockquote, th, td {
   padding:0;
-  margin:0;}
+  margin:0;
+}
 
 fieldset, img {border:0}
 
@@ -48,6 +45,7 @@ p {
   display: inline-block;
   margin-left: 18px;
 }
+
 h1 {
   font-size: 32px;
   font-weight: 300;

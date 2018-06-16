@@ -44,9 +44,8 @@ INSTALLED_APPS = [
     'django_bootstrap_breadcrumbs',
     'django_popup_view_field',
     'crispy_forms',
-    'reset_migrations',
     'table',
-
+#    'reset_migrations',
 ]
 
 MIDDLEWARE = [
@@ -86,9 +85,9 @@ WSGI_APPLICATION = 'sueldos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'proyecto2-repo',
+        'NAME': 'proyecto2-bk',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'PASSWORD': 'agaray',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

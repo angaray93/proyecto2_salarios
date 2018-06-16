@@ -23,10 +23,11 @@ from liquidacion.tables import LiquidacionMensualTable
 
 #from dateutil.relativedelta import relativedelta
 
+@login_required
 def index(request):
     return render(request, 'index.html')
 
-
+@login_required
 def generar_liq_definitiva(request, idmovimiento):
     context = {}
     advertencia = liquidacion = None
@@ -118,18 +119,22 @@ def generar_liq_definitiva(request, idmovimiento):
             )
         salario_mes.save()
 
-        aguinaldo = Aguinaldo.objects.get(movimiento=liq_haber.haber.movimiento,
-                                          anho=datetime.datetime.now().year)
-        if liq_haber.haber.movimiento.tieneAguinaldo is True:
-            aguinaldo_prop = DetalleLiquidacion(
-                cantidad=1,
-                monto=aguinaldo.total,
-                parametro = Parametro.objects.get(descripcion='Monto'),
-                variable = Variable.objects.get(motivo='Aguinaldo'),
-                liquidacion_haber = liq_haber,
-                constante = Constante.objects.get(tipo__nombre='Aguinaldo', movimiento=liq_haber.haber.movimiento)
-            )
-            aguinaldo_prop.save()
+        try:
+            aguinaldo = Aguinaldo.objects.get(movimiento=liq_haber.haber.movimiento,
+                                              anho=datetime.datetime.now().year)
+        except Aguinaldo.DoesNotExist:
+            aguinaldo = None
+        if aguinaldo == None:
+            if liq_haber.haber.movimiento.tieneAguinaldo is True:
+                aguinaldo_prop = DetalleLiquidacion(
+                    cantidad=1,
+                    monto=aguinaldo.total,
+                    parametro = Parametro.objects.get(descripcion='Monto'),
+                    variable = Variable.objects.get(motivo='Aguinaldo'),
+                    liquidacion_haber = liq_haber,
+                    constante = Constante.objects.get(tipo__nombre='Aguinaldo', movimiento=liq_haber.haber.movimiento)
+                )
+                aguinaldo_prop.save()
 
         #------------------------------VACACIONES-----------------------------------#
         if liq_haber.haber.movimiento.tieneVacaciones is True:
@@ -206,7 +211,7 @@ def param_liq_definitiva(request):
         return render(request, 'liquidacionbaja/filtro_liq_definitiva.html',
                       {'form': LiquidacionDefinitivaForm(), 'vista': vista})
 
-
+@login_required
 def confirmar_liquidaciones(request):
     context = {}
     vista = 'confirmar_liquidaciones'
@@ -327,7 +332,7 @@ def confirmar_liquidaciones(request):
                     second.save()
     return render(request, 'liquidacionmensual/liquidaciones_periodo.html', context)
 
-
+@login_required
 def confirmadas_periodo(request):
     context = {}
     vista = 'confirmadas_periodo'
@@ -344,7 +349,7 @@ def confirmadas_periodo(request):
         })
     return render(request, 'liquidacionmensual/confirmadas_periodo.html', context)
 
-
+@login_required
 def liquidaciones_periodo(request):
     context = {}
     if request.method == 'POST':
@@ -362,7 +367,7 @@ def liquidaciones_periodo(request):
 
     return render(request, 'liquidacionmensual/liquidaciones_periodo.html', context)
 
-
+@login_required
 def liq_pendientes_filtro(request):
     context = {}
     if request.method == 'POST':
@@ -380,7 +385,7 @@ def liq_pendientes_filtro(request):
         form = LiqPendientesForm()
     return render(request, 'liquidacionmensual/liq_pendientes_filtro.html', {'form': form})
 
-
+@login_required
 def liq_funcionarios_list(request, funcionario, mes):
     tipos = ['Inicio','Pendiente']
     ifuncionario = Funcionario.objects.get(pk=funcionario)
@@ -391,7 +396,7 @@ def liq_funcionarios_list(request, funcionario, mes):
                                                                        'funcionario': ifuncionario,
                                                                        'mes': imes})
 
-
+@login_required
 def vacaciones_form(request, idvacaciones):
     #liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
     vacaciones = Vacaciones.objects.filter(movimiento__funcionario__idFuncionario = 2, dias_restantes__gt = 0)\
@@ -530,7 +535,7 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
         })
     return render(request, 'liquidacionmensual/detalleliquidacion_form.html', context)
 
-
+@login_required
 def delete_detalleliquidacion(request, pk):
     detalleliquidacion = get_object_or_404(DetalleLiquidacion, pk=pk)
     tipo = detalleliquidacion.variable.tipo
@@ -551,7 +556,7 @@ def delete_detalleliquidacion(request, pk):
     liquidacion_haber.liquidacion.save()
     return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[liquidacion_haber.pk]))
 
-
+@login_required
 def vista_liq_mensual(request, idliquidacion):
     context = {}
     advertencia = liquidacion= None
@@ -809,7 +814,7 @@ def vista_liq_mensual(request, idliquidacion):
                 })
     return render(request, 'liquidacionmensual/liqmensual_form.html', context)
 
-
+@login_required
 def parametros_liq_mensual(request):
     context = {}
     if request.method == 'POST':
@@ -960,7 +965,7 @@ def parametros_liq_mensual(request):
         form = PreLiqMensualForm()
     return render(request, 'liquidacionmensual/liqmensual_filtro.html', {'form': form})
 
-
+@login_required
 def liq_pendientes_list(request, iddpto, mes, anho):
     context = {}
     imes = Mes.objects.get(numero=mes, year=anho)
@@ -977,7 +982,7 @@ def liq_pendientes_list(request, iddpto, mes, anho):
                                                                        'dpto': departamento,
                                                                        'mes': imes })
 
-
+@login_required
 def vista_liquidacionhaber(request, idliquidacionhaber):
     context = {}
     advertencia = liq_haber= None
@@ -1119,7 +1124,7 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
             })
     return render(request, 'liquidacionmensual/liquidacionhaber_form.html', context)
 
-
+@login_required
 def success_page(request, idmovimiento):
     context = {}
     tipo = Movimiento.objects.get(pk=idmovimiento).motivo.nombre
@@ -1130,7 +1135,7 @@ def success_page(request, idmovimiento):
     })
     return render(request, 'success_page.html', context)
 
-
+@login_required
 def mostrar_movimiento_resumen(request, idmovimiento):
     context = {}
     movimiento = Movimiento.objects.get(pk=idmovimiento)
@@ -1146,7 +1151,7 @@ def mostrar_movimiento_resumen(request, idmovimiento):
 
     return render(request, 'proceso/resumen_movimiento.html', context)
 
-
+@login_required
 def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=None):
     context = {}
     movimiento = None
@@ -1315,14 +1320,15 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             })
     return render(request, 'proceso/movimiento_form.html', context)
 
-
+@login_required
 def opciones_proceso(request):
     return render(request, 'proceso/opciones_proceso.html')
 
+@login_required
 def opciones_vacaciones(request):
     return render(request, 'vacaciones/opciones_vacaciones.html')
 
-
+@login_required
 def busqueda_funcionarios(request):
     choice = request.GET.get("q")
     queryset_list = Funcionario.objects.all()
@@ -1333,7 +1339,7 @@ def busqueda_funcionarios(request):
 
     return render(request, 'proceso/filtro_funcionarios_movimiento.html', {'funcionarios': queryset_list})
 
-
+@login_required
 def busqueda_movimiento_funcionario(request):
     vista = 'busqueda_movimiento_funcionario'
     if request.GET.get('q'):
@@ -1360,7 +1366,7 @@ def busqueda_movimiento_funcionario(request):
         return render(request, 'proceso/seleccion_movimiento_funcionario.html',
                       {'form': LiquidacionDefinitivaForm(), 'vista': vista})
 
-
+@login_required
 def get_movimientos(request):
     if request.is_ajax():
         q = request.GET.get('idfuncionario', '')
@@ -1375,7 +1381,7 @@ def get_movimientos(request):
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
 
-
+@login_required
 def documento_vista(request, idmovimiento=None, iddocumento=None):
     context = {}
     documento = None
@@ -1417,7 +1423,7 @@ def documento_vista(request, idmovimiento=None, iddocumento=None):
             })
         return render(request, 'proceso/documento_form.html', context)
 
-
+@login_required
 def aguinaldo_vista(request, idmovimiento=None, idaguinaldo=None):
     context = {}
     aguinaldo = None
@@ -1459,7 +1465,7 @@ def aguinaldo_vista(request, idmovimiento=None, idaguinaldo=None):
             })
         return render(request, 'aguinaldo/aguinaldo_form.html', context)
 
-
+@login_required
 def constante_vista(request, idmovimiento=None, idconstante=None):
     context = {}
     constante = None
@@ -1505,7 +1511,7 @@ def constante_vista(request, idmovimiento=None, idconstante=None):
             })
         return render(request, 'constante/constante_form.html', context)
 
-
+@login_required(login_url='/accounts/login/')
 def pago_vista(request, idmovimiento=None, idpago=None):
     context = {}
     pago = None

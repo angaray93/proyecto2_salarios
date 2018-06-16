@@ -20,17 +20,6 @@
             <li class="nav-item">
                 <a class="nav-link" href='{% url 'liquidacion:editar_movimiento' movimiento.pk %}'>Movimiento N° {{ movimiento.pk }}</a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documento</a>
-                <div class="dropdown-menu">
-                    {% if documento %}
-                        <a class="dropdown-item" onclick="return abrir_modal('{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}')">Ver documento</a>
-                    {% else %}
-                        <button class="dropdown-item btn btn-link" onclick="return abrir_modal('{% url 'liquidacion:nuevo_documento' movimiento.pk %}')">Crear Nuevo</button>
-                    {% endif %}
-                    <div class="dropdown-divider"></div>
-                </div>
-            </li>
             <li class="nav-item">
                 {% if movimiento.motivo.nombre == 'Contrato' %}
                     <a class="nav-link active" href="{% url 'liquidacion:nuevo_pago' movimiento.pk %}">
@@ -41,6 +30,16 @@
                         Debitos y Creditos
                     </a>
                 {% endif %}
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documento</a>
+                <div class="dropdown-menu">
+                    {% if documento %}
+                        <a class="dropdown-item" onclick="return abrir_modal('{% url 'liquidacion:ver_documento' documento.movimiento.pk documento.pk %}')">Ver documento</a>
+                    {% else %}
+                        <button class="dropdown-item btn btn-link" onclick="return abrir_modal('{% url 'liquidacion:nuevo_documento' movimiento.pk %}')">Crear Nuevo</button>
+                    {% endif %}
+                </div>
             </li>
         </ul>
 
@@ -107,16 +106,18 @@
             </div>
         </div>
 </form>
+
+
+{% if pagos %}
 <hr>
 
 <div class="row">
         <div class="col-lg-12">
         <table id="tabla_pagos" class="table table-hover">
-            <thead class="thead-dark">
+            <thead class="thead-light">
                 <tr>
                     <th class="text-center">Mes</th>
                     <th class="text-center">Monto</th>
-                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,21 +125,13 @@
                     <tr class='clickable-row'>
                         <td class="text-center">{{ pago.mes }}</td>
                         <td class="text-center">Gs. {{ pago.monto|floatformat }}</td>
-                        <td class="text-center">
-                            <a href="#">
-                              <span class="glyphicon glyphicon-eye-open"></span>
-                            </a>
-                            <button class="btn btn-outline-primary btn-edit" type="button"
-                                onclick="">
-                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
         </div>
     </div>
-
+{% endif %}
 
 </div>
 

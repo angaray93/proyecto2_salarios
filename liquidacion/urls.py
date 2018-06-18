@@ -9,8 +9,6 @@ app_name = 'liquidacion'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    #path('categoriasalarial_list', views.categoriasalarial_list, name='categoriasalarial_list'),
-    #path('categoriasalarial/create/', views.vista_categoriasalarial, name='nueva_categoria'),
     path('opciones_proceso', views.opciones_proceso, name='opciones_proceso'),
     path('opciones_vacaciones', views.opciones_vacaciones, name='opciones_vacaciones'),
     path('funcionario/<int:idfuncionario>/movimiento/nuevo/', views.movimiento_vista, name='nuevo_movimiento'),
@@ -23,7 +21,6 @@ urlpatterns = [
     path('movimiento/<int:idmovimiento>/documento/<int:iddocumento>', views.documento_vista, name='ver_documento'),
     path('movimiento/<int:idmovimiento>/constante/nuevo/', views.constante_vista, name='nueva_constante'),
     path('movimiento/<int:idmovimiento>/constante/<int:idconstante>', views.constante_vista, name='borrar_constante'),
-    #path('django_popup_view_field/', include('django_popup_view_field.urls', namespace="django_popup_view_field")),
     path('categoriasalarial-list', CategoriaSalarialList.as_view(), name='categoriasalarial-list'),
     path('objetodegasto/add/', ObjetoDeGastoCreate.as_view(), name='objetodegasto-add'),
     path('tipomovimiento/add/', TipoMovimientoCreate.as_view(), name='tipomovimiento-add'),
@@ -55,5 +52,6 @@ urlpatterns = [
     path('liquidaciones/confirmadas/periodo/', views.confirmadas_periodo, name='confirmadas_periodo'),
     path('liquidaciond/seleccion/', views.param_liq_definitiva, name='param_liq_definitiva'),
     path('liquidacion_baja/movimiento/<int:idmovimiento>/', views.generar_liq_definitiva, name='generar_liq_definitiva'),
+    path('pdf', GeneratePdf.as_view(),),
 
 ]

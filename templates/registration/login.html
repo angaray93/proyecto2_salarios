@@ -28,7 +28,7 @@
       <div class="card-body">
         <form method="post">
             {% if form.errors %}
-                <p>Your username and password didn't match. Please try again.</p>
+                <strong style="color: red">Credenciales inválidas, intente de nuevo</strong>
             {% endif %}
           {% csrf_token %}
         {% if next %}

@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from django.db.models import *
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect, render_to_response
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, get_template
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET
@@ -20,8 +20,35 @@ from liquidacion.models import *
 from django_popup_view_field.registry import registry_popup_view
 import json
 from liquidacion.tables import LiquidacionMensualTable
+from django.http import HttpResponse
+from django.views.generic import View
+from liquidacion.utils import render_to_pdf
 
-#from dateutil.relativedelta import relativedelta
+
+class GeneratePdf(View):
+    def get(self, request, *args, **kwargs):
+        template = get_template('pdf/invoice.html')
+        lista = Division.objects.all()
+        context = {
+            'today': datetime.date.today(),
+            'amount': 39.99,
+            'customer_name': 'Cooper Mann',
+            'order_id': 1233434,
+            'lista' : lista,
+        }
+        html = template.render(context)
+        pdf = render_to_pdf('pdf/invoice.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Invoice_%s.pdf" % ("12341231")
+            content = "inline; filename='%s'" % (filename)
+            download = request.GET.get("download")
+            if download:
+                content = "attachment; filename='%s'" % (filename)
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+
 
 @login_required
 def index(request):

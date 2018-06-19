@@ -10,6 +10,21 @@ from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 from django.forms.widgets import TimeInput
 
+MES_OPTIONS = (
+    (1 , 'Enero'),
+    (2 , 'Febrero'),
+    (3 , 'Marzo'),
+    (4 , 'Abril'),
+    (5 , 'Mayo'),
+    (6 , 'Junio'),
+    (7 , 'Julio'),
+    (8 , 'Agosto'),
+    (9 , 'Septiembre'),
+    (10 , 'Octubre'),
+    (11 , 'Noviembre'),
+    (12 , 'Diciembre'),
+)
+
 class LiquidacionDefinitivaForm(forms.Form):
 
     funcionario = IntegerField(label='Nro. de Documento de Identidad', required=True,
@@ -21,9 +36,6 @@ class VacacionesFuncionarioForm(forms.Form):
     funcionario = IntegerField(label='Nro. de Documento de Identidad', required=True,
                                widget=forms.TextInput(attrs={'class': 'form-control',}))
 
-class LiquidacionesPendientesForm(forms.Form):
-    your_name = forms.CharField(label='Your name', max_length=100, required=False)
-
 
 class LiqPendientesForm(forms.Form):
 
@@ -31,9 +43,13 @@ class LiqPendientesForm(forms.Form):
                                                               'name': 'funcionario',
                                                               }))
 
-    mes = forms.IntegerField(label='Mes', required=True, widget=forms.Select(attrs={'class': 'form-control',
+    mes = forms.ChoiceField(label='Mes', required=True, choices=MES_OPTIONS, widget=forms.Select(attrs={'class': 'form-control',
                                                                                           'name': 'mes',
                                                                                           'id': 'mes-select',
+                                                                                          }))
+
+    anho = forms.IntegerField(label='Año', required=True, widget=forms.NumberInput(attrs={'class': 'form-control',
+                                                                                          'name': 'anho',
                                                                                           }))
 
 class VacacionesusadasForm(forms.ModelForm):

@@ -17,14 +17,33 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from liquidacion.forms import *
 from liquidacion.mixins import AjaxFormMixin, AjaxTemplateMixin
 from liquidacion.models import *
-from django_popup_view_field.registry import registry_popup_view
 import json
 from liquidacion.tables import LiquidacionMensualTable
 from django.http import HttpResponse
-from django.views.generic import View
+from django.views import View
 from liquidacion.utils import render_to_pdf
 
 
+@login_required
+def liquidacion_filtro(request):
+    context = {}
+    if request.method == 'POST':
+        form = LiqPendientesForm(request.POST)
+        if form.is_valid():
+            cedula = form.cleaned_data['funcionario']
+            funcionario = Funcionario.objects.get(cedula=cedula)
+            imes = form.cleaned_data['mes']
+            anho = form.cleaned_data['anho']
+            mes = Mes.objects.get(numero=imes, year=anho)
+            lista = Liquidacion.objects.get(mes=mes, funcionario__cedula=cedula, tipo__nombre='Mensual')
+
+            return redirect(reverse('liquidacion:editar_liquidacion', args=[lista.pk]))
+    else:
+        form = LiqPendientesForm()
+    return render(request, 'reportes/filtro_liquidacion.html', {'form': form})
+
+
+@login_required
 class GeneratePdf(View):
     def get(self, request, *args, **kwargs):
         template = get_template('pdf/invoice.html')
@@ -48,6 +67,30 @@ class GeneratePdf(View):
             response['Content-Disposition'] = content
             return response
         return HttpResponse("Not found")
+
+@login_required
+def generate_view(request, *args, **kwargs):
+    template = get_template('pdf/invoice.html')
+    lista = Division.objects.all()
+    context = {
+        'today': datetime.date.today(),
+        'amount': 39.99,
+        'customer_name': 'Cooper Mann',
+        'order_id': 1233434,
+        'lista' : lista,
+    }
+    html = template.render(context)
+    pdf = render_to_pdf('pdf/invoice.html', context)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "Invoice_%s.pdf" % ("12341231")
+        content = "inline; filename='%s'" % (filename)
+        download = request.GET.get("download")
+        if download:
+            content = "attachment; filename='%s'" % (filename)
+        response['Content-Disposition'] = content
+        return response
+    return HttpResponse("Not found")
 
 
 @login_required
@@ -428,7 +471,6 @@ def vacaciones_form(request, idvacaciones):
     #liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
     vacaciones = Vacaciones.objects.filter(movimiento__funcionario__idFuncionario = 2, dias_restantes__gt = 0)\
         .order_by('-inicio')
-    print(vacaciones)
     context = {}
     pago = None
     if request.POST:

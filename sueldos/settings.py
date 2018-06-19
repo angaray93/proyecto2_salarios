@@ -85,9 +85,9 @@ WSGI_APPLICATION = 'sueldos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'proyecto2-bk',
+        'NAME': 'proyecto2-repo',
         'USER': 'postgres',
-        'PASSWORD': 'agaray',
+        'PASSWORD': 'postgres',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

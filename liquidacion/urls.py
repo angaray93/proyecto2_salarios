@@ -4,11 +4,14 @@ from django.views.i18n import JavaScriptCatalog
 
 from liquidacion.views import *
 from . import views
+from liquidacion.views import GeneratePdf
 
 app_name = 'liquidacion'
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    #path('accounts/login/', 'django.contrib.auth.views.login', name='login'),
+    #path('accounts/logout/', 'django.contrib.auth.views.logout', name='logout'),
+    path('home/', views.index, name='index'),
     path('opciones_proceso', views.opciones_proceso, name='opciones_proceso'),
     path('opciones_vacaciones', views.opciones_vacaciones, name='opciones_vacaciones'),
     path('funcionario/<int:idfuncionario>/movimiento/nuevo/', views.movimiento_vista, name='nuevo_movimiento'),
@@ -52,6 +55,8 @@ urlpatterns = [
     path('liquidaciones/confirmadas/periodo/', views.confirmadas_periodo, name='confirmadas_periodo'),
     path('liquidaciond/seleccion/', views.param_liq_definitiva, name='param_liq_definitiva'),
     path('liquidacion_baja/movimiento/<int:idmovimiento>/', views.generar_liq_definitiva, name='generar_liq_definitiva'),
-    path('pdf', GeneratePdf.as_view(),),
+   # path('pdf/', GeneratePdf.as_view()),
+    path('pdf/', views.generate_view, name='generate_view'),
+    path('liquidacion_filtro/', views.liquidacion_filtro, name='liquidacion_filtro'),
 
 ]

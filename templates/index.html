@@ -3,7 +3,6 @@
 {% load admin_urls %}
 
 {% block content %}
-  {% if user.is_authenticated %}
     <div class="row">
         <div class="col-xl-3 col-sm-6 mb-3">
           <div class="card text-white bg-primary o-hidden h-100">
@@ -74,7 +73,7 @@
     </div>
 
 
-    <div id="popup" class="modal fade" role="dialog"></div>
+<div id="popup" class="modal fade" role="dialog"></div>
 
 <script>
     function abrir_modal(url)
@@ -94,7 +93,5 @@
 
 </script>
 
-
-{% endif %}
 {% endblock %}
 

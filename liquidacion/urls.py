@@ -4,7 +4,6 @@ from django.views.i18n import JavaScriptCatalog
 
 from liquidacion.views import *
 from . import views
-from liquidacion.views import GeneratePdf
 
 app_name = 'liquidacion'
 

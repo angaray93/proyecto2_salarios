@@ -35,38 +35,35 @@ def liquidacion_filtro(request):
             imes = form.cleaned_data['mes']
             anho = form.cleaned_data['anho']
             mes = Mes.objects.get(numero=imes, year=anho)
-            lista = Liquidacion.objects.get(mes=mes, funcionario__cedula=cedula, tipo__nombre='Mensual')
+            liquidacion = Liquidacion.objects.get(mes=mes, funcionario__cedula=cedula, tipo__nombre='Mensual')
+            liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
+            movimientos = Movimiento.objects.filter(
+                pk__in=Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
+            detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
 
-            return redirect(reverse('liquidacion:editar_liquidacion', args=[lista.pk]))
+            template = get_template('reportes/print_liquidacionmensual.html')
+            context = {
+                'liquidacion': liquidacion,
+                'haberes' : liq_haberes,
+                'detalles' : detalles,
+            }
+            html = template.render(context)
+            pdf = render_to_pdf('reportes/print_liquidacionmensual.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "Invoice_%s.pdf" % ("12341231")
+                content = "inline; filename='%s'" % (filename)
+                download = request.GET.get("download")
+                if download:
+                    content = "attachment; filename='%s'" % (filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
+            #return render(request, 'reportes/liquidacionmensual.html', {'form': form})
     else:
         form = LiqPendientesForm()
     return render(request, 'reportes/filtro_liquidacion.html', {'form': form})
 
-
-@login_required
-class GeneratePdf(View):
-    def get(self, request, *args, **kwargs):
-        template = get_template('pdf/invoice.html')
-        lista = Division.objects.all()
-        context = {
-            'today': datetime.date.today(),
-            'amount': 39.99,
-            'customer_name': 'Cooper Mann',
-            'order_id': 1233434,
-            'lista' : lista,
-        }
-        html = template.render(context)
-        pdf = render_to_pdf('pdf/invoice.html', context)
-        if pdf:
-            response = HttpResponse(pdf, content_type='application/pdf')
-            filename = "Invoice_%s.pdf" % ("12341231")
-            content = "inline; filename='%s'" % (filename)
-            download = request.GET.get("download")
-            if download:
-                content = "attachment; filename='%s'" % (filename)
-            response['Content-Disposition'] = content
-            return response
-        return HttpResponse("Not found")
 
 @login_required
 def generate_view(request, *args, **kwargs):

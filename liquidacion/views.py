@@ -25,6 +25,39 @@ from liquidacion.utils import render_to_pdf
 
 
 @login_required
+def historico_movimientos(request):
+    context = {}
+    if request.method == 'POST':
+        form = LiquidacionDefinitivaForm(request.POST)
+        if form.is_valid():
+            cedula = form.cleaned_data['funcionario']
+            funcionario = Funcionario.objects.get(cedula=cedula)
+
+            movimientos = Movimiento.objects.filter(funcionario=funcionario).order_by('fechainicio')
+            print('Movimientos:' , movimientos)
+
+            template = get_template('reportes/filtro_historicomovimiento.html')
+            context = {
+                'movimientos': movimientos,
+            }
+            html = template.render(context)
+            pdf = render_to_pdf('reportes/print_liquidacionmensual.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "file_%s.pdf" % ("12341231")
+                content = "inline; filename='%s'" % (filename)
+                download = request.GET.get("download")
+                if download:
+                    content = "attachment; filename='%s'" % (filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
+    else:
+        form = LiquidacionDefinitivaForm()
+    return render(request, 'reportes/filtro_historicomovimiento.html', {'form': form})
+
+
+@login_required
 def liquidacion_filtro(request):
     context = {}
     if request.method == 'POST':
@@ -51,7 +84,7 @@ def liquidacion_filtro(request):
             pdf = render_to_pdf('reportes/print_liquidacionmensual.html', context)
             if pdf:
                 response = HttpResponse(pdf, content_type='application/pdf')
-                filename = "Invoice_%s.pdf" % ("12341231")
+                filename = "liquidacionm_%s.pdf" % ("12341231")
                 content = "inline; filename='%s'" % (filename)
                 download = request.GET.get("download")
                 if download:
@@ -80,7 +113,7 @@ def generate_view(request, *args, **kwargs):
     pdf = render_to_pdf('pdf/invoice.html', context)
     if pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
-        filename = "Invoice_%s.pdf" % ("12341231")
+        filename = "liquidacionmensual_%s.pdf" % ("12341231")
         content = "inline; filename='%s'" % (filename)
         download = request.GET.get("download")
         if download:

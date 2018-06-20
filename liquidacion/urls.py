@@ -57,5 +57,6 @@ urlpatterns = [
    # path('pdf/', GeneratePdf.as_view()),
     path('pdf/', views.generate_view, name='generate_view'),
     path('liquidacion_filtro/', views.liquidacion_filtro, name='liquidacion_filtro'),
+    path('historico_movimientos/', views.historico_movimientos, name='historico_movimientos'),
 
 ]

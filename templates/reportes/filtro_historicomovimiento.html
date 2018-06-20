@@ -17,18 +17,16 @@
 {% render_breadcrumbs %}
 
     <div class="col-12 col-sm-10 recuadro">
-        <form method="get">
+        <form method="post">
         {% csrf_token %}
             <div class="row">
                 <div class="col-12">
                     <div class="col-12 d-flex align-self-start">
-                        <h5>Liquidacion Salarial por Baja de Funcionario: </h5>
+                        <h5>Informe Histórico de movimientos de funcionario </h5>
                     </div>
                 </div>
             </div>
-
             <hr>
-
             <div class="row">
                 <div class="col-lg-10">
                     {% for message in messages %}
@@ -43,7 +41,6 @@
                     {% endfor %}
                 </div>
             </div>
-
             <div class="row">
                 <label for="funcionario">Ingrese el numero de cedula de identidad del funcionario :</label>
                 <div class="col-6">
@@ -51,20 +48,11 @@
                 </div>
                 <div class="col-6">
                     <button type="submit" class="btn btn-success" name="q" value="true"
-                            formaction="{% url 'liquidacion:param_liq_definitiva' %}">
+                            formaction="{% url 'liquidacion:historico_movimientos' %}">
                         Generar
                     </button>
                 </div>
             </div>
-
-            {% if form.errors %}
-                <div class="row mt-0">
-                    <div class="col-md-4">
-                        <strong style="color:red">{{ form.cedula.errors.as_text }}</strong>
-                    </div>
-                </div>
-            {% endif %}
-
         </form>
 
         <div class="row mt-3 mb-3"></div>
@@ -77,47 +65,6 @@
                 </button>
             </div>
         {% endif %}
-
-        {% if listado_movimientos %}
-            <hr>
-            <div class="row">
-                <label class="text-center">Seleccione el rubro o contrato que desea dar de baja:</label>
-            </div>
-            <table id="tabla-vac" class="table">
-                <thead class="thead-light">
-                    <th class="centrartexto" style="font-weight: inherit">Motivo</th>
-                    <th>Categoria Salarial o Nro. de Contrato</th>
-                    <th>Fecha de inicio</th>
-                    <th>Acciones</th>
-                </thead>
-                <tbody>
-                {% for item in listado_movimientos %}
-                    <tr>
-                        <td class="centrartexto">{{ item.motivo.nombre }}</td>
-                        {% if item.motivo.nombre == 'Contrato' %}
-                            <td>{{ item.codigo }}</td>
-                        {% else %}
-                            <td>{{ item.categoria_salarial.codigo }}</td>
-                        {% endif %}
-                        <td>{{ item.fechainicio }}</td>
-                        <td>
-                            <button class="btn btn-outline-primary" type="button"
-                               name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:generar_liq_definitiva' item.pk %}')">
-                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
-
 </div>
-
-<footer>
-    <script>
-
-    </script>
-
-</footer>
 
 {% endblock %}

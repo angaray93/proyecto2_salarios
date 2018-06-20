@@ -131,7 +131,7 @@ class MovimientoForm(forms.ModelForm):
 
     class Meta:
         model = Movimiento
-        exclude = ['movimiento_padre','funcionario','estado','esPrimero']
+        exclude = ['movimiento_padre','funcionario','estado','esPrimero', 'familia']
         widgets = {
             'codigo': forms.TextInput(attrs={
                 'class': 'form-control'

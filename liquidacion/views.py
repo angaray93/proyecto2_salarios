@@ -1293,6 +1293,11 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             form = MovimientoForm(request.POST, instance=movimiento)
             if form.is_valid():
                 movimiento = form.save()
+                if movimiento.movimiento_padre is None:
+                    movimiento.familia = movimiento.pk
+                else:
+                    movimiento.familia = movimiento.movimiento_padre.familia
+                movimiento.save()
                 salario = Constante(
                     finito = False,
                     movimiento = movimiento,

@@ -36,10 +36,10 @@ def gastosxtipomovimiento(request):
 
             if motivo == 'Contrato':
                 monto = Liquidacionhaber.objects.filter(haber__movimiento__motivo=contrato, liquidacion__mes__year=anho)\
-                    .values('liquidacion__mes__nombre').annotate(sumames=Sum('subTotal'))
+                    .values('liquidacion__mes__nombre').annotate(sumames=Sum('subTotal')).order_by('liquidacion__mes__numero')
             else:
                 monto = Liquidacionhaber.objects.filter(~Q(haber__movimiento__motivo=contrato) & Q(liquidacion__mes__year=anho)) \
-                    .values('liquidacion__mes__nombre').annotate(sumames=Sum('subTotal'))
+                    .values('liquidacion__mes__nombre').annotate(sumames=Sum('subTotal')).order_by('liquidacion__mes__numero')
             print('monto', monto)
 
             template = get_template('reportes/filtro_gastos_motivomovimiento.html')

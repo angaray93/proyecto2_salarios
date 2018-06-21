@@ -25,6 +25,23 @@ MES_OPTIONS = (
     (12 , 'Diciembre'),
 )
 
+MOTIVO_OPTIONS = (
+    ('Contrato', 'Contrato'),
+    ('Permanente' , 'Permanente'),
+)
+
+class FiltroGastosForm(forms.Form):
+
+    motivo = forms.ChoiceField(label='Tipo de cargo', required=True, choices=MOTIVO_OPTIONS, widget=forms.Select(attrs={'class': 'form-control',
+                                                                                          'name': 'motivo',
+                                                                                          'id': 'motivo-select',
+                                                                                          }))
+
+    anho = forms.IntegerField(label='Año', required=True, widget=forms.NumberInput(attrs={'class': 'form-control',
+                                                                                          'name': 'anho',
+                                                                                          }))
+
+
 class LiquidacionDefinitivaForm(forms.Form):
 
     funcionario = IntegerField(label='Nro. de Documento de Identidad', required=True,

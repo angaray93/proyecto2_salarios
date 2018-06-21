@@ -25,6 +25,45 @@ from liquidacion.utils import render_to_pdf
 
 
 @login_required
+def gastosxtipomovimiento(request):
+    context = {}
+    if request.method == 'POST':
+        form = FiltroGastosForm(request.POST)
+        if form.is_valid():
+            motivo = form.cleaned_data['motivo']
+            anho = form.cleaned_data['anho']
+            contrato = MovimientoMotivo.objects.get(nombre='Contrato')
+
+            if motivo == 'Contrato':
+                monto = Liquidacionhaber.objects.filter(haber__movimiento__motivo=contrato, liquidacion__mes__year=anho)\
+                    .values('liquidacion__mes__nombre').annotate(sumames=Sum('subTotal'))
+            else:
+                monto = Liquidacionhaber.objects.filter(~Q(haber__movimiento__motivo=contrato) & Q(liquidacion__mes__year=anho)) \
+                    .values('liquidacion__mes__nombre').annotate(sumames=Sum('subTotal'))
+            print('monto', monto)
+
+            template = get_template('reportes/filtro_gastos_motivomovimiento.html')
+            context = {
+                'monto': monto,
+            }
+            html = template.render(context)
+            pdf = render_to_pdf('reportes/filtro_gastos_motivomovimiento.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "file_%s.pdf" % ("12341231")
+                content = "inline; filename='%s'" % (filename)
+                download = request.GET.get("download")
+                if download:
+                    content = "attachment; filename='%s'" % (filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
+    else:
+        form = FiltroGastosForm()
+    return render(request, 'reportes/filtro_gastos_motivomovimiento.html', {'form': form})
+
+
+@login_required
 def historico_movimientos(request):
     context = {}
     if request.method == 'POST':
@@ -33,15 +72,16 @@ def historico_movimientos(request):
             cedula = form.cleaned_data['funcionario']
             funcionario = Funcionario.objects.get(cedula=cedula)
 
-            movimientos = Movimiento.objects.filter(funcionario=funcionario).order_by('fechainicio')
+            movimientos = Movimiento.objects.filter(funcionario=funcionario).order_by('familia','fechainicio')
             print('Movimientos:' , movimientos)
 
             template = get_template('reportes/filtro_historicomovimiento.html')
             context = {
                 'movimientos': movimientos,
+                'funcionario': funcionario,
             }
             html = template.render(context)
-            pdf = render_to_pdf('reportes/print_liquidacionmensual.html', context)
+            pdf = render_to_pdf('reportes/print_historicomovimiento.html', context)
             if pdf:
                 response = HttpResponse(pdf, content_type='application/pdf')
                 filename = "file_%s.pdf" % ("12341231")
@@ -1293,11 +1333,12 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
             form = MovimientoForm(request.POST, instance=movimiento)
             if form.is_valid():
                 movimiento = form.save()
-                if movimiento.movimiento_padre is None:
-                    movimiento.familia = movimiento.pk
-                else:
-                    movimiento.familia = movimiento.movimiento_padre.familia
-                movimiento.save()
+                if movimiento.motivo.nombre != 'Contrato':
+                    if movimiento.movimiento_padre is None:
+                        movimiento.familia = movimiento.pk
+                    else:
+                        movimiento.familia = movimiento.movimiento_padre.familia
+                    movimiento.save()
                 salario = Constante(
                     finito = False,
                     movimiento = movimiento,

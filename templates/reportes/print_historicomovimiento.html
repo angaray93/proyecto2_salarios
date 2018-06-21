@@ -67,79 +67,62 @@
              </div>
              <div class="row">
                  <div class="col-12">
-                     <h5 style="text-align: center;">Liquidacion Salarial del mes de {{ liquidacion.mes.nombre }} - {{ liquidacion.mes.year|unlocalize }}</h5>
+                     <h5 style="text-align: center;">Informe histórico de movimientos de funcionario</h5>
                  </div>
              </div>
              <div class="row">
                  <div class="col-12">
-                     <p style="margin-bottom:0;font-size: 13px;"><strong>Periodo:</strong> Del {{ liquidacion.inicio_periodo|date:"d/m/Y" }} al {{ liquidacion.fin_periodo|date:"d/m/Y" }}</p>
-                     <p style="margin-top:0;font-size: 13px;"><strong>Funcionario/a</strong> : {{ liquidacion.funcionario }}</p>
+                     <p style="margin-top:0;font-size: 13px;"><strong>Funcionario/a</strong> : {{ funcionario }}</p>
+                     <p style="margin-top:0;font-size: 13px;"><strong>Documento N°</strong> : {{ funcionario.cedula }}</p>
                  </div>
              </div>
-             <hr class='hrItem' />
-         </div>
-         <div>
-             <table>
-                <tr style="font-size: 13px;text-align: center;font-weight: bold;" class="contenido">
-                    <td>Débitos: Gs. {{ liquidacion.total_debito|floatformat }}</td>
-                    <td>Créditos: Gs. {{ liquidacion.total_credito|floatformat }}</td>
-                    <td>Total General: Gs. {{ liquidacion.total_liquidacion|floatformat }}</td>
-                </tr>
-             </table>
          </div>
 
-         {% for item in haberes %}
-             {% ifchanged item.pk %}
-                 <div style="font-size: 15px;text-align: left;font-weight: bold;color: #333333;border-top: 1px solid #a9a9a9; padding-top: 10px;">
-                     {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
-                        <p>Categoria Salarial: {{ item.haber.movimiento.categoria_salarial }}</p>
-                    {% else %}
-                        <p>Contrato N° : {{ item.haber.movimiento.codigo }}</p>
-                    {% endif %}
-                 </div>
+         {% for item in movimientos %}
+             {% if item.familia %}
                  <div>
                      <table>
-                        <tr style="font-size: 13px;text-align: center;font-weight: bold;" class="contenido">
-                            <td>Concepto</td>
-                            <td>Creditos</td>
-                            <td>Debitos</td>
+                         {% ifchanged item.familia %}
+                             <tr style="font-size: 13px;padding-top: 2px;align-content: flex-end;">
+                                <th style="text-align: center;">Motivo</th>
+                                <th style="text-align: center;">Categoria Salarial </th>
+                                <th style="text-align: center;">Inicio</th>
+                                <th style="text-align: center;">Fin</th>
+                                <th style="text-align: center;">Funcion</th>
+                                <th style="text-align: center;">Dependencia</th>
+                            </tr>
+                         {% endifchanged %}
+                        <hr style="color: darkgrey;">
+                        <tr style="font-size: 13px; padding-top: 3px;">
+                            <td style="text-align: center;">{{ item.haber.movimiento.motivo }}</td>
+                            <td style="text-align: center;">{{ item.haber.movimiento.categoria_salarial }}</td>
+                            <td style="text-align: center;">{{ item.haber.movimiento.fechainicio }}</td>
+                            <td style="text-align: center;">{{ item.haber.movimiento.fechafin }}</td>
+                            <td style="text-align: center;">{{ item.haber.movimiento.funcion }}</td>
+                            <td style="text-align: center;">{{ item.haber.movimiento.division }}</td>
                         </tr>
                      </table>
-                     <table>
-                        <tbody>
-                            {% for det in detalles %}
-                                {% if det.liquidacion_haber == item %}
-                                    <tr style="font-size: 13px;" class="contenido">
-                                        <td>{{ det.variable.motivo }}</td>
-                                        {% if det.variable.tipo == 'C' %}
-                                            <td style="text-align: center;">Gs. {{ det.total_detalle|floatformat }}</td>
-                                            <td style="text-align: center;"> - </td>
-                                        {% else %}
-                                            <td style="text-align: center;"> - </td>
-                                            <td style="text-align: center;">Gs. {{ det.total_detalle|floatformat }}</td>
-                                        {% endif %}
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-
-                 <table>
-                     <tr style="font-size: 13px;padding-top: 2px;align-content: flex-end;">
-                        <td></td>
-                        <td style="border-top: 1px solid #000000;text-align: center;">Gs.{{ item.monto_credito|floatformat }}</td>
-                        <td style="border-top: 1px solid #000000;text-align: center;">Gs.{{ item.monto_debito|floatformat }}</td>
-                    </tr>
-                    <tr style="font-size: 13px; padding-top: 3px;">
-                        <th style="text-align: center;"></th>
-                        <th style="text-align: center;">Total a cobrar:</th>
-                        <th style="text-align: center;">Gs.{{ item.subTotal|floatformat }}</th>
-                    </tr>
-                 </table>
-
                  </div>
-             {% endifchanged %}
+             {% else %}
+                 <tr style="font-size: 13px;padding-top: 2px;align-content: flex-end;">
+                    <td style="border-top: 1px solid #000000;text-align: center;">Motivo de movimiento</td>
+                    <td>Objeto de gasto</td>
+                    <td>Número</td>
+                    <td style="border-top: 1px solid #000000;text-align: center;">Inicio</td>
+                    <td style="border-top: 1px solid #000000;text-align: center;">Fin</td>
+                    <td style="border-top: 1px solid #000000;text-align: center;">Funcion</td>
+                    <td style="border-top: 1px solid #000000;text-align: center;">Dependencia</td>
+                </tr>
+                <tr style="font-size: 13px; padding-top: 3px;">
+                    <td style="text-align: center;">{{ item.haber.movimiento.motivo }}</td>
+                    <td style="text-align: center;">{{ item.haber.movimiento.og }}</td>
+                    <td style="text-align: center;">{{ item.haber.movimiento.codigo }}</td>
+                    <td style="text-align: center;">{{ item.haber.movimiento.fechainicio }}</td>
+                    <td style="text-align: center;">{{ item.haber.movimiento.fechafin }}</td>
+                    <td style="text-align: center;">{{ item.haber.movimiento.funcion }}</td>
+                    <td style="text-align: center;">{{ item.haber.movimiento.division }}</td>
+                </tr>
+             {% endif %}
         {% endfor %}
-
      </body>
  </html>

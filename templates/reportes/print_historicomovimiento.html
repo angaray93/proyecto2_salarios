@@ -83,7 +83,7 @@
                  <div>
                      <table>
                          {% ifchanged item.familia %}
-                             <tr style="font-size: 13px;padding-top: 2px;align-content: flex-end;">
+                             <tr style="font-size: 13px;padding-top: 2px;border-bottom: 1px solid #000000;align-content: flex-end;">
                                 <th style="text-align: center;">Motivo</th>
                                 <th style="text-align: center;">Categoria Salarial </th>
                                 <th style="text-align: center;">Inicio</th>
@@ -92,7 +92,7 @@
                                 <th style="text-align: center;">Dependencia</th>
                             </tr>
                          {% endifchanged %}
-                        <hr style="color: darkgrey;">
+
                         <tr style="font-size: 13px; padding-top: 3px;">
                             <td style="text-align: center;">{{ item.haber.movimiento.motivo }}</td>
                             <td style="text-align: center;">{{ item.haber.movimiento.categoria_salarial }}</td>
@@ -104,14 +104,21 @@
                      </table>
                  </div>
              {% else %}
-                 <tr style="font-size: 13px;padding-top: 2px;align-content: flex-end;">
-                    <td style="border-top: 1px solid #000000;text-align: center;">Motivo de movimiento</td>
-                    <td>Objeto de gasto</td>
-                    <td>Número</td>
-                    <td style="border-top: 1px solid #000000;text-align: center;">Inicio</td>
-                    <td style="border-top: 1px solid #000000;text-align: center;">Fin</td>
-                    <td style="border-top: 1px solid #000000;text-align: center;">Funcion</td>
-                    <td style="border-top: 1px solid #000000;text-align: center;">Dependencia</td>
+                 <br>
+                <div class="row">
+                    <div class="col-12">
+                        <p style="text-align: center;font-weight: bold">Contratos</p>
+                    </div>
+                </div>
+                 <table>
+                 <tr style="font-size: 13px;padding-top: 2px;border-bottom: 1px solid #000000;align-content: flex-end;">
+                    <th style="text-align: center;">Motivo de movimiento</th>
+                    <th style="text-align: center;">Objeto de gasto</th>
+                    <th style="text-align: center;">Número</th>
+                    <th style="text-align: center;">Inicio</th>
+                    <th style="text-align: center;">Fin</th>
+                    <th style="text-align: center;">Funcion</th>
+                    <th style="text-align: center;">Dependencia</th>
                 </tr>
                 <tr style="font-size: 13px; padding-top: 3px;">
                     <td style="text-align: center;">{{ item.haber.movimiento.motivo }}</td>
@@ -122,6 +129,7 @@
                     <td style="text-align: center;">{{ item.haber.movimiento.funcion }}</td>
                     <td style="text-align: center;">{{ item.haber.movimiento.division }}</td>
                 </tr>
+                 </table>
              {% endif %}
         {% endfor %}
      </body>

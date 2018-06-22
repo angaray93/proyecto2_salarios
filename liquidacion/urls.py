@@ -59,5 +59,6 @@ urlpatterns = [
     path('liquidacion_filtro/', views.liquidacion_filtro, name='liquidacion_filtro'),
     path('historico_movimientos/', views.historico_movimientos, name='historico_movimientos'),
     path('reporte_monto_motivo/', views.gastosxtipomovimiento, name='gastosxtipomovimiento'),
+    path('informe_vacaciones/', views.informe_vacaciones, name='informe_vacaciones'),
 
 ]

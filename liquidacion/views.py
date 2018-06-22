@@ -25,6 +25,41 @@ from liquidacion.utils import render_to_pdf
 
 
 @login_required
+def informe_vacaciones(request):
+
+    context = {}
+    if request.method == 'POST':
+        form = VacacionesFuncionarioForm(request.POST)
+        if form.is_valid():
+            cedula = form.cleaned_data['funcionario']
+            funcionario = Funcionario.objects.get(cedula=cedula)
+
+            vacaciones = Vacaciones.objects.filter(movimiento__funcionario=funcionario).order_by('-inicio')
+            print('vacaciones', vacaciones)
+
+            template = get_template('reportes/filtro_informevacaciones.html')
+            context = {
+                'vacaciones': vacaciones,
+                'funcionario': funcionario,
+            }
+            html = template.render(context)
+            pdf = render_to_pdf('reportes/print_informevacaciones.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "file_%s.pdf" % ("12341231")
+                content = "inline; filename='%s'" % (filename)
+                download = request.GET.get("download")
+                if download:
+                    content = "attachment; filename='%s'" % (filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
+    else:
+        form = VacacionesFuncionarioForm()
+    return render(request, 'reportes/filtro_informevacaciones.html', {'form': form})
+
+
+@login_required
 def gastosxtipomovimiento(request):
     context = {}
     if request.method == 'POST':
@@ -45,9 +80,10 @@ def gastosxtipomovimiento(request):
             template = get_template('reportes/filtro_gastos_motivomovimiento.html')
             context = {
                 'monto': monto,
+                'anho': anho,
             }
             html = template.render(context)
-            pdf = render_to_pdf('reportes/filtro_gastos_motivomovimiento.html', context)
+            pdf = render_to_pdf('reportes/print_gastos_motivomovimiento.html', context)
             if pdf:
                 response = HttpResponse(pdf, content_type='application/pdf')
                 filename = "file_%s.pdf" % ("12341231")
@@ -538,7 +574,6 @@ def liq_funcionarios_list(request, funcionario, mes):
 
 @login_required
 def vacaciones_form(request, idvacaciones):
-    #liquidacion = get_object_or_404(Liquidacion, pk=idliquidacion)
     vacaciones = Vacaciones.objects.filter(movimiento__funcionario__idFuncionario = 2, dias_restantes__gt = 0)\
         .order_by('-inicio')
     context = {}
@@ -624,28 +659,6 @@ def vista_detalleliquidacion(request, idliquidacionhaber=None, iddetalleliq=None
             except IntegrityError:
                 messages.error(request, "Ya existe un detalle con la misma descripcion")
                 return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[liquidacionhaber.pk]))
-
-            '''if detalleliquidacion.liquidacion_haber.liquidacion.tipo.nombre == 'Definitiva':
-                detalleliquidacion.monto = detalleliquidacion.calcular_monto_baja()
-            else:
-                detalleliquidacion.monto = detalleliquidacion.calcular_monto()
-            detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
-            detalleliquidacion.save()'''
-
-            '''if detalleliquidacion.variable.tipo == 'D':
-                suma_detalles_debito = detalleliquidacion.liquidacion_haber.suma_detalles_debito()
-                detalleliquidacion.liquidacion_haber.monto_debito += suma_detalles_debito
-            else:
-                suma_detalles_credito = detalleliquidacion.liquidacion_haber.suma_detalles_credito()
-                detalleliquidacion.liquidacion_haber.monto_credito += suma_detalles_credito
-            detalleliquidacion.liquidacion_haber.save()
-            detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
-            detalleliquidacion.liquidacion_haber.save()
-
-            detalleliquidacion.liquidacion_haber.liquidacion.total_credito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_credito()
-            detalleliquidacion.liquidacion_haber.liquidacion.total_debito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_debito()
-            detalleliquidacion.liquidacion_haber.liquidacion.total_liquidacion = detalleliquidacion.liquidacion_haber.liquidacion.calcular_total_liquidacion()
-            detalleliquidacion.liquidacion_haber.liquidacion.save()'''
 
             return redirect(reverse('liquidacion:editar_liquidacionhaber', args=[detalleliquidacion.liquidacion_haber.pk]))
         else:

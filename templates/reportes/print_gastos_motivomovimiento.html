@@ -1,0 +1,90 @@
+{% load staticfiles %}
+{% load humanize %}
+{% load l10n %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+ <html>
+     <head>
+         <title>Title</title>
+         <style type="text/css">
+             #main-content h6, h5 {
+                margin: 0px 0px 5px 0px;
+                padding: 0px 0px 0px 0px;
+             }
+             .contenido {
+                position: absolute;
+                width: 50%;
+                bottom: 10px;
+             }
+             body {
+                 font-weight: 200;
+                 font-size: 14px;
+             }
+             .header {
+                 font-size: 15px;
+                 font-weight: 100;
+                 text-align: center;
+                 color: #000000;
+             }
+             .title {
+                 font-size: 22px;
+                 font-weight: 100;
+                /* text-align: right;*/
+                padding: 10px 20px 0px 20px;
+             }
+             .title span {
+                 color: #007cae;
+             }
+             .details {
+                 padding: 10px 20px 0px 20px;
+                 text-align: left !important;
+                 /*margin-left: 40%;*/
+             }
+             .hrItem {
+                 border: none;
+                 height: 1px;
+                 /* Set the hr color */
+                 color: #333; /* old IE */
+                 background-color: #fff; /* Modern Browsers */
+             }
+         </style>
+     </head>
+     <body>
+         <div class="wrapper">
+             <div class="header">
+                 <table class="table-borderless" style="border: 0px; width:40%">
+                    <tr style="border: 0px">
+                        <td></td>
+                        <td>
+                            <p style="margin-bottom:0;">Universidad Nacional de Asunción</p>
+                            <p style="margin-top:0;">Facultad Politécnica</p>
+                        </td>
+                        <td style="text-align: center;">
+
+                        </td>
+                    </tr>
+                </table>
+             </div>
+             <div class="row">
+                 <div class="col-12">
+                     <h5 style="text-align: center;">Resumen de gastos por pagos de cargos permanentes</h5>
+                     <h6 style="text-align: center;">Año {{ anho|unlocalize }}</h6>
+                 </div>
+             </div>
+         </div>
+         <div>
+             <table>
+                     <tr style="font-size: 13px;padding-top: 2px;border-bottom: 1px solid #000000;align-content: flex-end;">
+                        <th style="text-align: center;">Mes</th>
+                        <th style="text-align: center;">Monto</th>
+                    </tr>
+                 {% for item in monto %}
+                        <tr style="font-size: 13px; padding-top: 3px;">
+                            <td style="text-align: center;">{{ item.liquidacion__mes__nombre }}</td>
+                            <td style="text-align: center;">Gs. {{ item.sumames|floatformat }}</td>
+                        </tr>
+                 {% endfor %}
+             </table>
+         </div>
+     </body>
+ </html>

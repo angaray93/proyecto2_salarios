@@ -25,8 +25,68 @@ from liquidacion.utils import render_to_pdf
 
 
 @login_required
-def informe_vacaciones(request):
+def nomina_funcionarios(request):
+    context = {}
+    if request.method == 'POST':
+        form = FiltroDepartamentoForm(request.POST)
+        if form.is_valid():
+            dpto = form.cleaned_data['departamento']
+            print('dpto:', dpto)
 
+            departamentos = Departamento.objects.all().only('pk')
+            if dpto != 0:
+                departamentos = Departamento.objects.get(pk=dpto)
+                context.update({
+                    'departamento': departamentos,
+                })
+                movimientos = Movimiento.objects\
+                    .filter(division__departamento=departamentos, estado__name='Activo').order_by('division__departamento')
+                    #.values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
+            else:
+                movimientos = Movimiento.objects \
+                    .filter(division__departamento__in=departamentos, estado__name='Activo').order_by('division__departamento')
+                    #.values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
+
+            print('Movimientos: ', movimientos)
+
+            template = get_template('reportes/filtro_nomina_funcionarios.html')
+            context = {
+                'movimientos': movimientos,
+            }
+            html = template.render(context)
+            pdf = render_to_pdf('reportes/print_nominafuncionarios.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "file_%s.pdf" % ("12341231")
+                content = "inline; filename='%s'" % (filename)
+                download = request.GET.get("download")
+                if download:
+                    content = "attachment; filename='%s'" % (filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
+    else:
+        form = FiltroDepartamentoForm()
+    return render(request, 'reportes/filtro_nomina_funcionarios.html', {'form': form})
+
+
+@require_GET
+def traer_departamentos(request):
+    if request.is_ajax():
+        departamentos = Departamento.objects.all()
+        res = []
+        for departamento in departamentos:
+            departamento_json = {'id': departamento.pk, 'value': departamento.descripcion}
+            res.append(departamento_json)
+        data = json.dumps(res)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+@login_required
+def informe_vacaciones(request):
     context = {}
     if request.method == 'POST':
         form = VacacionesFuncionarioForm(request.POST)

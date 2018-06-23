@@ -30,6 +30,14 @@ MOTIVO_OPTIONS = (
     ('Permanente' , 'Permanente'),
 )
 
+class FiltroDepartamentoForm(forms.Form):
+
+    departamento = IntegerField(label='Departamento', required=True, widget=forms.Select(attrs={'class': 'form-control',
+                                                                                          'name': 'departamento-select',
+                                                                                          'id': 'departamento-select',
+                                                                                          }))
+
+
 class FiltroGastosForm(forms.Form):
 
     motivo = forms.ChoiceField(label='Tipo de cargo', required=True, choices=MOTIVO_OPTIONS, widget=forms.Select(attrs={'class': 'form-control',

@@ -11,6 +11,7 @@ from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 from django.forms.widgets import TimeInput
 
 MES_OPTIONS = (
+    (0 , 'Todos'),
     (1 , 'Enero'),
     (2 , 'Febrero'),
     (3 , 'Marzo'),
@@ -29,6 +30,15 @@ MOTIVO_OPTIONS = (
     ('Contrato', 'Contrato'),
     ('Permanente' , 'Permanente'),
 )
+
+
+class FiltroMesForm(forms.Form):
+
+    mes = forms.ChoiceField(label='Mes', required=True, choices=MES_OPTIONS, widget=forms.Select(attrs={'class': 'form-control',
+                                                                                          'name': 'mes',
+                                                                                          'id': 'mes-select',
+                                                                                          }))
+
 
 class FiltroDepartamentoForm(forms.Form):
 

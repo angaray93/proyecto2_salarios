@@ -25,14 +25,100 @@ from liquidacion.utils import render_to_pdf
 
 
 @login_required
+def monto_objetodegasto(request):
+    context = {}
+    if request.method == 'POST':
+        form = FiltroMesForm(request.POST)
+        if form.is_valid():
+            mespk = form.cleaned_data['mes']
+            og_lista = Objeto_De_Gasto.objects.all()
+
+            if mespk != '0':
+                lista_og = []
+                valores = []
+                mes = Mes.objects.get(numero=mespk, year=datetime.datetime.now().year)
+                for og in og_lista:
+                    og_nombre = {}
+                    datos = Liquidacionhaber.objects.filter(liquidacion__mes=mes,
+                                                            liquidacion__estado_actual__name='Confirmado',
+                                                            haber__movimiento__motivo=MovimientoMotivo.objects.get(nombre='Contrato'),
+                                                            haber__movimiento__og=og)\
+                        .aggregate(
+                            monto_mes=Sum('pago__monto', filter=Q(liquidacion__mes=mes)),
+                        )
+                    valores.append(datos)
+                    if len(valores) != 0:
+                        primes = list(valores)
+                        og_nombre.update({
+                            og: primes,
+                        })
+                        lista_og.append(og_nombre)
+                        valores.clear()
+
+                context.update({
+                    'mes': mes,
+                    'lista': lista_og,
+                })
+            else:
+                lista_og = []
+                valores = []
+                for og in og_lista:
+                    og_nombre = {}
+                    datos = Liquidacionhaber.objects.filter(liquidacion__estado_actual__name='Confirmado',
+                                                            haber__movimiento__motivo=MovimientoMotivo.objects.get(
+                                                                nombre='Contrato'), haber__movimiento__og=og) \
+                        .aggregate(
+                            enero=Sum('pago__monto', filter=Q(liquidacion__mes__numero=1)),
+                            febrero=Sum('pago__monto', filter=Q(liquidacion__mes__numero=2)),
+                            marzo=Sum('pago__monto', filter=Q(liquidacion__mes__numero=3)),
+                            abril=Sum('pago__monto', filter=Q(liquidacion__mes__numero=4)),
+                            mayo=Sum('pago__monto', filter=Q(liquidacion__mes__numero=5)),
+                            junio=Sum('pago__monto', filter=Q(liquidacion__mes__numero=6)),
+                            julio=Sum('pago__monto', filter=Q(liquidacion__mes__numero=7)),
+                            agosto=Sum('pago__monto', filter=Q(liquidacion__mes__numero=8)),
+                            septiembre=Sum('pago__monto', filter=Q(liquidacion__mes__numero=9)),
+                            octubre=Sum('pago__monto', filter=Q(liquidacion__mes__numero=10)),
+                            noviembre=Sum('pago__monto', filter=Q(liquidacion__mes__numero=11)),
+                            diciembre=Sum('pago__monto', filter=Q(liquidacion__mes__numero=12)),
+                    )
+                    valores.append(datos)
+                    if len(valores) != 0:
+                        primes = list(valores)
+                        og_nombre.update({
+                            og.numero: primes,
+                        })
+                        lista_og.append(og_nombre)
+                        valores.clear()
+                context.update({
+                    'lista': lista_og,
+                })
+
+            template = get_template('reportes/filtro_monto_objetodegasto.html')
+
+            html = template.render(context)
+            pdf = render_to_pdf('reportes/print_monto_objetodegasto.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "file_%s.pdf" % ("12341231")
+                content = "inline; filename='%s'" % (filename)
+                download = request.GET.get("download")
+                if download:
+                    content = "attachment; filename='%s'" % (filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
+    else:
+        form = FiltroMesForm()
+    return render(request, 'reportes/filtro_monto_objetodegasto.html', {'form': form})
+
+
+@login_required
 def nomina_funcionarios(request):
     context = {}
     if request.method == 'POST':
         form = FiltroDepartamentoForm(request.POST)
         if form.is_valid():
             dpto = form.cleaned_data['departamento']
-            print('dpto:', dpto)
-
             departamentos = Departamento.objects.all().only('pk')
             if dpto != 0:
                 departamentos = Departamento.objects.get(pk=dpto)
@@ -41,13 +127,9 @@ def nomina_funcionarios(request):
                 })
                 movimientos = Movimiento.objects\
                     .filter(division__departamento=departamentos, estado__name='Activo').order_by('division__departamento')
-                    #.values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
             else:
                 movimientos = Movimiento.objects \
                     .filter(division__departamento__in=departamentos, estado__name='Activo').order_by('division__departamento')
-                    #.values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
-
-            print('Movimientos: ', movimientos)
 
             template = get_template('reportes/filtro_nomina_funcionarios.html')
             context = {
@@ -95,7 +177,6 @@ def informe_vacaciones(request):
             funcionario = Funcionario.objects.get(cedula=cedula)
 
             vacaciones = Vacaciones.objects.filter(movimiento__funcionario=funcionario).order_by('-inicio')
-            print('vacaciones', vacaciones)
 
             template = get_template('reportes/filtro_informevacaciones.html')
             context = {

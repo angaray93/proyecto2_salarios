@@ -31,6 +31,24 @@ MOTIVO_OPTIONS = (
     ('Permanente' , 'Permanente'),
 )
 
+TIPO_OPTIONS = (
+    ('Alta', 'Alta'),
+    ('Baja' , 'Baja'),
+)
+
+
+class FilroTipoMovimientoForm(forms.Form):
+
+    desde = forms.DateTimeField(label='Desde', required=True,
+                          widget=forms.TextInput(attrs={'class': 'form-control datepicker',
+                                                  'id': 'fec_ini',}))
+
+    hasta = forms.DateTimeField(label='Hasta', required=True,
+                          widget=forms.TextInput(attrs={'class': 'form-control datepicker',
+                                                  'id': 'fec_fin',}))
+
+    tipo = forms.ChoiceField(label='Tipo de Movimiento', required=True, choices=TIPO_OPTIONS, widget=forms.Select(attrs={'class': 'form-control'}))
+
 
 class FiltroMesForm(forms.Form):
 

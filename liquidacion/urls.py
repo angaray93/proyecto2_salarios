@@ -63,5 +63,7 @@ urlpatterns = [
     path('nomina_funcionarios/', views.nomina_funcionarios, name='nomina_funcionarios'),
     path('ajax/traer_departamentos/', views.traer_departamentos, name='traer_departamentos'),
     path('monto_objetodegasto/', views.monto_objetodegasto, name='monto_objetodegasto'),
+    path('informe_altasbajas/', views.informe_altasbajas, name='informe_altasbajas'),
+
 
 ]

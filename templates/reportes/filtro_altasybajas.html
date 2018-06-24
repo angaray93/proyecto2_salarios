@@ -1,0 +1,211 @@
+{% extends "index.html" %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load l10n %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb " Seleccion de movimiento de funcionario " 'liquidacion:param_liq_definitiva' %}
+{% endblock %}
+
+{% block head %}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{% endblock %}
+
+{% block content %}
+{% render_breadcrumbs %}
+
+    <div class="col-12 col-sm-10 recuadro">
+        <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+        <div class="col-12">
+            <div class="col-12 d-flex align-self-start">
+                <h5>Liquidación Salarial Mensual por Departamento</h5>
+            </div>
+        </div>
+        </div>
+        <hr>
+        {% if advertencia %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ advertencia }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
+        <div class="row">
+        <div class="col-lg-10">
+            {% for message in messages %}
+                {% if message.error %}
+                <div class="alert alert-danger">{{ message }}
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                </div>
+                {% endif %}
+                    <div class="alert alert-warning">{{ message }}
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    </div>
+            {% endfor %}
+        </div>
+        </div>
+
+        <div class="row">
+        <div class="col-md-6">
+        <div class="form-group">
+            <label for="desde">Inicio del periodo:</label>
+                <div class="input-group">
+                    {% if form.desde.errors %}
+                    <ol>
+                    {% for error in form.desde.errors %}
+                    <li><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ol>
+                    {% endif %}
+                    <input type="date" id="id_desde" name="desde" class="form-control">
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="hasta">Fin del periodo:</label>
+                    <div class="input-group">
+                    {% if form.hasta.errors %}
+                    <ol>
+                    {% for error in form.hasta.errors %}
+                    <li><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ol>
+                    {% endif %}
+                    <input type="date" id="id_hasta" name="hasta" class="form-control">
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                    </div>
+                </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="tipo">Tipo de Moviento:</label>
+                <div class="input-group">
+                    {{ form.tipo }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 align-self-end pb-3">
+            <button type="submit" class="btn btn-success" name="q" value="true"
+                    formaction="{% url 'liquidacion:informe_altasbajas' %}">
+                Crear Liquidaciones
+            </button>
+        </div>
+        </div>
+
+        {% if form.errors %}
+        <div class="row mt-0">
+            <div class="col-md-4">
+                <strong style="color:red">{{ form.cedula.errors.as_text }}</strong>
+            </div>
+
+            <div class="col-md-4">
+                <strong style="color:red">{{ form.nombres.errors.as_text }}</strong>
+            </div>
+
+            <div class="col-md-4">
+                <strong style="color:red">{{ form.apellidos.errors.as_text }}</strong>
+            </div>
+        </div>
+        {% endif %}
+
+        </form>
+
+        <div class="row mt-3 mb-3"></div>
+
+        {% if sin_datos %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ sin_datos }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        {% endif %}
+        </div>
+
+
+<footer>
+    <script>
+        function cargarFec() {
+            var fecha_inicio = document.getElementById("fec-ini").value;
+            var hora_inicio = document.getElementById("hora-ini").value;
+            var min_ini = document.getElementById("min-ini").value;
+            var fecha_fin = document.getElementById("fec-fin").value;
+            var hora_fin = document.getElementById("hora-fin").value;
+            var min_fin = document.getElementById("min-fin").value;
+            document.getElementById("fechainicio").value = fecha_inicio + " " + hora_inicio + ":" + min_ini;
+            document.getElementById("fechafin").value = fecha_fin + " " + hora_fin + ":" + min_fin;
+        }
+    </script>
+    <script>
+        $(function () {
+            $(".datepicker").datepicker({dateFormat: "yy-mm-dd"});
+        });
+    </script>
+    <script type="text/javascript">
+        {% if lista %}
+            $(document).ready(function () {
+                $("#success_modal").modal('show');
+            });
+        {% endif %}
+    </script>
+    <script>
+            $(document).ready(function (event) {
+                var departamento_select = $('#departamento-select');
+                $.ajax({
+                    url: '{% url 'liquidacion:traer_departamentos' %}',
+                    dataType: 'json',
+                    data: {},
+                    success: function (data) {
+                        if ($.trim(data)) {
+                            departamento_select.empty().append('<option value=' + 0 + ' selected >' + '------' + '</option>');
+                            $.each(data, function (key, value) {
+                                departamento_select.append('<option value=' + value.id + '>' + value.value + '</option>')
+                            });
+                        } else {
+                            departamento_select.empty().append('<option value=' + 0 + ' selected>' + '------' + '</option>');
+                        }
+                    },
+                    error: function (data) {
+                        departamento_select.empty().append('<option value=' + 0 + ' selected disabled="true">' + 'No hay datos' + '</option>');
+                    }
+                })
+            });
+        </script>
+        <script>
+            $('#departamento-select').on('change', function (e) {
+                var opcion_sel = $('#departamento-select').find('option:selected');
+                var departamento_select = $('#departamento-select');
+                $.ajax({
+                    url: '{% url 'liquidacion:traer_funcionarios' %}',
+                    dataType: 'json',
+                    data: {
+                        iddepartamento: opcion_sel.val()
+                    },
+                    success: function (data) {
+                        console.log(data)
+                    },
+                    error: function (data) {
+                    }
+                })
+            });
+        </script>
+</footer>
+
+{% endblock %}

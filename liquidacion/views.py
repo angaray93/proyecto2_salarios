@@ -25,6 +25,43 @@ from liquidacion.utils import render_to_pdf
 
 
 @login_required
+def informe_altasbajas(request):
+    context = {}
+    if request.method == 'POST':
+        form = FilroTipoMovimientoForm(request.POST)
+        if form.is_valid():
+            tipo = form.cleaned_data['tipo']
+            fechafin = form.cleaned_data['hasta']
+            fechainicio = form.cleaned_data['desde']
+
+            if tipo == 'Alta':
+                f = ~Q(tipo__nombre='Baja') & Q(fechainicio__gte=fechainicio) & Q(fechainicio__lte=fechafin)
+                lista = Movimiento.objects.filter(f)
+            else:
+                f = Q(liquidacion__tipo__nombre='Definitiva') & Q(liquidacion__fechacreacion__gte=fechainicio) & Q(liquidacion__fechacreacion__lte = fechafin)
+                lista = Liquidacionhaber.objects.filter(f)
+            print('lista', lista)
+
+            template = get_template('reportes/filtro_altasybajas.html')
+            context = { }
+            html = template.render(context)
+            pdf = render_to_pdf('reportes/filtro_altasybajas.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "file_%s.pdf" % ("12341231")
+                content = "inline; filename='%s'" % (filename)
+                download = request.GET.get("download")
+                if download:
+                    content = "attachment; filename='%s'" % (filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
+    else:
+        form = FilroTipoMovimientoForm()
+    return render(request, 'reportes/filtro_altasybajas.html', {'form': form})
+
+
+@login_required
 def monto_objetodegasto(request):
     context = {}
     if request.method == 'POST':

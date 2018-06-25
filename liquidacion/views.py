@@ -122,7 +122,7 @@ def monto_objetodegasto(request):
                     if len(valores) != 0:
                         primes = list(valores)
                         og_nombre.update({
-                            og.numero: primes,
+                            og: primes,
                         })
                         lista_og.append(og_nombre)
                         valores.clear()

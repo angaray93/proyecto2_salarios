@@ -78,14 +78,28 @@
                 </div>
              </div>
          {% endif %}
-         {% for item in lista %}
-             <div class="row">
-                    <div class="col-12">
-                        <p style="text-align: center;font-weight: bold"> {{  }}</p>
-                    </div>
-                </div>
-         {% endfor %}
 
+         <table>
+             <tr style="font-size: 13px;padding-top: 2px;border-bottom: 1px solid #000000;align-content: flex-end;">
+                <th style="text-align: center;">Objeto de Gasto</th>
+                <th style="text-align: center;">Enero</th>
+                <th style="text-align: center;">Febrero</th>
+                <th style="text-align: center;">Marzo</th>
+                <th style="text-align: center;">Abril</th>
+                <th style="text-align: center;">Mayo</th>
+                <th style="text-align: center;">Junio</th>
+            </tr>
+             {% for item in lista %}
+                <tr style="font-size: 13px; padding-top: 3px;">
+                {% for key, value in item.items %}
+                    <td style="text-align: center;">{{key}}</td>
+                    {% for p in value %}
+                        <td style="text-align: center;">{{p}}</td>
+                    {% endfor %}
+                {% endfor %}
+                </tr>
+             {% endfor %}
+         </table>
 
                 {% ifchanged item.division.departamento %}
                 <div class="row">

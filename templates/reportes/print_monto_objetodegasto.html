@@ -88,46 +88,31 @@
                 <th style="text-align: center;">Abril</th>
                 <th style="text-align: center;">Mayo</th>
                 <th style="text-align: center;">Junio</th>
+                 <th style="text-align: center;">Julio</th>
+                <th style="text-align: center;">Agosto</th>
+                <th style="text-align: center;">Septiembre</th>
+                <th style="text-align: center;">Octubre</th>
+                <th style="text-align: center;">Noviembre</th>
+                <th style="text-align: center;">Diciembre</th>
             </tr>
              {% for item in lista %}
-                <tr style="font-size: 13px; padding-top: 3px;">
+                <tr style="font-size: 13px; padding-top: 3px;border-bottom: 1px solid #c6c8ca;">
                 {% for key, value in item.items %}
                     <td style="text-align: center;">{{key}}</td>
                     {% for p in value %}
-                        <td style="text-align: center;">{{p}}</td>
+                        {% for key, value in p.items %}
+                            {% if value is None %}
+                                <td style="text-align: center;"> - </td>
+                            {% else %}
+                                <td style="text-align: center;">{{ value }}</td>
+                            {% endif %}
+
+                        {% endfor %}
                     {% endfor %}
                 {% endfor %}
                 </tr>
              {% endfor %}
          </table>
-
-                {% ifchanged item.division.departamento %}
-                <div class="row">
-                    <div class="col-12">
-                        <p style="text-align: center;font-weight: bold">Departamento: {{ item.division.departamento }}</p>
-                    </div>
-                </div>
-                 <table>
-                 <tr style="font-size: 13px;padding-top: 2px;border-bottom: 1px solid #000000;align-content: flex-end;">
-                    <th style="text-align: center;">Modalidad</th>
-                    <th style="text-align: center;">Funcionario</th>
-                    <th style="text-align: center;">Desde</th>
-                    <th style="text-align: center;">Funcion</th>
-                    <th style="text-align: center;">Division</th>
-                </tr>
-                {% endifchanged %}
-                <tr style="font-size: 13px; padding-top: 3px;">
-                    {% if item.haber.movimiento.motivo.nombre == 'Contrato' %}
-                        <td style="text-align: center;">Contratado</td>
-                    {% else %}
-                        <td style="text-align: center;">Permanente</td>
-                    {% endif %}
-                    <td style="text-align: center;">{{ item.haber.movimiento.funcionario }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.fechainicio }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.funcion }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.division }}</td>
-                </tr>
-                 </table>
 
      </body>
  </html>

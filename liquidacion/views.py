@@ -40,12 +40,16 @@ def informe_altasbajas(request):
             else:
                 f = Q(liquidacion__tipo__nombre='Definitiva') & Q(liquidacion__fechacreacion__gte=fechainicio) & Q(liquidacion__fechacreacion__lte = fechafin)
                 lista = Liquidacionhaber.objects.filter(f)
-            print('lista', lista)
 
             template = get_template('reportes/filtro_altasybajas.html')
-            context = { }
+            context = {
+                'lista' : lista,
+                'tipo' : tipo,
+                'fechainicio' : fechainicio,
+                'fechafin' : fechafin,
+            }
             html = template.render(context)
-            pdf = render_to_pdf('reportes/filtro_altasybajas.html', context)
+            pdf = render_to_pdf('reportes/print_altasybajas.html', context)
             if pdf:
                 response = HttpResponse(pdf, content_type='application/pdf')
                 filename = "file_%s.pdf" % ("12341231")
@@ -126,6 +130,7 @@ def monto_objetodegasto(request):
                         })
                         lista_og.append(og_nombre)
                         valores.clear()
+                print('lista', lista_og)
                 context.update({
                     'lista': lista_og,
                 })

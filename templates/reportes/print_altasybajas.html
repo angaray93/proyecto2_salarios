@@ -1,10 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load staticfiles %}
+{% load humanize %}
+{% load l10n %}
 
-</body>
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+ <html>
+     <head>
+         <title>Title</title>
+         <style type="text/css">
+             #main-content h6, h5 {
+                margin: 0px 0px 5px 0px;
+                padding: 0px 0px 0px 0px;
+             }
+             .contenido {
+                position: absolute;
+                width: 50%;
+                bottom: 10px;
+             }
+             body {
+                 font-weight: 200;
+                 font-size: 14px;
+             }
+             .header {
+                 font-size: 15px;
+                 font-weight: 100;
+                 text-align: center;
+                 color: #000000;
+             }
+             .title {
+                 font-size: 22px;
+                 font-weight: 100;
+                /* text-align: right;*/
+                padding: 10px 20px 0px 20px;
+             }
+             .title span {
+                 color: #007cae;
+             }
+             .details {
+                 padding: 10px 20px 0px 20px;
+                 text-align: left !important;
+                 /*margin-left: 40%;*/
+             }
+             .hrItem {
+                 border: none;
+                 height: 1px;
+                 /* Set the hr color */
+                 color: #333; /* old IE */
+                 background-color: #fff; /* Modern Browsers */
+             }
+         </style>
+     </head>
+     <body>
+         <div class="wrapper">
+             <div class="header">
+                 <table class="table-borderless" style="border: 0px; width:40%">
+                    <tr style="border: 0px">
+                        <td></td>
+                        <td>
+                            <p style="margin-bottom:0;">Universidad Nacional de Asunción</p>
+                            <p style="margin-top:0;">Facultad Politécnica</p>
+                        </td>
+                        <td style="text-align: center;">
+
+                        </td>
+                    </tr>
+                </table>
+             </div>
+             <div class="row">
+                 <div class="col-12">
+                     <h5 style="text-align: center;">Informe</h5>
+                 </div>
+             </div>
+             <div class="row">
+                 <div class="col-12">
+                     <p style="margin-top:0;font-size: 13px;"><strong>Funcionario/a</strong> : {{ funcionario }}</p>
+                 </div>
+             </div>
+         </div>
+         <div>
+             <table>
+                     <tr style="font-size: 13px;padding-top: 2px;border-bottom: 1px solid #000000;align-content: flex-end;">
+                        <th style="text-align: center;">Motivo</th>
+                        <th style="text-align: center;">Fecha de operación</th>
+                        <th style="text-align: center;">Funcionario</th>
+                        <th style="text-align: center;">Categoria Salarial</th>
+                        <th style="text-align: center;">Funcion</th>
+                        <th style="text-align: center;">Dependencia</th>
+                    </tr>
+                 {% for item in lista %}
+                     {% if tipo == 'Alta' %}
+                        <tr style="font-size: 13px; padding-top: 3px;">
+                            <td style="text-align: center;">{{ item.motivo.nombre }}</td>
+                            <td style="text-align: center;">{{ item.fechainicio }}</td>
+                            <td style="text-align: center;">{{ item.funcionario }}</td>
+                            {% if item.motivo.nombre != 'Contrato' %}
+                                <th style="text-align: center;">{{ item.categoria_salarial }}</th>
+                            {% else %}
+                                <th style="text-align: center;">{{ item.codigo }}</th>
+                            {% endif %}
+                            <td style="text-align: center;">{{ item.funcion }}</td>
+                            <td style="text-align: center;">{{ item.division }}</td>
+                        </tr>
+                     {% else %}
+                         <tr style="font-size: 13px; padding-top: 3px;">
+                            <td style="text-align: center;">{{ item.haber.movimiento.motivo.nombre }} - Baja</td>
+                            <td style="text-align: center;">{{ item.liquidacion.fechacreacion }}</td>
+                            <td style="text-align: center;">{{ item.liquidacion.funcionario }}</td>
+                            {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
+                                <th style="text-align: center;">{{ item.haber.movimiento.categoria_salarial }}</th>
+                            {% else %}
+                                <th style="text-align: center;">{{ item.haber.movimiento.codigo }}</th>
+                            {% endif %}
+                            <td style="text-align: center;">{{ item.haber.movimiento.funcion }}</td>
+                            <td style="text-align: center;">{{ item.haber.movimiento.division }}</td>
+                        </tr>
+                     {% endif %}
+                 {% endfor %}
+             </table>
+         </div>
+     </body>
+ </html>

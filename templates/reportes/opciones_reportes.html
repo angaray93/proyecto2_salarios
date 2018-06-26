@@ -1,0 +1,50 @@
+<div class="modal-dialog">
+    <div class="modal-content" id="opciones_reporte_modal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+      </div>
+        <div class="modal-body">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:buscar_movimientos_funcionario' %}"
+                             id="" style="width: 100%">Consulta de cargos activos</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:liquidacion_filtro' %}"
+                             id="" style="width: 100%">Imprimir liquidacion salarial</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:historico_movimientos' %}"
+                             id="" style="width: 100%">Informe histórico de cargos de funcionario</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:gastosxtipomovimiento' %}"
+                             id="" style="width: 100%">Reporte de monto gastado por tipo de cargo</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:informe_vacaciones' %}"
+                             id="" style="width: 100%">Resumen de vacaciones por funcionario</a>
+                        </li>
+                         <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:nomina_funcionarios' %}"
+                             id="" style="width: 100%">Nómina def funcionarios por departamento</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:monto_objetodegasto' %}"
+                             id="" style="width: 100%">Resumen de importe utilizado por Objeto de gasto</a>
+                        </li>
+                        <li class="list-group-item">
+                          <a class="btn btn-primary" href="{% url 'liquidacion:informe_altasbajas' %}"
+                             id="" style="width: 100%">Nómina def funcionarios por departamento</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="modal-footer">
+
+            </div>
+    </div>
+</div>

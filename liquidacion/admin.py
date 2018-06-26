@@ -14,7 +14,8 @@ admin.site.register(Action)
 admin.site.register(Transition)
 admin.site.register(Transitionaction)
 admin.site.register(Mes)
-
+admin.site.register(FuenteFinanciamiento)
+admin.site.register(LiquidacionMotivo)
 
 #--------------------------------------------------#
 

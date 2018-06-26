@@ -13,6 +13,7 @@ urlpatterns = [
     path('home/', views.index, name='index'),
     path('opciones_proceso', views.opciones_proceso, name='opciones_proceso'),
     path('opciones_vacaciones', views.opciones_vacaciones, name='opciones_vacaciones'),
+    path('opciones_reportes', views.opciones_reportes, name='opciones_reportes'),
     path('funcionario/<int:idfuncionario>/movimiento/nuevo/', views.movimiento_vista, name='nuevo_movimiento'),
     path('movimiento_padre/<int:idpadre>/', views.movimiento_vista, name='modificar_movimiento'),
     path('movimiento/<int:idmovimiento>', views.movimiento_vista, name='editar_movimiento'),
@@ -64,6 +65,6 @@ urlpatterns = [
     path('ajax/traer_departamentos/', views.traer_departamentos, name='traer_departamentos'),
     path('monto_objetodegasto/', views.monto_objetodegasto, name='monto_objetodegasto'),
     path('informe_altasbajas/', views.informe_altasbajas, name='informe_altasbajas'),
-
+    path('print_liquidacion/<int:idliquidacion>/', views.print_liquidacion, name='print_liquidacion'),
 
 ]

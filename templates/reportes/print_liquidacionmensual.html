@@ -123,20 +123,18 @@
                             {% endfor %}
                         </tbody>
                     </table>
-
-                 <table>
-                     <tr style="font-size: 13px;padding-top: 2px;align-content: flex-end;">
-                        <td></td>
-                        <td style="border-top: 1px solid #000000;text-align: center;">Gs.{{ item.monto_credito|floatformat }}</td>
-                        <td style="border-top: 1px solid #000000;text-align: center;">Gs.{{ item.monto_debito|floatformat }}</td>
-                    </tr>
-                    <tr style="font-size: 13px; padding-top: 3px;">
-                        <th style="text-align: center;"></th>
-                        <th style="text-align: center;">Total a cobrar:</th>
-                        <th style="text-align: center;">Gs.{{ item.subTotal|floatformat }}</th>
-                    </tr>
-                 </table>
-
+                     <table>
+                         <tr style="font-size: 13px;padding-top: 2px;align-content: flex-end;">
+                            <td></td>
+                            <td style="border-top: 1px solid #000000;text-align: center;">Gs.{{ item.monto_credito|floatformat }}</td>
+                            <td style="border-top: 1px solid #000000;text-align: center;">Gs.{{ item.monto_debito|floatformat }}</td>
+                        </tr>
+                        <tr style="font-size: 13px; padding-top: 3px;">
+                            <th style="text-align: center;"></th>
+                            <th style="text-align: center;">Total a cobrar:</th>
+                            <th style="text-align: center;">Gs.{{ item.subTotal|floatformat }}</th>
+                        </tr>
+                     </table>
                  </div>
              {% endifchanged %}
         {% endfor %}

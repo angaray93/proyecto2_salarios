@@ -23,6 +23,33 @@ from django.http import HttpResponse
 from django.views import View
 from liquidacion.utils import render_to_pdf
 
+@login_required
+def print_liquidacion(request, idliquidacion):
+    liquidacion = Liquidacion.objects.get(pk=idliquidacion)
+    liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
+    movimientos = Movimiento.objects.filter(
+        pk__in=Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
+    detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
+
+    template = get_template('reportes/print_liquidacionmensual.html')
+    context = {
+        'liquidacion': liquidacion,
+        'haberes' : liq_haberes,
+        'detalles' : detalles,
+    }
+    html = template.render(context)
+    pdf = render_to_pdf('reportes/print_liquidacionmensual.html', context)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "liquidacionm_%s.pdf" % ("12341231")
+        content = "inline; filename='%s'" % (filename)
+        download = request.GET.get("download")
+        if download:
+            content = "attachment; filename='%s'" % (filename)
+        response['Content-Disposition'] = content
+        return response
+    return HttpResponse("Not found")
+
 
 @login_required
 def informe_altasbajas(request):
@@ -130,7 +157,6 @@ def monto_objetodegasto(request):
                         })
                         lista_og.append(og_nombre)
                         valores.clear()
-                print('lista', lista_og)
                 context.update({
                     'lista': lista_og,
                 })
@@ -1191,6 +1217,7 @@ def parametros_liq_mensual(request):
                                                movimiento__division__departamento__pk=depto, estado__name='Activo')
                     for haber in haberes:
                         if haber.movimiento.motivo.nombre == 'Contrato':
+                            liq_haber = None
                             try:
                                 pago = Pago.objects.get(movimiento=haber.movimiento, mes=liquidacion.mes)
                             except Pago.DoesNotExist:
@@ -1668,6 +1695,10 @@ def opciones_proceso(request):
 @login_required
 def opciones_vacaciones(request):
     return render(request, 'vacaciones/opciones_vacaciones.html')
+
+@login_required
+def opciones_reportes(request):
+    return render(request, 'reportes/opciones_reportes.html')
 
 @login_required
 def busqueda_funcionarios(request):

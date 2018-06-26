@@ -4,6 +4,16 @@
 {% load humanize %}
 {% load l10n %}
 
+{% block navbar %}
+    {% if liquidacion.estado_actual.name != 'Confirmado' %}
+    <li class="nav-item">
+      <a class="nav-link text-center" id="sidenavToggler" href="{% url 'liquidacion:print_liquidacion' liquidacion.pk %}">
+        <i class="fa fa-fw fa-print"></i>Imprimir</a>
+    </li>
+    {% endif %}
+
+{% endblock %}
+
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb " Liquidaciones Pendientes " 'liquidacion:index' %}
@@ -136,11 +146,13 @@
   </div>
   <div class="card-body" style="background-color: #b9bbbe">
     <div class="row">
-        <div class="col-5">
-            <label>Cantidad de días :</label>
-        </div>
-        <div class="col-3">
+        <div class="col-6">
+            <label for="vacaciones_usadas">Cantidad de días :</label>
             {{ form.vacaciones_usadas }}
+        </div>
+        <div class="col-6">
+            <label for="motivo">Motivo de Liquidacion:</label>
+            {{ form.motivo }}
         </div>
     </div>
   </div>

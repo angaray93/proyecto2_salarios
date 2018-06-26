@@ -35,7 +35,7 @@
     {% if movimiento %}
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href='{% url 'liquidacion:editar_movimiento' movimiento.pk %}'>Movimiento N° {{ movimiento.pk }}</a>
+                <a class="nav-link active" href="{% url 'liquidacion:editar_movimiento' movimiento.pk %}">Movimiento N° {{ movimiento.pk }}</a>
             </li>
             <li class="nav-item">
                 {% if movimiento.motivo.nombre == 'Contrato' %}
@@ -221,10 +221,10 @@
                         <input id="categoria_salarial" class="form-control" readonly>
                     {% endif %}
                         <span class="input-group-btn">
-                        <a>
-                            <button id="btnCategoria" class="btn btn-secondary" type="button">
-                                <i class="fa fa-search" aria-hidden="true"></i></button>
-                        </a>
+                            <a>
+                                <button id="btnCategoria" class="btn btn-secondary" type="button">
+                                    <i class="fa fa-search" aria-hidden="true"></i></button>
+                            </a>
                         </span>
                 </div>
             </div>
@@ -256,7 +256,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
             <div class="form-group">
                 <label for="formapago">Forma de Pago:</label>
                 <div class="input-group">
@@ -270,6 +270,24 @@
                         {% endif %}
                     {% else %}
                         {{ form.formapago }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="ffinanciamiento">Fuente de Financiamiento:</label>
+                <div class="input-group">
+                    {% if movimiento %}
+                        {% if not perms.liquidacion.change_movimiento %}
+                            <input type="text" id="ffinanciamiento" class="form-control"
+                               value="{{ movimiento.ffinanciamiento }}" disabled/>
+                            <input type="hidden" name="ffinanciamiento" value="{{ movimiento.ffinanciamiento }}">
+                        {% else %}
+                           {{ form.ffinanciamiento }}
+                        {% endif %}
+                    {% else %}
+                        {{ form.ffinanciamiento }}
                     {% endif %}
                 </div>
             </div>

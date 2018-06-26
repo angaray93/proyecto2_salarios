@@ -151,6 +151,9 @@ class LiqMensualForm(forms.ModelForm):
                 'class': 'form-control',
                 'size' : "30",
             }),
+            'motivo': forms.Select(attrs={
+                'class': 'form-control',
+            }),
         }
 
 
@@ -202,6 +205,9 @@ class MovimientoForm(forms.ModelForm):
                 'class': 'form-control'
             }),
             'formapago': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'ffinanciamiento': forms.Select(attrs={
                 'class': 'form-control'
             }),
             'division': forms.Select(attrs={

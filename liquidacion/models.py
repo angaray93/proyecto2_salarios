@@ -84,6 +84,7 @@ class Movimiento(models.Model):
     funcion = models.CharField(max_length=99, default='')
     familia = models.IntegerField(blank=True, null=True, default=1)
     #------------------------------------Relationships-----------------------------------------#
+    ffinanciamiento = models.ForeignKey('FuenteFinanciamiento', on_delete=models.DO_NOTHING, default=1)
     funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')
     categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING,
                                            related_name='fk_movimiento_categoriasalarial', blank=True, null=True)
@@ -100,6 +101,19 @@ class Pago(models.Model):
     # -----------------------------------Relationships-----------------------------------------#
     mes = models.ForeignKey('Mes', on_delete=models.DO_NOTHING, default=1)
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_pago_movimiento')
+
+
+class FuenteFinanciamiento(models.Model):
+    id = models.AutoField(primary_key=True)
+    descripcion = models.CharField(max_length=50, default='', unique=True)
+    numero = models.IntegerField()
+
+    class Meta:
+        ordering = ["descripcion"]
+        verbose_name_plural = "Fuentes de Financiamiento"
+
+    def __str__(self):
+        return 'Fuente %s  - %s ' % (self.numero, self.descripcion)
 
 
 class Objeto_De_Gasto(models.Model):
@@ -400,11 +414,11 @@ class Liquidacion(models.Model):
     dias_trabajados = models.IntegerField(default=0, blank=True, null=True)
     vacaciones_usadas = models.IntegerField(default=0, blank=True)
     #-----------------------------------Relationships-----------------------------------------#
-    #haberes = models.ManyToManyField('Haber', through='Liquidacionhaber', through_fields=('liquidacion', 'haber'), null=True)
     funcionario = models.ForeignKey('Funcionario', on_delete=models.CASCADE, related_name='fk_liq_funcionario')
     estado_actual = models.ForeignKey('State', on_delete=models.CASCADE, related_name='fk_liquidacion_estado')
     tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE, related_name='fk_liquidacion_tipo')
     propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fk_liquidacion_user')
+    motivo = models.ForeignKey('LiquidacionMotivo', on_delete=models.CASCADE, related_name='fk_liquidacion_motivo', default=1)
 
     #class Meta:
     #    unique_together = (('funcionario', 'mes'),)
@@ -511,6 +525,18 @@ class Liquidacionhaber(models.Model):
     def calcular_total(self):
         total = round((self.monto_credito) - self.monto_debito, 0)
         return total
+
+
+class LiquidacionMotivo(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, validators=[validar_nombre], unique=True, default='Mensual')
+
+    class Meta:
+        ordering = ["nombre"]
+        verbose_name_plural = "Motivos de Liquidacion"
+
+    def __str__(self):
+        return '%s ' % (self.nombre)
 
 
 class LiquidacionType(models.Model):

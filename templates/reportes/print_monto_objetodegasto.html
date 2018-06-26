@@ -65,7 +65,7 @@
              </div>
              <div class="row">
                  <div class="col-12">
-                     <h5 style="text-align: center;">Informe de cargos por departamento</h5>
+                     <h5 style="text-align: center;">Resumen de monto gastado por Objeto de Gasto</h5>
                  </div>
              </div>
          </div>
@@ -82,18 +82,22 @@
          <table>
              <tr style="font-size: 13px;padding-top: 2px;border-bottom: 1px solid #000000;align-content: flex-end;">
                 <th style="text-align: center;">Objeto de Gasto</th>
-                <th style="text-align: center;">Enero</th>
-                <th style="text-align: center;">Febrero</th>
-                <th style="text-align: center;">Marzo</th>
-                <th style="text-align: center;">Abril</th>
-                <th style="text-align: center;">Mayo</th>
-                <th style="text-align: center;">Junio</th>
-                 <th style="text-align: center;">Julio</th>
-                <th style="text-align: center;">Agosto</th>
-                <th style="text-align: center;">Septiembre</th>
-                <th style="text-align: center;">Octubre</th>
-                <th style="text-align: center;">Noviembre</th>
-                <th style="text-align: center;">Diciembre</th>
+                 {% if mes %}
+                     <th style="text-align: center;">{{ mes.nombre }}</th>
+                 {% else %}
+                     <th style="text-align: center;">Enero</th>
+                    <th style="text-align: center;">Febrero</th>
+                    <th style="text-align: center;">Marzo</th>
+                    <th style="text-align: center;">Abril</th>
+                    <th style="text-align: center;">Mayo</th>
+                    <th style="text-align: center;">Junio</th>
+                    <th style="text-align: center;">Julio</th>
+                    <th style="text-align: center;">Agosto</th>
+                    <th style="text-align: center;">Septiembre</th>
+                    <th style="text-align: center;">Octubre</th>
+                    <th style="text-align: center;">Noviembre</th>
+                    <th style="text-align: center;">Diciembre</th>
+                 {% endif %}
             </tr>
              {% for item in lista %}
                 <tr style="font-size: 13px; padding-top: 3px;border-bottom: 1px solid #c6c8ca;">
@@ -106,7 +110,6 @@
                             {% else %}
                                 <td style="text-align: center;">{{ value }}</td>
                             {% endif %}
-
                         {% endfor %}
                     {% endfor %}
                 {% endfor %}

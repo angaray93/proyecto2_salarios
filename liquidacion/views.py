@@ -1195,7 +1195,7 @@ def parametros_liq_mensual(request):
             mes = Mes.objects.get(numero=fechafin.month, year=fechafin.year)
             funcionarios = Movimiento.objects\
                 .filter(division__departamento=depto, estado__name='Activo')\
-                .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
+                .values('funcionario__idFuncionario', 'motivo__nombre', 'idmovimiento').distinct('funcionario__idFuncionario')
             if funcionarios.count() > 0:
                 for mov in funcionarios:
                     existe_pago = True
@@ -1210,9 +1210,9 @@ def parametros_liq_mensual(request):
                         initial_state_type = StateType.objects.get(name='Inicio')
                         initial_state = State.objects.get(process=proceso, stateType=initial_state_type)
                         funcionario = Funcionario.objects.get(pk = mov['funcionario__idFuncionario'])
-                        if mov.motivo.nombre == 'Contrato':
+                        if mov['motivo__nombre'] == 'Contrato':
                             try:
-                                pago = Pago.objects.get(mes=mes, movimiento=mov)
+                                pago = Pago.objects.get(mes=mes, movimiento__pk=mov['idmovimiento'])
                                 existe_pago = True
                             except Pago.DoesNotExist:
                                 pago = None

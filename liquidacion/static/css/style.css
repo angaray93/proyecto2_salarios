@@ -229,5 +229,11 @@ a.button:hover {
 }
 
 .explicativo {
-  font-family: Candara;
+  font-family: proxima-nova, sans-serif;
+}
+
+.opciones {
+  width: 100%;
+  background-color: #3B598D;
+  color: white;
 }

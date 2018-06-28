@@ -1,36 +1,36 @@
 <div class="modal-dialog">
-    <div class="modal-content" id="opciones_proceso_modal">
-
+    <div class="modal-content" id="opciones_proceso_modal" style="background-color: #b9bbbe">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">×</button>
+          <h4>Seleccione una opción</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
       </div>
         <div class="modal-body">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                          <a class="btn btn-primary" href="{% url 'liquidacion:buscar_funcionario' %}"
-                             id="" style="width: 100%">Nueva Alta de Funcionario</a>
+                    <ul class="list-group" style="background-color: #b9bbbe">
+                        <li class="list-group-item" style="background-color: #b9bbbe">
+                          <a class="btn btn-light opciones" href="{% url 'liquidacion:buscar_funcionario' %}"
+                             id="" style="width: 100%;">Nuevo cargo de Funcionario</a>
                         </li>
-                        <li class="list-group-item">
-                          <a class="btn btn-primary" href="{% url 'liquidacion:buscar_movimiento' %}"
-                             id="" style="width: 100%">Modificacion de Movimiento</a>
+                        <li class="list-group-item" style="background-color: #b9bbbe">
+                          <a class="btn btn-light opciones" href="{% url 'liquidacion:buscar_movimiento' %}"
+                             id="" style="width: 100%;">Ascenso o modificación de funciones</a>
                         </li>
-                        <li class="list-group-item">
-                          <a class="btn btn-primary" href="{% url 'liquidacion:parametros_liq_mensual' %}"
-                             id="" style="width: 100%">Generacion de Liquidacion Mensual</a>
+                        <li class="list-group-item" style="background-color: #b9bbbe">
+                          <a class="btn btn-light opciones" href="{% url 'liquidacion:parametros_liq_mensual' %}"
+                             id="" style="width: 100%;">Generación de Liquidacion Salarial Mensual</a>
                         </li>
-                        <li class="list-group-item">
-                          <a class="btn btn-primary" href="{% url 'liquidacion:param_liq_definitiva' %}"
-                             id="" style="width: 100%">Generacion de Liquidacion por Baja</a>
+                        <li class="list-group-item" style="background-color: #b9bbbe">
+                          <a class="btn btn-light opciones" href="{% url 'liquidacion:param_liq_definitiva' %}"
+                             id="" style="width: 100%;">Generacion de Liquidacion por Baja de Funcionario</a>
                         </li>
-                        <li class="list-group-item">
-                          <a class="btn btn-primary" href="{% url 'liquidacion:liquidaciones_periodo' %}"
-                             id="" style="width: 100%">Consulta de Liquidaciones Pendientes del periodo </a>
+                        <li class="list-group-item" style="background-color: #b9bbbe">
+                          <a class="btn btn-light opciones" href="{% url 'liquidacion:liquidaciones_periodo' %}"
+                             id="" style="width: 100%;">Consulta de Liquidaciones Pendientes del periodo </a>
                         </li>
-                         <li class="list-group-item">
-                          <a class="btn btn-primary" href="{% url 'liquidacion:confirmadas_periodo' %}"
-                             id="" style="width: 100%">Consulta de Liquidaciones Confirmadas del periodo</a>
+                         <li class="list-group-item" style="background-color: #b9bbbe">
+                          <a class="btn btn-light opciones" href="{% url 'liquidacion:confirmadas_periodo' %}"
+                             id="" style="width: 100%;">Consulta de Liquidaciones Confirmadas del periodo</a>
                         </li>
                     </ul>
                 </div>

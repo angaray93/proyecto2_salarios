@@ -1,14 +1,15 @@
 <div class="modal-dialog">
-    <div class="modal-content" id="opciones_vacaciones">
+    <div class="modal-content" id="opciones_vacaciones" style="background-color: #b9bbbe">
         <div class="modal-header">
+            <h4>Seleccione una opción</h4>
             <button type="button" class="close" data-dismiss="modal">×</button>
         </div>
         <div class="modal-body">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                          <a class="btn btn-primary" href="{% url 'liquidacion:consulta_vacaciones' %}"
+                    <ul class="list-group" style="background-color: #b9bbbe">
+                        <li class="list-group-item" style="background-color: #b9bbbe">
+                          <a class="btn btn-light opciones" href="{% url 'liquidacion:consulta_vacaciones' %}"
                              id="" style="width: 100%">Consulta de estado de vacaciones</a>
                         </li>
                     </ul>

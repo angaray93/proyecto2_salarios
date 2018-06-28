@@ -1,150 +1,88 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html lang="en">
-
+{% load i18n static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>SLSB-FPUNA</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!-- Bootstrap core CSS-->
-    <link href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
-    <!-- Custom fonts for this template-->
-    <link href="{% static "vendor/font-awesome/css/font-awesome.min.css" %}" rel="stylesheet" type="text/css">
-    <!-- Page level plugin CSS-->
-    <link href="{% static "vendor/datatables/dataTables.bootstrap4.css" %}" rel="stylesheet">
-    <!-- Custom styles for this template-->
-    <link href="{% static "css/sb-admin.css" %}" rel="stylesheet">
-    <link href="{% static "css/style.css" %}" rel="stylesheet">
-    {% block extrastyles %}{% endblock %}
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
 </head>
+{% load i18n %}
 
-{% if user.is_authenticated %}
-<body class="fixed-nav sticky-footer bg-dark" id="page-top">
-  <!-- Navigation-->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <a class="navbar-brand" href="index.html">SLSB / FP-UNA</a>
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
- <div class="collapse navbar-collapse" id="navbarResponsive">
-  <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-      <a class="nav-link" href="{% url 'liquidacion:index' %}">
-        <span class="nav-link-text">Inicio</span>
-      </a>
-    </li>
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+  data-admin-utc-offset="{% now "Z" %}">
 
-    </li>
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
+<!-- Container -->
+<div id="container">
 
-    </li>
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+    {% if not is_popup %}
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        {% block branding %}{% endblock %}
+        </div>
+        {% block usertools %}
+        {% if has_permission %}
+        <div id="user-tools">
+            {% block welcome-msg %}
+                {% trans 'Welcome,' %}
+                <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+            {% endblock %}
+            {% block userlinks %}
+                {% if site_url %}
+                    <a href="{{ site_url }}">{% trans 'View site' %}</a> /
+                {% endif %}
+                {% if user.is_active and user.is_staff %}
+                    {% url 'django-admindocs-docroot' as docsroot %}
+                    {% if docsroot %}
+                        <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                    {% endif %}
+                {% endif %}
+                {% if user.has_usable_password %}
+                <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+                {% endif %}
+                <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+            {% endblock %}
+        </div>
+        {% endif %}
+        {% endblock %}
+        {% block nav-global %}{% endblock %}
+    </div>
+    <!-- END Header -->
+    {% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    {% if title %} &rsaquo; {{ title }}{% endif %}
+    </div>
+    {% endblock %}
+    {% endif %}
 
-    </li>
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
 
-    </li>
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
 
-    </li>
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Menu Levels">
-
-    </li>
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
-
-    </li>
-  </ul>
-  <ul class="navbar-nav sidenav-toggler">
-    <li class="nav-item">
-      <a class="nav-link text-center" id="sidenavToggler">
-        <i class="fa fa-fw fa-angle-left"></i>
-      </a>
-    </li>
-  </ul>
-  <ul class="navbar-nav ml-auto">
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-        <i class="fa fa-fw fa-sign-out"></i>Salir</a>
-    </li>
-  </ul>
+    {% block footer %}<div id="footer"></div>{% endblock %}
 </div>
-  </nav>
-  <div class="content-wrapper">
-    <div class="container-fluid">
-    {% block content %}{% endblock %}
-    </div>
-    <!-- /.container-fluid-->
-    <!-- /.content-wrapper}
-    <footer class="sticky-footer">
-      <div class="container">
-        <div class="text-center">
-          <small>
+<!-- END Container -->
 
-          </small>
-        </div>
-      </div>
-    </footer>-->
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fa fa-angle-up"></i>
-    </a>
-    <!-- Logout Modal-->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Seguro que desea cerrar sesion?</h5>
-            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-            <a class="btn btn-primary" href="{% url 'logout' %}">Confirmar</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </body>
-{% else %}
-
-<body class="fixed-nav sticky-footer bg-dark" id="page-top">
-  <div class="container">
-    <div class="card card-login mx-auto mt-5">
-      <div class="card-header">Sistema de Liquidacion de Salarios y Beneficios</div>
-      <div class="card-body">
-            <p>Para continuar, identifiquese:<a href="{% url 'login' %}">Iniciar Sesión</a> </p>
-      </div>
-    </div>
-  </div>
-</body>
-{% endif %}
-<footer>
-<!-- Bootstrap core JavaScript-->
-    <script src="{% static "vendor/jquery/jquery.min.js" %}"></script>
-    <script src="{% static "vendor/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
-    <!-- Core plugin JavaScript-->
-    <script src="{% static "vendor/jquery-easing/jquery.easing.min.js" %}"></script>
-
-    <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>  <!-- JQUERY HERE -->
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <!-- Page level plugin JavaScript-->
-    <script src="{% static "vendor/chart.js/Chart.min.js" %}"></script>
-    <script src="{% static "vendor/datatables/jquery.dataTables.js" %}"></script>
-    <script src="{% static "vendor/datatables/dataTables.bootstrap4.js" %}"></script>
-    <!-- Custom scripts for all pages-->
-    <script src="{% static "js/sb-admin.min.js" %}"></script>
-    <!-- Custom scripts for this page-->
-    <script src="{% static "js/sb-admin-datatables.min.js" %}"></script>
-    <script src="{% static "js/sb-admin-charts.min.js" %}"></script>
-
-</footer>
-
 </html>

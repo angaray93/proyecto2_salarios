@@ -22,7 +22,7 @@
             </li>
             <li class="nav-item">
                 {% if movimiento.motivo.nombre == 'Contrato' %}
-                    <a class="nav-link active" href="{% url 'liquidacion:nuevo_pago' movimiento.pk %}">
+                    <a class="nav-link active" style="background-color: #b9bbbe" href="{% url 'liquidacion:nuevo_pago' movimiento.pk %}">
                         Pagos
                     </a>
                 {% else %}

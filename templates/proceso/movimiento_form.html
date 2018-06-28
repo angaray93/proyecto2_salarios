@@ -35,7 +35,7 @@
     {% if movimiento %}
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'liquidacion:editar_movimiento' movimiento.pk %}">Movimiento N° {{ movimiento.pk }}</a>
+                <a class="nav-link active" style="background-color: #b9bbbe" href="{% url 'liquidacion:editar_movimiento' movimiento.pk %}">Movimiento N° {{ movimiento.pk }}</a>
             </li>
             <li class="nav-item">
                 {% if movimiento.motivo.nombre == 'Contrato' %}
@@ -60,7 +60,7 @@
             </li>
         </ul>
     {% endif %}
-
+<br>
         <div class="row text-center">
             <div class="col-12 text-center">
                 {% if not movimiento %}

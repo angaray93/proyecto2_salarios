@@ -5,14 +5,14 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb " Liquidaciones Pendientes " 'liquidacion:liq_pendientes_filtro' %}
+    {% breadcrumb " Impresion de Liquidacion Salarial " 'liquidacion:index' %}
 {% endblock %}
 
 {% block head %}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     {% block title %}
-        <title>Liquidaciones Pendientes</title>
+        <title>Impresion de Liquidacion Salarial</title>
     {% endblock %}
 {% endblock %}
 
@@ -45,7 +45,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="funcionario">Nro. de Documento de Identidad:</label>
+                        <label for="funcionario"><strong>Nro. de Documento de Identidad</strong></label>
                         <div class="input-group">
                             {{ form.funcionario }}
                         </div>
@@ -53,26 +53,26 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="mes">Mes:</label>
+                        <label for="mes"><strong>Mes</strong></label>
                         <div class="input-group">
                             {{ form.mes }}
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="anho">Año:</label>
+                        <label for="anho"><strong>Año</strong></label>
                         <div class="input-group">
                             {{ form.anho }}
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-md-6 align-self-end pb-3">
-                    <button type="submit" class="btn btn-success" name="q" value="true"
+                    <button type="submit" class="btn btn-light opciones" name="q" value="true"
                             formaction="{% url 'liquidacion:liquidacion_filtro' %}">
-                        Generar
+                        Imprimir
                     </button>
                 </div>
             </div>

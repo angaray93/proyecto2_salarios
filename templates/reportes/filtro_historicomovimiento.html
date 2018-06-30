@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb " Seleccion de movimiento de funcionario " 'liquidacion:param_liq_definitiva' %}
+    {% breadcrumb " Historico de cargos de Funcionario" 'liquidacion:historico_movimientos' %}
 {% endblock %}
 
 {% block head %}
@@ -22,7 +22,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="col-12 d-flex align-self-start">
-                        <h5>Informe Histórico de movimientos de funcionario </h5>
+                        <h5>Informe Histórico de cargos de funcionario </h5>
                     </div>
                 </div>
             </div>
@@ -42,18 +42,20 @@
                 </div>
             </div>
             <div class="row">
-                <label for="funcionario">Ingrese el numero de cedula de identidad del funcionario :</label>
-                <div class="col-6">
-                    {{ form.funcionario }}
-                </div>
-                <div class="col-6">
-                    <button type="submit" class="btn btn-success" name="q" value="true"
-                            formaction="{% url 'liquidacion:historico_movimientos' %}">
-                        Generar
-                    </button>
+                <div class="col-8">
+                    <div class="input-group">
+                        {{ form.funcionario }}
+                        <span>
+                            <button type="submit" class="btn btn-light opciones" name="q" value="true"
+                                    formaction="{% url 'liquidacion:historico_movimientos' %}">
+                                Generar
+                            </button>
+                        </span>
+                    </div>
                 </div>
             </div>
-        </form>
+    </form>
+
 
         <div class="row mt-3 mb-3"></div>
 

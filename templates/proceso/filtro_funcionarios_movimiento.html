@@ -18,12 +18,21 @@
         </div>
     </div>
     <hr>
-    <div class="row">
-        <form method="get">
-            <input type="text" name="q" placeholder="Ingrese un numero de cedula" value="{{ request.GET.q }}"/>
-            <button type="submit" class="btn">Buscar</button>
+
+<div class="row">
+    <div class="col-12">
+        <label for="funcionario" class="explicativo"><strong>Ingrese el numero de cedula de identidad del funcionario</strong></label>
+        <form method="get" class="form-inline">
+            <div class="input-group">
+                <input type="text" name="q" placeholder="Ingrese un numero de cedula" value="{{ request.GET.q }}" class="form-control">
+                <span class="input-group-append">
+                    <button type="submit" class="btn btn-light opciones"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
         </form>
     </div>
+</div>
+
 <div class="row separador mt-2"></div>
     <div class="row separador_fila">
                 <div class="col-lg-12">
@@ -45,7 +54,7 @@
                                         <td class="text-center">
                                             <button class="btn btn-secondary btn-edit" type="button"
                                                onclick="location.href='{% url 'liquidacion:nuevo_movimiento' funcionario.pk %}'">
-                                                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                                                <i class="fa fa-edit" aria-hidden="true"></i>
                                             </button>
                                         </td>
                                     </tr>

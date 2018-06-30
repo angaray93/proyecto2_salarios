@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="col-12 d-flex align-self-start">
-            <h5>Seleccion de movimiento para Ascenso o Modificacion de funciones </h5>
+            <h5><strong>Seleccion de movimiento para Ascenso o Modificacion de funciones</strong></h5>
         </div>
     </div>
 </div>
@@ -23,20 +23,20 @@
 <hr>
 
 <div class="row">
-    <form method="get">
-        <div class="row">
-            <label for="funcionario" class="explicativo">Ingrese el numero de cedula de identidad del funcionario :</label>
-            <div class="col-6">
+    <div class="col-12">
+    <label for="funcionario" class="explicativo"><strong>Ingrese el numero de cedula de identidad del funcionario</strong></label>
+    <form method="get" class="form-inline">
+            <div class="input-group">
                 {{ form.funcionario }}
-            </div>
-            <div class="col-6">
-                <button type="submit" class="btn btn-outline-dark" name="q" value="true"
-                        formaction="{% url 'liquidacion:buscar_movimiento' %}">
-                    Buscar
+            <span class="input-group-append">
+                <button type="submit" class="btn btn-light opciones" name="q" value="true"
+                        formaction="{% url 'liquidacion:buscar_movimiento' %}" style="display:inline-block;">
+                   <i class="fa fa-search"></i>
                 </button>
-            </div>
-        </div>
+             </span>
+    </div>
     </form>
+    </div>
 </div>
 
 {% if funcionarios %}
@@ -46,24 +46,24 @@
             <table class="table table-hover table-striped table-sm">
                 <thead class="thead-light">
                     <tr>
-                        <th class="columna-normal text-center">Nombres</th>
-                        <th class="columna-normal text-center">Apellidos</th>
-                        <th class="columna-normal text-center">Tipo de movimiento</th>
-                        <th class="columna-normal text-center">Categoria Salarial</th>
-                        <th class="columna-normal text-center">Seleccionar</th>
+                        <th class="text-center">Nombres</th>
+                        <th class="text-center">Apellidos</th>
+                        <th class="text-center">Tipo de movimiento</th>
+                        <th class="text-center">Categoria Salarial</th>
+                        <th class="text-center">Seleccionar</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for movimiento in funcionarios %}
                         <tr class='clickable-row'>
-                            <td class="columna-negrita text-center">{{ movimiento.funcionario.nombres }}</td>
-                            <td class="columna-negrita text-center">{{ movimiento.funcionario.apellidos }}</td>
-                            <td class="columna-negrita text-center">{{ movimiento.motivo.nombre }}</td>
-                            <td class="columna-negrita text-center">{{ movimiento.categoria_salarial.codigo }}</td>
+                            <td class="text-center">{{ movimiento.funcionario.nombres }}</td>
+                            <td class="text-center">{{ movimiento.funcionario.apellidos }}</td>
+                            <td class="text-center">{{ movimiento.motivo.nombre }}</td>
+                            <td class="text-center">{{ movimiento.categoria_salarial.codigo }}</td>
                             <td class="text-center">
-                                <button class="btn btn-outline-secondary" type="button"
+                                <button class="btn btn-secondary" type="button"
                                    name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:modificar_movimiento' movimiento.pk %}')">
-                                <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
+                                <i class="fa fa-edit" aria-hidden="true"></i></button>
                             </td>
                         </tr>
                     {% endfor %}

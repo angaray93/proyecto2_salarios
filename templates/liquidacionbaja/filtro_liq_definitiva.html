@@ -22,7 +22,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="col-12 d-flex align-self-start">
-                        <h5>Liquidacion Salarial por Baja de Funcionario: </h5>
+                        <h5>Liquidacion Salarial por Baja de Funcionario</h5>
                     </div>
                 </div>
             </div>
@@ -44,28 +44,28 @@
                 </div>
             </div>
 
-            <div class="row">
-                <label for="funcionario">Ingrese el numero de cedula de identidad del funcionario :</label>
-                <div class="col-6">
+        <div class="row">
+            <label for="funcionario" class="explicativo"><strong>Ingrese el numero de cedula de identidad del funcionario</strong></label>
+            <div class="col-6">
+                <div class="input-group">
                     {{ form.funcionario }}
-                </div>
-                <div class="col-6">
-                    <button type="submit" class="btn btn-success" name="q" value="true"
-                            formaction="{% url 'liquidacion:param_liq_definitiva' %}">
-                        Generar
-                    </button>
+                    <span>
+                        <button type="submit" class="btn btn-light opciones" name="q" value="true"
+                                formaction="{% url 'liquidacion:param_liq_definitiva' %}">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
                 </div>
             </div>
+        </div>
 
-            {% if form.errors %}
-                <div class="row mt-0">
-                    <div class="col-md-4">
-                        <strong style="color:red">{{ form.cedula.errors.as_text }}</strong>
-                    </div>
+        {% if form.errors %}
+            <div class="row mt-0">
+                <div class="col-md-4">
+                    <strong style="color:red">{{ form.cedula.errors.as_text }}</strong>
                 </div>
-            {% endif %}
-
-        </form>
+            </div>
+        {% endif %}
 
         <div class="row mt-3 mb-3"></div>
 
@@ -81,7 +81,7 @@
         {% if listado_movimientos %}
             <hr>
             <div class="row">
-                <label class="text-center">Seleccione el rubro o contrato que desea dar de baja:</label>
+            <label class="explicativo text-center"><strong>Seleccione el rubro o contrato que desea dar de baja</strong></label>
             </div>
             <table id="tabla-vac" class="table">
                 <thead class="thead-light">
@@ -101,16 +101,17 @@
                         {% endif %}
                         <td>{{ item.fechainicio }}</td>
                         <td>
-                            <button class="btn btn-outline-primary" type="button"
+                            <button class="btn btn-secondary btn-edit" type="button"
                                name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:generar_liq_definitiva' item.pk %}')">
-                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                            </button>
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         {% endif %}
-
+    </form>
 </div>
 
 <footer>

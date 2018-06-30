@@ -398,6 +398,11 @@
                                disabled
                            {% endif %}
                         />
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" disabled>
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </button>
+                        </span>
                     {% else %}
                         <input type="date" id="id_fechafin" name="fechafin" class="form-control">
                         <span class="input-group-btn">
@@ -430,8 +435,18 @@
                         {% else %}
                            {{ form.horaEntrada }}
                         {% endif %}
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" disabled>
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                            </button>
+                        </span>
                     {% else %}
                         {{ form.horaEntrada }}
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" disabled>
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                            </button>
+                        </span>
                     {% endif %}
 
                 </div>
@@ -455,9 +470,19 @@
                             <input type="hidden" name="horaSalida" value="{{ movimiento.horaSalida }}">
                         {% else %}
                             {{ form.horaSalida }}
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" disabled>
+                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         {% endif %}
                     {% else %}
                         {{ form.horaSalida }}
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" disabled>
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                            </button>
+                        </span>
                     {% endif %}
                     </div>
             </div>

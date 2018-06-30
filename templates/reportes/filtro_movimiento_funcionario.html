@@ -45,7 +45,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="nombres">Nombres:</label>
+                        <label for="nombres"><strong>Nombres</strong></label>
                         <div class="input-group">
                             {{ form.nombres }}
                         </div>
@@ -54,7 +54,7 @@
 
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="apellidos">Apellidos:</label>
+                        <label for="apellidos"><strong>Apellidos</strong></label>
                         <div class="input-group">
                             {{ form.apellidos }}
                         </div>
@@ -65,7 +65,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="cedula">Documento de Identidad:</label>
+                        <label for="cedula"><strong>Documento de Identidad</strong></label>
                         <div class="input-group">
                             {{ form.cedula }}
                         </div>
@@ -74,7 +74,7 @@
 
                 <div class="col-md-6 align-self-end pb-3">
                     {% if vista == 'buscar_movimientos_funcionario' %}
-                        <button type="submit" class="btn btn-success" name="q" value="true"
+                        <button type="submit" class="btn btn-light opciones" name="q" value="true"
                                 formaction="{% url 'liquidacion:buscar_movimientos_funcionario' %}">
                             Consultar
                         </button>
@@ -82,8 +82,6 @@
                 </div>
 
             </div>
-
-
 
             {% if form.errors %}
                 <div class="row mt-0">
@@ -131,10 +129,10 @@
                     <td>{{ movimiento.motivo }}</td>
                     <td>{{ movimiento.categoria_salarial.codigo }}</td>
                     <td class="centrartexto">
-                        <button class="btn btn-outline-secondary" type="button"
+                        <button class="btn btn-secondary btn-edit" type="button"
                                    name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:movimiento_resumen' movimiento.pk %}')">
                                 <i class="fa fa-eye" aria-hidden="true"></i></button>
-                        <button class="btn btn-outline-secondary" type="button"
+                        <button class="btn btn-secondary btn-edit" type="button"
                                    name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_movimiento' movimiento.pk %}')">
                                 <i class="fa fa-edit" aria-hidden="true"></i></button>
                     </td>

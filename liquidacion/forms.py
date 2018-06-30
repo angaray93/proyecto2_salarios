@@ -81,13 +81,14 @@ class FiltroGastosForm(forms.Form):
 class LiquidacionDefinitivaForm(forms.Form):
 
     funcionario = IntegerField(label='Nro. de Documento de Identidad', required=True,
-                               widget=forms.TextInput(attrs={'class': 'form-control',}))
-
+                               widget=forms.TextInput(attrs={'class': 'form-control',
+                                                             'placeholder' : "Ingrese el número de documento",}))
 
 class VacacionesFuncionarioForm(forms.Form):
 
     funcionario = IntegerField(label='Nro. de Documento de Identidad', required=True,
-                               widget=forms.TextInput(attrs={'class': 'form-control',}))
+                               widget=forms.TextInput(attrs={'class': 'form-control',
+                                                             'placeholder' : "Ingrese el numero de documento de identidad"}))
 
 
 class LiqPendientesForm(forms.Form):
@@ -251,6 +252,7 @@ class MovimientoForm(forms.ModelForm):
             raise forms.ValidationError("Ingrese un nombre valido para el tipo de categoria")
         return self.cleaned_data['tipo']"""
 
+
 class ConstanteForm(ModelForm):
 
     class Meta:
@@ -287,6 +289,7 @@ class PagoForm(ModelForm):
             }),
         }
 
+
 class CategoriaSalarialForm(forms.ModelForm):
 
     class Meta:
@@ -303,6 +306,7 @@ class CategoriaSalarialForm(forms.ModelForm):
             raise forms.ValidationError("Ingrese un nombre valido para el tipo de categoria")
         return self.cleaned_data['tipo']
 
+
 class AutoridadFirmanteForm(forms.ModelForm):
     class Meta:
         model = AutoridadFirmante
@@ -312,6 +316,7 @@ class AutoridadFirmanteForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+
 
 class DocumentoRespaldatorioForm(forms.ModelForm):
 
@@ -384,6 +389,7 @@ class GradoUniversitarioForm(forms.ModelForm):
     class Meta:
         model = GradoUniversitario
         fields = '__all__'
+
 
 class ConstanteTypeForm(forms.ModelForm):
     #tipo = forms.ChoiceField(choices=ConstanteType_OPTIONS, widget=forms.RadioSelect())

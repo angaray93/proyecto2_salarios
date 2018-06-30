@@ -616,18 +616,25 @@ def confirmar_liquidaciones(request):
         item.estado_actual = transicion
         item.save()
         # -------------------------------AGUINALDO----------------------------------------------#
+
         liq_haberes = Liquidacionhaber.objects.filter(liquidacion=item)
         if item.mes.numero == 1:
             for liq in liq_haberes:
-                nuevo_aguinaldo = Aguinaldo(
-                    anho=datetime.datetime.today().year,
-                    movimiento=liq.haber.movimiento
-                )
-                nuevo_aguinaldo.save()
-                nuevo_aguinaldo.acumulado += nuevo_aguinaldo.calculo_acumulado(item.mes.pk)
-                nuevo_aguinaldo.save()
-                nuevo_aguinaldo.total = nuevo_aguinaldo.calculo_total()
-                nuevo_aguinaldo.save()
+                try:
+                    aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
+                                                      anho=datetime.datetime.today().year)
+                except:
+                    aguinaldo = None
+                if aguinaldo is not None:
+                    nuevo_aguinaldo = Aguinaldo(
+                        anho=datetime.datetime.today().year,
+                        movimiento=liq.haber.movimiento
+                    )
+                    nuevo_aguinaldo.save()
+                    nuevo_aguinaldo.acumulado += nuevo_aguinaldo.calculo_acumulado(liq.pk)
+                    nuevo_aguinaldo.save()
+                    nuevo_aguinaldo.total = nuevo_aguinaldo.calculo_total()
+                    nuevo_aguinaldo.save()
         else:
             for liq in liq_haberes:
                 try:
@@ -640,7 +647,7 @@ def confirmar_liquidaciones(request):
                                                       anho=datetime.datetime.today().year)
                     aguinaldo.save()
                     aguinaldo.cantidad_meses += 1
-                    aguinaldo.acumulado += aguinaldo.calculo_acumulado(item.mes.pk)
+                    aguinaldo.acumulado += aguinaldo.calculo_acumulado(liq.pk)
                     aguinaldo.save()
                     aguinaldo.total = aguinaldo.calculo_total()
                     aguinaldo.save()
@@ -734,24 +741,23 @@ def confirmadas_periodo(request):
             'lista': liquidaciones_confirmadas,
             'liquidacion_table': liquidacion_table
         })
-    return render(request, 'liquidacionmensual/confirmadas_periodo.html', context)
+    return render(request, 'liquidacionmensual/liquidaciones_periodo.html', context)
 
 
 @login_required
 def liquidaciones_periodo(request):
     context = {}
-    if request.method == 'POST':
-        print('hola mundo')
-    else:
-        tipos_estado = ['Inicio','Pendiente','Normal']
-        estados_pendientes = State.objects.filter(stateType__name__in=tipos_estado)
-        liquidaciones_list = Liquidacion.objects.filter(tipo__nombre = 'Mensual', mes__numero = datetime.datetime.now().month,
-                                                        mes__year = datetime.datetime.now().year, estado_actual__in=estados_pendientes)
-        liquidacion_table = LiquidacionMensualTable(liquidaciones_list)
-        context.update({
-            'lista': liquidaciones_list,
-            'liquidacion_table' : liquidacion_table,
-        })
+    vista = 'liquidaciones_periodo'
+    tipos_estado = ['Inicio','Pendiente','Normal']
+    estados_pendientes = State.objects.filter(stateType__name__in=tipos_estado)
+    liquidaciones_list = Liquidacion.objects.filter(tipo__nombre = 'Mensual', mes__numero = datetime.datetime.now().month,
+                                                    mes__year = datetime.datetime.now().year, estado_actual__in=estados_pendientes)
+    liquidacion_table = LiquidacionMensualTable(liquidaciones_list)
+    context.update({
+        'vista': vista,
+        'lista': liquidaciones_list,
+        'liquidacion_table' : liquidacion_table,
+    })
 
     return render(request, 'liquidacionmensual/liquidaciones_periodo.html', context)
 

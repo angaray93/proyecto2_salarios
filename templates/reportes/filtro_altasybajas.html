@@ -22,7 +22,7 @@
         <div class="row">
         <div class="col-12">
             <div class="col-12 d-flex align-self-start">
-                <h5>Liquidación Salarial Mensual por Departamento</h5>
+                <h5>Reporte de Altas y Bajas</h5>
             </div>
         </div>
         </div>
@@ -53,7 +53,7 @@
         <div class="row">
         <div class="col-md-6">
         <div class="form-group">
-            <label for="desde">Inicio del periodo:</label>
+            <label for="desde">Desde</label>
                 <div class="input-group">
                     {% if form.desde.errors %}
                     <ol>
@@ -73,7 +73,7 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label for="hasta">Fin del periodo:</label>
+                <label for="hasta">Hasta</label>
                     <div class="input-group">
                     {% if form.hasta.errors %}
                     <ol>
@@ -95,7 +95,7 @@
         <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                <label for="tipo">Tipo de Moviento:</label>
+                <label for="tipo">Tipo de movimiento:</label>
                 <div class="input-group">
                     {{ form.tipo }}
                 </div>
@@ -104,7 +104,7 @@
         <div class="col-md-6 align-self-end pb-3">
             <button type="submit" class="btn btn-success" name="q" value="true"
                     formaction="{% url 'liquidacion:informe_altasbajas' %}">
-                Crear Liquidaciones
+                Generar
             </button>
         </div>
         </div>

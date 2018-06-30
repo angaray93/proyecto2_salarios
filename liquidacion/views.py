@@ -158,6 +158,7 @@ def monto_objetodegasto(request):
                         })
                         lista_og.append(og_nombre)
                         valores.clear()
+                print(lista_og)
                 context.update({
                     'lista': lista_og,
                 })
@@ -285,7 +286,6 @@ def gastosxtipomovimiento(request):
             else:
                 monto = Liquidacionhaber.objects.filter(~Q(haber__movimiento__motivo=contrato) & Q(liquidacion__mes__year=anho)) \
                     .values('liquidacion__mes__nombre').annotate(sumames=Sum('subTotal')).order_by('liquidacion__mes__numero')
-            print('monto', monto)
 
             template = get_template('reportes/filtro_gastos_motivomovimiento.html')
             context = {
@@ -319,7 +319,6 @@ def historico_movimientos(request):
             funcionario = Funcionario.objects.get(cedula=cedula)
 
             movimientos = Movimiento.objects.filter(funcionario=funcionario).order_by('familia','fechainicio')
-            print('Movimientos:' , movimientos)
 
             template = get_template('reportes/filtro_historicomovimiento.html')
             context = {
@@ -1027,78 +1026,85 @@ def vista_liq_mensual(request, idliquidacion):
 
                     # -------------------------------VACACIONES---------------------------------------------#
 
-                    f = ~Q(movimiento__motivo__nombre = 'Contrato') \
-                        & Q(tieneVacaciones = True) \
-                        & Q(funcionario = liquidacion.funcionario)
+                    try:
+                        vacacion_periodo = Vacaciones.objects.filter(
+                            movimiento__funcionario=liquidacion.funcionario).order_by('-inicio')
+                    except Vacaciones.DoesNotExist:
+                        vacacion_periodo = None
 
-                    lista_movimientos = Movimiento.objects.filter(f).order_by('fechainicio')
+                    if vacacion_periodo is not None:
+                        f = ~Q(movimiento__motivo__nombre = 'Contrato') \
+                            & Q(tieneVacaciones = True) \
+                            & Q(funcionario = liquidacion.funcionario)
 
-                    if lista_movimientos.count() > 0:
-                        primera_fecha = lista_movimientos.first().fechainicio
-                        past_year = datetime.datetime.today().year - 1
-                        f = date(past_year, primera_fecha.month , primera_fecha.day)
-                        h = time(23, 59)
-                        fechainicio = datetime.datetime.combine(f, h)
+                        lista_movimientos = Movimiento.objects.filter(f).order_by('fechainicio')
 
-                        if (primera_fecha.month == liquidacion.mes.numero) and  (primera_fecha.year != liquidacion.mes.year):
-                            nueva_vacacion = Vacaciones(
-                                anho = datetime.datetime.today().year,
-                                inicio = fechainicio,
-                                movimiento = lista_movimientos.first()
-                            )
-                            nueva_vacacion.save()
+                        if lista_movimientos.count() > 0:
+                            primera_fecha = lista_movimientos.first().fechainicio
+                            past_year = datetime.datetime.today().year - 1
+                            f = date(past_year, primera_fecha.month , primera_fecha.day)
+                            h = time(23, 59)
+                            fechainicio = datetime.datetime.combine(f, h)
 
-                    vacacion_periodo = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario).order_by('-inicio')
-
-                    movimientos = Movimiento.objects.filter(
-                        pk__in=Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
-                    #if vacacion_periodo.movimiento in movimientos:
-
-                    newest = vacacion_periodo.first()
-                    newest.diasobtenidos = newest.calculo_diasobtenidos()
-                    newest.dias_restantes = newest.calculo_diasrestantes()
-                    newest.save()
-                    if liquidacion.vacaciones_usadas > 0 :
-                        vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
-                                                                           dias_restantes__gt=0).order_by('inicio')[:2]
-                        first = vacaciones_funcionario.first()
-                        if first.dias_restantes > liquidacion.vacaciones_usadas:
-                            first.diasusados += liquidacion.vacaciones_usadas
-                            first.save()
-                            first.dias_restantes = first.calculo_diasrestantes()
-                            first.save()
-                            vacacion_liquidacion = Vacacionesusadas(
-                                diasusados = liquidacion.vacaciones_usadas,
-                                vacaciones = first,
-                                mes = liquidacion.mes
-                            )
-                            vacacion_liquidacion.save()
-                        else:
-                            if vacaciones_funcionario.count() > 1:
-                                first =  vacaciones_funcionario[0]
-                                second =  vacaciones_funcionario[1]
-                                aux1 = liquidacion.vacaciones_usadas
-                                first.diasusados += first.dias_restantes
-                                first.save()
-                                vacacion_liquidacion = Vacacionesusadas(
-                                    diasusados= first.dias_restantes,
-                                    vacaciones=first,
-                                    mes=liquidacion.mes
+                            if (primera_fecha.month == liquidacion.mes.numero) and  (primera_fecha.year != liquidacion.mes.year):
+                                nueva_vacacion = Vacaciones(
+                                    anho = datetime.datetime.today().year,
+                                    inicio = fechainicio,
+                                    movimiento = lista_movimientos.first()
                                 )
-                                vacacion_liquidacion.save()
-                                aux2 = aux1 - first.dias_restantes
+                                nueva_vacacion.save()
+
+
+
+                        movimientos = Movimiento.objects.filter(
+                            pk__in=Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
+                        #if vacacion_periodo.movimiento in movimientos:
+
+                        newest = vacacion_periodo.first()
+                        newest.diasobtenidos = newest.calculo_diasobtenidos()
+                        newest.dias_restantes = newest.calculo_diasrestantes()
+                        newest.save()
+                        if liquidacion.vacaciones_usadas > 0 :
+                            vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
+                                                                               dias_restantes__gt=0).order_by('inicio')[:2]
+                            first = vacaciones_funcionario.first()
+                            if first.dias_restantes > liquidacion.vacaciones_usadas:
+                                first.diasusados += liquidacion.vacaciones_usadas
+                                first.save()
                                 first.dias_restantes = first.calculo_diasrestantes()
                                 first.save()
-                                second.diasusados += aux2
-                                second.save()
-                                vacacion_liquidacion2 = Vacacionesusadas(
-                                    diasusados = aux2,
-                                    vacaciones = second,
+                                vacacion_liquidacion = Vacacionesusadas(
+                                    diasusados = liquidacion.vacaciones_usadas,
+                                    vacaciones = first,
                                     mes = liquidacion.mes
                                 )
-                                vacacion_liquidacion2.save()
-                                second.dias_restantes = second.calculo_diasrestantes()
-                                second.save()
+                                vacacion_liquidacion.save()
+                            else:
+                                if vacaciones_funcionario.count() > 1:
+                                    first =  vacaciones_funcionario[0]
+                                    second =  vacaciones_funcionario[1]
+                                    aux1 = liquidacion.vacaciones_usadas
+                                    first.diasusados += first.dias_restantes
+                                    first.save()
+                                    vacacion_liquidacion = Vacacionesusadas(
+                                        diasusados= first.dias_restantes,
+                                        vacaciones=first,
+                                        mes=liquidacion.mes
+                                    )
+                                    vacacion_liquidacion.save()
+                                    aux2 = aux1 - first.dias_restantes
+                                    first.dias_restantes = first.calculo_diasrestantes()
+                                    first.save()
+                                    second.diasusados += aux2
+                                    second.save()
+                                    vacacion_liquidacion2 = Vacacionesusadas(
+                                        diasusados = aux2,
+                                        vacaciones = second,
+                                        mes = liquidacion.mes
+                                    )
+                                    vacacion_liquidacion2.save()
+                                    second.dias_restantes = second.calculo_diasrestantes()
+                                    second.save()
                 else:
                     if request.POST.get('boton', '') == 'Borrador':
                         transicion = Transition.objects.get(process=proceso, currentState=estado_actual, nextState__stateType__name='Pendiente')
@@ -1350,13 +1356,14 @@ def parametros_liq_mensual(request):
 def liq_pendientes_list(request, iddpto, mes, anho):
     context = {}
     imes = Mes.objects.get(numero=mes, year=anho)
-    estado = State.objects.get(stateType__name='Inicio', process__name='Liquidacion Mensual')
+    estado = State.objects.filter(~Q(stateType__name='Completado') & ~Q(stateType__name='Cancelado')
+                                  & ~Q(stateType__name='Corregido') & Q(process__name='Liquidacion Mensual'))
     departamento = Departamento.objects.get(pk=iddpto)
     divisones = Division.objects.filter(departamento__iddepartamento=iddpto)
     funcionarios = Movimiento.objects \
         .filter(division__departamento=departamento, estado__name='Activo') \
         .values('funcionario__idFuncionario').distinct('funcionario__idFuncionario')
-    liquidaciones = Liquidacion.objects.filter(mes=imes, estado_actual=estado, funcionario__idFuncionario__in=funcionarios)
+    liquidaciones = Liquidacion.objects.filter(mes=imes, estado_actual__in=estado, funcionario__idFuncionario__in=funcionarios)
     liquidacion_haberes = Liquidacionhaber.objects.filter(liquidacion__in=liquidaciones,
                                                           haber__movimiento__division__in=divisones)
     return render(request, 'liquidacionmensual/liqmensual_list.html', {'lista': liquidacion_haberes,

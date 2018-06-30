@@ -4,13 +4,7 @@
 {% load humanize %}
 {% load l10n %}
 
-{% block breadcrumbs %}
-    {{ block.super }}
-    {% breadcrumb " Liquidaciones Pendientes " 'liquidacion:index' %}
-{% endblock %}
-
 {% block content %}
-{% render_breadcrumbs %}
 
 <div class="col-12 col-sm-10 recuadro">
 
@@ -98,6 +92,19 @@
         <div class="col-3 text-center">
             <h6>Departamento : <strong>{{ liq_haber.haber.movimiento.division.departamento.nombre }}</strong></h6>
         </div>
+
+<div class="row mt-2">
+<div class="col">
+    <button type="button" form="liqhaber_form"
+            name="boton" value="Guardar"
+            onclick="location.href='{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}'"
+            class="btn btn-success" style="width: 100%">
+        Ir a Liquidacion
+    </button>
+</div>
+
+</div>
+
 {% if liq_haber.editable is True %}
         {% if liq_haber.liquidacion.tipo.nombre == 'Mensual' %}
             <div class="col-3">

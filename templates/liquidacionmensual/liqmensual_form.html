@@ -5,7 +5,7 @@
 {% load l10n %}
 
 {% block navbar %}
-    {% if liquidacion.estado_actual.name != 'Confirmado' %}
+    {% if liquidacion.estado_actual.name == 'Confirmado' %}
     <li class="nav-item">
       <a class="nav-link text-center" id="sidenavToggler" href="{% url 'liquidacion:print_liquidacion' liquidacion.pk %}">
         <i class="fa fa-fw fa-print"></i>Imprimir</a>
@@ -14,13 +14,8 @@
 
 {% endblock %}
 
-{% block breadcrumbs %}
-    {{ block.super }}
-    {% breadcrumb " Liquidaciones Pendientes " 'liquidacion:index' %}
-{% endblock %}
 
 {% block content %}
-{% render_breadcrumbs %}
 
 <div class="col-12 col-sm-10 recuadro">
 

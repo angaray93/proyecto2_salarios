@@ -12,7 +12,6 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     {% block title %}
-        <title>Liquidaciones Pendientes</title>
     {% endblock %}
 {% endblock %}
 
@@ -26,7 +25,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="col-12 d-flex align-self-start">
-                        <h5>Consulta de vacaciones de funcionarios </h5>
+                        <h5>Consulta de estado de vacaciones</h5>
                     </div>
                 </div>
             </div>
@@ -42,13 +41,15 @@
 
             <div class="row">
                 <div class="col-md-6">
-                        <label for="funcionario">Nro. de Documento de Identidad:</label>
+                    <div class="form-group">
+                        <label for="funcionario"><strong>Seleccione el funcionario</strong></label>
                         <div class="input-group">
                             {{ form.funcionario }}
                         </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                            <button type="submit" class="btn btn-success" name="q" value="true"
+                <div class="col-md-4 align-self-end pb-3">
+                    <button type="submit" class="btn btn-light opciones" name="q" value="true"
                             formaction="{% url 'liquidacion:consulta_vacaciones' %}">
                         Consultar
                     </button>

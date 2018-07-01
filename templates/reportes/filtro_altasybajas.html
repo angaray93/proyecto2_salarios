@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb " Seleccion de movimiento de funcionario " 'liquidacion:param_liq_definitiva' %}
+    {% breadcrumb " Filtro para reporte de altas y bajas " 'liquidacion:informe_altasbajas' %}
 {% endblock %}
 
 {% block head %}
@@ -53,7 +53,7 @@
         <div class="row">
         <div class="col-md-6">
         <div class="form-group">
-            <label for="desde">Desde</label>
+            <label for="desde"><strong>Desde</strong></label>
                 <div class="input-group">
                     {% if form.desde.errors %}
                     <ol>
@@ -73,7 +73,7 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label for="hasta">Hasta</label>
+                <label for="hasta"><strong>Hasta</strong></label>
                     <div class="input-group">
                     {% if form.hasta.errors %}
                     <ol>
@@ -92,21 +92,23 @@
                 </div>
         </div>
         </div>
+
         <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="tipo">Tipo de movimiento:</label>
-                <div class="input-group">
-                    {{ form.tipo }}
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="tipo"><strong>Tipo de movimiento</strong></label>
+                    <div class="input-group">
+                        {{ form.tipo }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6 align-self-end pb-3">
-            <button type="submit" class="btn btn-success" name="q" value="true"
-                    formaction="{% url 'liquidacion:informe_altasbajas' %}">
-                Generar
-            </button>
-        </div>
+
+            <div class="col-md-4 align-self-end pb-3">
+                <button type="submit" class="btn btn-light opciones" name="q" value="true"
+                        formaction="{% url 'liquidacion:informe_altasbajas' %}">
+                    Consultar
+                </button>
+            </div>
         </div>
 
         {% if form.errors %}

@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb " Seleccion de movimiento de funcionario " 'liquidacion:param_liq_definitiva' %}
+    {% breadcrumb " Seleccion de mes " 'liquidacion:monto_objetodegasto' %}
 {% endblock %}
 
 {% block head %}
@@ -41,15 +41,20 @@
                     {% endfor %}
                 </div>
             </div>
+
             <div class="row">
-                <label for="mes">Seleccione el mes:</label>
-                <div class="col-6">
-                    {{ form.mes }}
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="mes"><strong>Seleccione el mes</strong></label>
+                        <div class="input-group">
+                            {{ form.mes }}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <button type="submit" class="btn btn-success" name="q" value="true"
+                <div class="col-md-4 align-self-end pb-3">
+                    <button type="submit" class="btn btn-light opciones" name="q" value="true"
                             formaction="{% url 'liquidacion:monto_objetodegasto' %}">
-                        Generar
+                        Generar informe
                     </button>
                 </div>
             </div>

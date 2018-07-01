@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb " Seleccion de movimiento de funcionario " 'liquidacion:param_liq_definitiva' %}
+    {% breadcrumb " Seleccion de departamento " 'liquidacion:nomina_funcionarios' %}
 {% endblock %}
 
 {% block head %}
@@ -41,17 +41,20 @@
                     {% endfor %}
                 </div>
             </div>
+
             <div class="row">
-                <label for="motivo">Seleccione el departamento :</label>
-                <div class="col-6">
-                    {{ form.departamento }}
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="departamento"><strong>Seleccione el departamento</strong></label>
+                        <div class="input-group">
+                            {{ form.departamento }}
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <button type="submit" class="btn btn-success" name="q" value="true"
+                <div class="col-md-4 align-self-end pb-3">
+                    <button type="submit" class="btn btn-light opciones" name="q" value="true"
                             formaction="{% url 'liquidacion:nomina_funcionarios' %}">
-                        Generar
+                        Generar informe
                     </button>
                 </div>
             </div>

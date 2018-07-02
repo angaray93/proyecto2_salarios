@@ -25,9 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'o*e41!2kv$izlh^pqi@+#w)a&)enc(g$=v$n@mw()uy_^4&9l@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 
 # Application definition
@@ -85,9 +85,9 @@ WSGI_APPLICATION = 'sueldos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'proyecto2-repo',
+        'NAME': 'proyecto2-bk',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'PASSWORD': 'agaray',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

@@ -24,40 +24,15 @@
           <img id="image" src="{% static "img/fpuna_logo_corporativo4.png" %}" class="rounded mx-auto d-block" />
           <label class="control-label" for="username"><strong>Sistema de Liquidacion de Salarios y Beneficios
           </strong></label>
+          <label class="control-label" style="color: red;"><strong>Error 500</strong></label>
       </div>
       <div class="card-body">
-        <form method="post">
-            {% if form.errors %}
-                <strong style="color: red">Credenciales inválidas, intente de nuevo</strong>
-            {% endif %}
-          {% csrf_token %}
-        {% if next %}
-            {% if user.is_authenticated %}
-            <p>Usted no cuenta con los permisos necesarios para acceder a esta pagina.</p>
-            {% else %}
-            <strong style="color: red">Favor inicie sesión para continuar</strong>
-            {% endif %}
-        {% endif %}
-            <div class="form-group">
-               <div class="control-group">
-            <label class="control-label" for="username"><strong>Usuario:</strong></label>
-            <div class="controls">
-                <input type="text" class="form-control" id="username" name="username"  placeholder="Usuario">
-            </div>
-            </div>
-            <br>
-            <div class="control-group">
-                <label class="control-label" for="password"><strong>Contraseña:</strong></label>
-                <div class="controls">
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Contraseña">
-                </div>
-            </div>
-            </div>
-            <br>
-            <div class="form-group col-md-12">
-                <button type="submit" class="btn btn-primary btn-block">Iniciar Sesion</button>
-            </div>
-        </form>
+        <p class="lead" style="color: red;">
+            Ha ocurrido un error, favor contacte con el administrador del sistema.
+        </p>
+        <p>
+            <a href="{% url 'login' %}"><strong>Volver</strong></a>
+        </p>
       </div>
     </div>
   </div>

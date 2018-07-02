@@ -84,5 +84,26 @@
                     $('#id_cantidad').prop('disabled',false);
                 }
             });
+
+            $('#id_variable').click(function () {
+            var var_select = $('#id_variable');
+            $.ajax({
+                url: '{% url 'liquidacion:traer_variables' %}',
+                dataType: 'json',
+                success: function (data) {
+                    if ($.trim(data)) {
+                        var_select.empty().append('<option value=' + 0 + ' selected disabled>' + 'Seleccione una opcion' + '</option>');
+                        $.each(data, function (key, value) {
+                            var_select.append('<option value=' + value.id + '>' + value.value + '</option>')
+                        });
+                    } else {
+                        var_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                    }
+                },
+                error: function (data) {
+                    var_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                }
+            });
+        });
         })
     </script>

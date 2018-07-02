@@ -418,7 +418,7 @@ class Liquidacion(models.Model):
     estado_actual = models.ForeignKey('State', on_delete=models.CASCADE, related_name='fk_liquidacion_estado')
     tipo = models.ForeignKey('LiquidacionType', on_delete=models.CASCADE, related_name='fk_liquidacion_tipo')
     propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fk_liquidacion_user')
-    motivo = models.ForeignKey('LiquidacionMotivo', on_delete=models.CASCADE, related_name='fk_liquidacion_motivo', default=1)
+    motivo = models.ForeignKey('LiquidacionMotivo', on_delete=models.CASCADE, related_name='fk_liquidacion_motivo', default=1, null=True, blank=True)
 
     #class Meta:
     #    unique_together = (('funcionario', 'mes'),)
@@ -490,10 +490,8 @@ class Liquidacionhaber(models.Model):
             pago = Pago.objects.get(mes=self.liquidacion.mes, movimiento=self.haber.movimiento)
             resultado =  suma_monto_credito + pago.monto
         if self.liquidacion.tipo.nombre != 'Definitiva':
-            print('suma_constante_credito', resultado)
             return round(resultado)
         else:
-            print('suma_constante_credito', resultado)
             return round((resultado / 30) * self.liquidacion.dias_trabajados)
 
     def suma_credito_baja(self):
@@ -510,7 +508,6 @@ class Liquidacionhaber(models.Model):
                 Sum(models.F('total_detalle')), 0,
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_debito'] or 0
-        print('suma_detalle_debito', suma_detalle_debito)
         return suma_detalle_debito
 
     def suma_detalles_credito(self):
@@ -519,7 +516,6 @@ class Liquidacionhaber(models.Model):
                 Sum(models.F('total_detalle')), 0,
                 output_field=models.DecimalField(decimal_places=2)
             ))['monto_credito'] or 0
-        print('suma_detalle_credito', suma_detalle_credito)
         return suma_detalle_credito
 
     def calcular_total(self):
@@ -581,7 +577,6 @@ class DetalleLiquidacion(models.Model):
             monto = round(self.liquidacion_haber.subTotal * (self.constante.tipo.porcentaje / 100 ), 0)
         else:
             monto = self.monto
-        print('calcular_monto_constante', monto)
         return monto
 
     def calcular_monto_baja(self):
@@ -591,7 +586,7 @@ class DetalleLiquidacion(models.Model):
             monto = self.monto
         return monto
 
-    def calculo_totaldetalle(self):
+    def  calculo_totaldetalle(self):
         total = round(self.cantidad * self.monto, 0)
         return total
 
@@ -628,7 +623,7 @@ class Haber(models.Model):
     descripcion = models.CharField(max_length=50, blank=True, default='')
     estado = models.ForeignKey('State', on_delete=models.DO_NOTHING, default=1)
     # -----------------------------------Relationships-----------------------------------------#
-    movimiento = models.OneToOneField('Movimiento', on_delete=models.CASCADE)
+    movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE)
 
 
 class Process(models.Model):

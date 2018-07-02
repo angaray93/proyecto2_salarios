@@ -134,26 +134,32 @@
         </div>
     </div> <!-- Fin cuerpo -->
 
-{% if liquidacion.estado_actual.name != 'Confirmado' %}
-<div class="card" style="background-color: #b9bbbe">
-  <div class="card-header">
-    <strong>Vacaciones utilizadas</strong>
-  </div>
-  <div class="card-body" style="background-color: #b9bbbe">
-    <div class="row">
-        <div class="col-6">
-            <label for="vacaciones_usadas">Cantidad de días :</label>
-            {{ form.vacaciones_usadas }}
-        </div>
-        <div class="col-6">
-            <label for="motivo">Motivo de Liquidacion:</label>
+
+<div class="row">
+    <div class="col-6">
+        <div class="card" style="background-color: #b9bbbe">
+            <div class="card-header">
+                <strong>Motivo de Liquidacion</strong>
+            </div>
+        <div class="card-body" style="background-color: #b9bbbe">
+            <label for="motivo"></label>
             {{ form.motivo }}
         </div>
+        </div>
     </div>
-  </div>
+    <div class="col-6">
+        <div class="card" style="background-color: #b9bbbe">
+            <div class="card-header">
+                <strong>Vacaciones utilizadas</strong>
+            </div>
+        <div class="card-body" style="background-color: #b9bbbe">
+        <label for="vacaciones_usadas">Cantidad de días</label>
+        {{ form.vacaciones_usadas }}
+        </div>
+        </div>
+    </div>
 </div>
 <hr>
-{% endif %}
 
 <div class="card" style="background-color: #b9bbbe">
   <div class="card-header">
@@ -227,5 +233,17 @@
 <div id="popup" class="modal fade" role="dialog">
 
 </div>
+
+<footer>
+    <script>
+        $(document).ready(function () {
+            {% if liquidacion.tipo.nombre == 'Mensual' %}
+                $("#id_motivo").prop("disabled", true );
+            {% endif %}
+        });
+    </script>
+</footer>
+
+
 
 {% endblock %}

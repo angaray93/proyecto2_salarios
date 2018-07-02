@@ -30,7 +30,9 @@
         <div class="col-12" style="font-size: 12px">
             <div class="row text-center">
                 <div class="col-12 text-center">
-                    <h5><strong>Liquidacion Salarial N° {{ liq_haber.liquidacion.pk }}</strong></h5>
+                    <a href="{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}"><h5>
+                        <strong>Liquidacion Salarial N° {{ liq_haber.liquidacion.pk }}</strong></h5>
+                    </a>
                 </div>
             </div>
             <br>
@@ -93,30 +95,18 @@
             <h6>Departamento : <strong>{{ liq_haber.haber.movimiento.division.departamento.nombre }}</strong></h6>
         </div>
 
-<div class="row mt-2">
-<div class="col">
-    <button type="button" form="liqhaber_form"
-            name="boton" value="Guardar"
-            onclick="location.href='{% url 'liquidacion:editar_liquidacion' liq_haber.liquidacion.pk %}'"
-            class="btn btn-success" style="width: 100%">
-        Ir a Liquidacion
-    </button>
-</div>
-
-</div>
-
-{% if liq_haber.editable is True %}
-        {% if liq_haber.liquidacion.tipo.nombre == 'Mensual' %}
+    {% if liq_haber.editable is True %}
+            {% if liq_haber.liquidacion.tipo.nombre == 'Mensual' %}
+                <div class="col-3">
+                    <button type="submit" form="liqhaber_form"
+                            name="boton" value="Guardar"
+                            formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
+                            class="btn btn-success" style="width: 100%">
+                        Finalizar
+                    </button>
+                </div>
+            {% else %}
             <div class="col-3">
-                <button type="submit" form="liqhaber_form"
-                        name="boton" value="Guardar"
-                        formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
-                        class="btn btn-success" style="width: 100%">
-                    Finalizar
-                </button>
-            </div>
-        {% else %}
-        <div class="col-3">
                 <button type="submit" form="liqhaber_form"
                         name="boton" value="Finalizar"
                         formaction="{% url 'liquidacion:editar_liquidacionhaber' liq_haber.pk %}"
@@ -124,8 +114,8 @@
                     Finalizar
                 </button>
             </div>
-        {% endif %}
-{% endif %}
+            {% endif %}
+    {% endif %}
 </div>
 
 <div id="formulario">
@@ -198,16 +188,16 @@
                     <table id="tabla_detalleliquidacion" class="table">
                         <thead class="thead-light">
                             <tr>
+                                <th class="text-center">Cantidad</th>
                                 <th class="text-center">Descripcion</th>
-                                <th class="text-center">Importe</th>
                                 <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for detalle in detalles_list %}
-                                <tr class="text-dark" style="background-color: #c6c8ca; text">
+                                <tr class="text-dark" style="background-color: #c6c8ca;">
+                                    <td class="text-center">{{ detalle.cantidad|floatformat }}</td>
                                     <td>{{ detalle.variable }}</td>
-                                    <td class="text-center">Gs. {{ detalle.total_detalle|floatformat }}</td>
                                     <td class="text-center">
                                         <button class="btn btn-outline-danger" type="button"
                                                 onclick="location.href='{% url 'liquidacion:detalleliquidacion-delete' detalle.pk %}'">
@@ -219,7 +209,7 @@
                         </tbody>
                     </table>
                 </div>
-                </div>
+            </div>
       </div>
 </div>
 

@@ -24,14 +24,14 @@
           <img id="image" src="{% static "img/fpuna_logo_corporativo4.png" %}" class="rounded mx-auto d-block" />
           <label class="control-label" for="username"><strong>Sistema de Liquidacion de Salarios y Beneficios
           </strong></label>
-          <label class="control-label" style="color: red;"><strong>Error 500</strong></label>
+          <label class="control-label" style="color: red;"><strong>Error</strong></label>
       </div>
       <div class="card-body">
         <p class="lead" style="color: red;">
             Ha ocurrido un error, favor contacte con el administrador del sistema.
         </p>
         <p>
-            <a href="{% url 'login' %}"><strong>Volver</strong></a>
+            <a href="{% url 'liquidacion:index' %}"><strong>Volver</strong></a>
         </p>
       </div>
     </div>

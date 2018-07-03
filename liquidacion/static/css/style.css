@@ -39,13 +39,6 @@ select {
   color: #4c4c4c;
 }
 
-p {
-  font-size: 12px;
-  width: 150px;
-  display: inline-block;
-  margin-left: 18px;
-}
-
 h1 {
   font-size: 32px;
   font-weight: 300;

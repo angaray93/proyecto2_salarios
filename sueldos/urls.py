@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
-from liquidacion import views
+from liquidacion.views import *
 
 urlpatterns = [
     path('', auth_views.login, name = 'login'),
@@ -31,6 +31,6 @@ urlpatterns = [
     path('home/', TemplateView.as_view(template_name='index.html'), name='home'),
 ]
 
-handler404 = 'liquidacion.views.error_404_view'
-handler500 = 'liquidacion.views.error_500_view'
+handler404 = 'liquidacion.views.handler404'
+handler500 = 'liquidacion.views.handler500'
 

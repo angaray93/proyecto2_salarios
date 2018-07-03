@@ -3,6 +3,13 @@
 {% load django_bootstrap_breadcrumbs %}
 {% load humanize %}
 
+{% block navbar %}
+    <li class="nav-item">
+    <a id="" data-toggle="modal" data-target="#help_modal" class="nav-link text-center">
+        <i class="fa fa-question-circle"></i> Ayuda</a>
+    </li>
+{% endblock %}
+
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb "Debitos y Creditos" 'liquidacion:nueva_constante' %}
@@ -26,7 +33,7 @@
                         Pagos
                     </a>
                 {% else %}
-                    <a class="nav-link active" href="{% url 'liquidacion:nueva_constante' movimiento.pk %}">
+                    <a class="nav-link active" style="background-color: #b9bbbe" href="{% url 'liquidacion:nueva_constante' movimiento.pk %}">
                         Debitos y Creditos
                     </a>
                 {% endif %}
@@ -120,7 +127,7 @@
 <hr>
 
 <div class="row">
-        <div class="col-lg-12">
+    <div class="col-lg-12">
         <table id="tabla_constantes" class="table table-hover">
             <thead class="thead-light">
                 <tr>
@@ -138,9 +145,38 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+
+<div id="help_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: #b9bbbe">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold" style="color: #007bff">Información de ayuda al usuario</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>En ésta sección usted podrá agregar al nuevo cargo, los montos que se debitarán o acreditarán al
+                    salario del funcionario indefinidamente durante el tiempo que dure activo en el cargo.
+                    Aquí usted deberá seleccionar el concepto correspondiente a dicho monto seleccionando una
+                    opción en el campo <strong>Tipo</strong>,
+                    en caso de que el concepto sea calculado en base a un porcentaje del salario, éste se mostrará
+                    entre las opciones a seleccionar, de lo contrario usted podrá especificar en el campo
+                    <strong>Monto</strong> una cantidad fija en Guaraníes, la cual se aplicará indefinidamente al salario del funcionario
+                    según el tipo del concepto que seleccione, que podrá ser tanto débito como crédito.
+                </p>
+                <p>Para finalizar el proceso presione el botón
+                    <button type="button" class="btn btn-secondary" name="finalizar" onclick="">Finalizar</button>
+                </p>
+            </div>
+            <div id="modal-body" class="modal-footer">
+                <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">Entendido</button>
+            </div>
         </div>
     </div>
-
+</div>
 
 </div>
 

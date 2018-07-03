@@ -23,12 +23,12 @@ from django.http import HttpResponse
 from django.views import View
 from liquidacion.utils import render_to_pdf
 
-def error_404_view(request, exception):
-    return render(request, 'errors/404.html')
+def handler404(request):
+    return render(request, '404.html', status=404)
 
 
-def error_500_view(request, exception):
-    return render(request, 'errors/500.html')
+def handler500(request):
+    return render(request, '500.html', status=500)
 
 
 @login_required

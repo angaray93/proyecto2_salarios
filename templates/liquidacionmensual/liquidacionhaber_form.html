@@ -4,6 +4,13 @@
 {% load humanize %}
 {% load l10n %}
 
+{% block navbar %}
+    <li class="nav-item">
+    <a id="" data-toggle="modal" data-target="#help_modal" class="nav-link text-center">
+        <i class="fa fa-question-circle"></i> Ayuda</a>
+    </li>
+{% endblock %}
+
 {% block content %}
 
 <div class="col-12 col-sm-10 recuadro">
@@ -215,6 +222,44 @@
 
 {% endif %}
 
+</div>
+
+<div id="help_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: #b9bbbe">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold" style="color: #007bff">Información de ayuda al usuario</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Esta pantalla representa una sección de la liquidacion salarial creada.
+                    Esta seccion corresponde a los datos del cargo seleccionado en la pantalla anterior, de manera que usted pueda
+                    tener una vista de los montos correspondientes a dicho cargo que se aplicarán a la liquidacion salarial actual.</p>
+                <p>Primeramente el sistema muestra un listado de los débitos y créditos que han sido establecidos previamente
+                     para aplicarse al salario durante el tiempo que dure activo el cargo.</p>
+                <p>Para agregar un monto al salario, ya sea débito o crédito, presione el botón
+                    <button class="btn btn-primary" type="button"><i class="fa fa-plus" style="font-size:25px" aria-hidden="true"></i></button>.</p>
+                <p>Ésto desplegará un formulario en el cual usted podrá seleccionar</p>
+                <p>1. El concepto en el cual se acreditará o debitará el monto, para esto despliegue las opciones
+                    que figuran en el campo <strong>Descripción</strong></p>
+                <p>2. El campo <strong>Parámetro</strong>, que representa la forma en la que se aplicará el débito o crédito</p>
+                <p>3. En caso de que haya seleccionado el parámetro <strong>Monto</strong> usted deberá cargar el monto deseado
+                    de lo contrario, deberá completar el campo <strong>Cantidad</strong> con la cantidad de veces
+                    que desea aplicar dicho crédito o débito.
+                </p>
+                <p>Cuando haya finalizado presione el botón
+                    <button type="button" class="btn btn-success">Finalizar</button>, ésto terminará el proceso de carga y lo
+                    redireccionará a la vista general de la Liquidacion Salarial, por lo que
+                    ya no podrá editar los datos una vez que lo haya presionado.
+                </p>
+            </div>
+            <div id="modal-body" class="modal-footer">
+                <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">Entendido</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="popup" class="modal fade" role="dialog">

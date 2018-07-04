@@ -44,11 +44,11 @@
         <div class="col-12">
             <div class="row">
                 {% if liquidacion.tipo.nombre == 'Definitiva' %}
-                <div class="col-md-3 col-sm-3 btn_sep">
+                <div class="col-md-12 col-sm-12 btn_sep">
                     <button type="submit" form="liquidacion_form"
                             name="boton" value="Definitiva"
                             formaction="{% url 'liquidacion:editar_liquidacion' liquidacion.pk %}"
-                            class="btn" style="width: 100%">
+                            class="btn btn-primary" style="width: 100%">
                         Confirmar
                     </button>
                 </div>

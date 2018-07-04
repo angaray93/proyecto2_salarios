@@ -133,6 +133,7 @@ def monto_objetodegasto(request):
 
                 context.update({
                     'mes': mes,
+                    'anho': mes.year,
                     'lista': lista_og,
                 })
             else:
@@ -167,6 +168,7 @@ def monto_objetodegasto(request):
                         valores.clear()
                 print(lista_og)
                 context.update({
+                    'anho': datetime.datetime.now().year,
                     'lista': lista_og,
                 })
 
@@ -252,7 +254,6 @@ def informe_vacaciones(request):
         if form.is_valid():
             cedula = form.cleaned_data['funcionario']
             funcionario = Funcionario.objects.get(cedula=cedula)
-
             vacaciones = Vacaciones.objects.filter(movimiento__funcionario=funcionario).order_by('-inicio')
 
             template = get_template('reportes/filtro_informevacaciones.html')
@@ -296,6 +297,7 @@ def gastosxtipomovimiento(request):
 
             template = get_template('reportes/filtro_gastos_motivomovimiento.html')
             context = {
+                'motivo': motivo,
                 'monto': monto,
                 'anho': anho,
             }
@@ -323,27 +325,34 @@ def historico_movimientos(request):
         form = LiquidacionDefinitivaForm(request.POST)
         if form.is_valid():
             cedula = form.cleaned_data['funcionario']
-            funcionario = Funcionario.objects.get(cedula=cedula)
+            try:
+                funcionario = Funcionario.objects.get(cedula=cedula)
+            except Funcionario.DoesNotExist:
+                messages.error(request, "No existe funcionario con estas caracteristicas")
+                return redirect(reverse('liquidacion:param_liq_definitiva'))
 
             movimientos = Movimiento.objects.filter(funcionario=funcionario).order_by('familia','fechainicio')
-
-            template = get_template('reportes/filtro_historicomovimiento.html')
-            context = {
-                'movimientos': movimientos,
-                'funcionario': funcionario,
-            }
-            html = template.render(context)
-            pdf = render_to_pdf('reportes/print_historicomovimiento.html', context)
-            if pdf:
-                response = HttpResponse(pdf, content_type='application/pdf')
-                filename = "file_%s.pdf" % ("12341231")
-                content = "inline; filename='%s'" % (filename)
-                download = request.GET.get("download")
-                if download:
-                    content = "attachment; filename='%s'" % (filename)
-                response['Content-Disposition'] = content
-                return response
-            return HttpResponse("Not found")
+            if movimientos.count() == 0 :
+                messages.error(request, "Sin resultados")
+                return redirect(reverse('liquidacion:param_liq_definitiva'))
+            else:
+                template = get_template('reportes/filtro_historicomovimiento.html')
+                context = {
+                    'movimientos': movimientos,
+                    'funcionario': funcionario,
+                }
+                html = template.render(context)
+                pdf = render_to_pdf('reportes/print_historicomovimiento.html', context)
+                if pdf:
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    filename = "file_%s.pdf" % ("12341231")
+                    content = "inline; filename='%s'" % (filename)
+                    download = request.GET.get("download")
+                    if download:
+                        content = "attachment; filename='%s'" % (filename)
+                    response['Content-Disposition'] = content
+                    return response
+                return HttpResponse("Not found")
     else:
         form = LiquidacionDefinitivaForm()
     return render(request, 'reportes/filtro_historicomovimiento.html', {'form': form})
@@ -360,31 +369,36 @@ def liquidacion_filtro(request):
             imes = form.cleaned_data['mes']
             anho = form.cleaned_data['anho']
             mes = Mes.objects.get(numero=imes, year=anho)
-            liquidacion = Liquidacion.objects.get(mes=mes, funcionario__cedula=cedula, tipo__nombre='Mensual')
-            liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
-            movimientos = Movimiento.objects.filter(
-                pk__in=Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
-            detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
+            try:
+                liquidacion = Liquidacion.objects.get(mes=mes, funcionario__cedula=cedula, tipo__nombre='Mensual')
+            except Liquidacion.DoesNotExist:
+                messages.error(request, "Sin resultados")
+                return redirect(reverse('liquidacion:liquidacion_filtro'))
+            if liquidacion:
+                liq_haberes = Liquidacionhaber.objects.filter(liquidacion=liquidacion).order_by('pk')
+                movimientos = Movimiento.objects.filter(
+                    pk__in=Subquery(liq_haberes.values('haber__movimiento__idmovimiento')))
+                detalles = DetalleLiquidacion.objects.filter(liquidacion_haber__in=liq_haberes)
 
-            template = get_template('reportes/print_liquidacionmensual.html')
-            context = {
-                'liquidacion': liquidacion,
-                'haberes' : liq_haberes,
-                'detalles' : detalles,
-            }
-            html = template.render(context)
-            pdf = render_to_pdf('reportes/print_liquidacionmensual.html', context)
-            if pdf:
-                response = HttpResponse(pdf, content_type='application/pdf')
-                filename = "liquidacionm_%s.pdf" % ("12341231")
-                content = "inline; filename='%s'" % (filename)
-                download = request.GET.get("download")
-                if download:
-                    content = "attachment; filename='%s'" % (filename)
-                response['Content-Disposition'] = content
-                return response
-            return HttpResponse("Not found")
-            #return render(request, 'reportes/liquidacionmensual.html', {'form': form})
+                template = get_template('reportes/print_liquidacionmensual.html')
+                context = {
+                    'liquidacion': liquidacion,
+                    'haberes' : liq_haberes,
+                    'detalles' : detalles,
+                }
+                html = template.render(context)
+                pdf = render_to_pdf('reportes/print_liquidacionmensual.html', context)
+                if pdf:
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    filename = "liquidacionm_%s.pdf" % ("12341231")
+                    content = "inline; filename='%s'" % (filename)
+                    download = request.GET.get("download")
+                    if download:
+                        content = "attachment; filename='%s'" % (filename)
+                    response['Content-Disposition'] = content
+                    return response
+                return HttpResponse("Not found")
+                #return render(request, 'reportes/liquidacionmensual.html', {'form': form})
     else:
         form = LiqPendientesForm()
     return render(request, 'reportes/filtro_liquidacion.html', {'form': form})
@@ -439,6 +453,7 @@ def generar_liq_definitiva(request, idmovimiento):
             funcionario = Funcionario.objects.get(pk=movimiento.funcionario.idFuncionario)
             fecha_hoy = datetime.datetime.now()
             mes = Mes.objects.get(numero=datetime.datetime.now().month, year=datetime.datetime.now().year)
+            existe_pago = True
             liquidacion = Liquidacion(
                 fechacreacion = datetime.datetime.now(),
                 ultimamodificacion = datetime.datetime.now(),
@@ -462,30 +477,37 @@ def generar_liq_definitiva(request, idmovimiento):
         haber = Haber.objects.get(movimiento=movimiento, estado__name='Activo')
         print('Liquidacion del movimiento numero :', haber.movimiento.pk)
         if haber.movimiento.motivo.nombre == 'Contrato' and haber.movimiento.formapago == 'M':
+            liq_haber = None
             try:
                 pago = Pago.objects.get(movimiento=haber.movimiento, mes=liquidacion.mes)
+                existe_pago = True
             except Pago.DoesNotExist:
                 pago = None
-            if pago is not None:
+                existe_pago = False
+                messages.warning(request, "No existe pagos asociados a este cargo")
+                return redirect(reverse('liquidacion:param_liq_definitiva'))
+            if existe_pago is True:
                 liq_haber = Liquidacionhaber(
                     haber=haber,
                     liquidacion=liquidacion,
                     pago=pago,
                 )
+                liq_haber.save()
         else:
             liq_haber = Liquidacionhaber(
                 haber=haber,
                 liquidacion=liquidacion,
             )
-        liq_haber.salario_proporcional = liq_haber.calculo_salario_proporcional()
-        liq_haber.monto_debito = liq_haber.suma_detalles_debito()
-        liq_haber.monto_credito = liq_haber.suma_detalles_credito()
-        liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
         try:
             liq_haber.save()
         except IntegrityError:
             messages.error(request, "Ya se ha creado una liquidacion para este movimiento")
             return redirect(reverse('liquidacion:param_liq_definitiva'))
+
+        liq_haber.salario_proporcional = liq_haber.calculo_salario_proporcional()
+        liq_haber.monto_debito = liq_haber.suma_detalles_debito()
+        liq_haber.monto_credito = liq_haber.suma_detalles_credito()
+        liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
 
         if liq_haber.haber.movimiento.motivo.nombre == 'Contrato':
             salario_mes = DetalleLiquidacion(

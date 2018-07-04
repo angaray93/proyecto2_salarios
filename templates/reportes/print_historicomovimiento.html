@@ -47,6 +47,10 @@
                  color: #333; /* old IE */
                  background-color: #fff; /* Modern Browsers */
              }
+           @page {
+                size: a4 landscape;
+                margin: 2cm;
+            }
          </style>
      </head>
      <body>
@@ -94,12 +98,12 @@
                          {% endifchanged %}
 
                         <tr style="font-size: 13px; padding-top: 3px;">
-                            <td style="text-align: center;">{{ item.haber.movimiento.motivo }}</td>
-                            <td style="text-align: center;">{{ item.haber.movimiento.categoria_salarial }}</td>
-                            <td style="text-align: center;">{{ item.haber.movimiento.fechainicio }}</td>
-                            <td style="text-align: center;">{{ item.haber.movimiento.fechafin }}</td>
-                            <td style="text-align: center;">{{ item.haber.movimiento.funcion }}</td>
-                            <td style="text-align: center;">{{ item.haber.movimiento.division }}</td>
+                            <td style="text-align: center;">{{ item.motivo }}</td>
+                            <td style="text-align: center;">{{ item.categoria_salarial }}</td>
+                            <td style="text-align: center;">{{ item.fechainicio }}</td>
+                            <td style="text-align: center;">{{ item.fechafin }}</td>
+                            <td style="text-align: center;">{{ item.funcion }}</td>
+                            <td style="text-align: center;">{{ item.division }}</td>
                         </tr>
                      </table>
                  </div>
@@ -121,13 +125,13 @@
                     <th style="text-align: center;">Dependencia</th>
                 </tr>
                 <tr style="font-size: 13px; padding-top: 3px;">
-                    <td style="text-align: center;">{{ item.haber.movimiento.motivo }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.og }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.codigo }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.fechainicio }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.fechafin }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.funcion }}</td>
-                    <td style="text-align: center;">{{ item.haber.movimiento.division }}</td>
+                    <td style="text-align: center;">{{ item.motivo }}</td>
+                    <td style="text-align: center;">{{ item.og }}</td>
+                    <td style="text-align: center;">{{ item.codigo }}</td>
+                    <td style="text-align: center;">{{ item.fechainicio }}</td>
+                    <td style="text-align: center;">{{ item.fechafin }}</td>
+                    <td style="text-align: center;">{{ item.funcion }}</td>
+                    <td style="text-align: center;">{{ item.division }}</td>
                 </tr>
                  </table>
              {% endif %}

@@ -72,6 +72,12 @@
   <ul class="navbar-nav ml-auto">
     {% block navbar %}
     {% endblock %}
+    {% if user.is_authenticated %}
+        <li class="nav-item">
+          <p class="nav-link">
+            <i class="fa fa-fw fa-user"></i>Bienvenido, <strong>{{ user.username }}</strong></p>
+        </li>
+    {% endif %}
     <li class="nav-item">
       <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
         <i class="fa fa-fw fa-sign-out"></i>Salir</a>

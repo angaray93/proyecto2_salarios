@@ -47,6 +47,10 @@
                  color: #333; /* old IE */
                  background-color: #fff; /* Modern Browsers */
              }
+              @page {
+                size: a4 landscape;
+                margin: 2cm;
+            }
          </style>
      </head>
      <body>
@@ -67,7 +71,7 @@
              </div>
              <div class="row">
                  <div class="col-12">
-                     <h5 style="text-align: center;">Informe</h5>
+                     <h5 style="text-align: center;">Informe de {{ tipo }}s </h5>
                  </div>
              </div>
              <div class="row">
@@ -82,7 +86,7 @@
                         <th style="text-align: center;">Motivo</th>
                         <th style="text-align: center;">Fecha de operación</th>
                         <th style="text-align: center;">Funcionario</th>
-                        <th style="text-align: center;">Categoria Salarial</th>
+                        <th style="text-align: center;">Detalle</th>
                         <th style="text-align: center;">Funcion</th>
                         <th style="text-align: center;">Dependencia</th>
                     </tr>
@@ -93,22 +97,22 @@
                             <td style="text-align: center;">{{ item.fechainicio }}</td>
                             <td style="text-align: center;">{{ item.funcionario }}</td>
                             {% if item.motivo.nombre != 'Contrato' %}
-                                <th style="text-align: center;">{{ item.categoria_salarial }}</th>
+                                <th style="text-align: center;">Categoria {{ item.categoria_salarial }}</th>
                             {% else %}
-                                <th style="text-align: center;">{{ item.codigo }}</th>
+                                <th style="text-align: center;">Contrato N° {{ item.codigo }}</th>
                             {% endif %}
                             <td style="text-align: center;">{{ item.funcion }}</td>
                             <td style="text-align: center;">{{ item.division }}</td>
                         </tr>
                      {% else %}
                          <tr style="font-size: 13px; padding-top: 3px;">
-                            <td style="text-align: center;">{{ item.haber.movimiento.motivo.nombre }} - Baja</td>
+                            <td style="text-align: center;">{{ item.liquidacion.motivo }} </td>
                             <td style="text-align: center;">{{ item.liquidacion.fechacreacion }}</td>
                             <td style="text-align: center;">{{ item.liquidacion.funcionario }}</td>
                             {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
-                                <th style="text-align: center;">{{ item.haber.movimiento.categoria_salarial }}</th>
+                                <th style="text-align: center;">Categoria {{ item.haber.movimiento.categoria_salarial }}</th>
                             {% else %}
-                                <th style="text-align: center;">{{ item.haber.movimiento.codigo }}</th>
+                                <th style="text-align: center;">Contrato N° {{ item.haber.movimiento.codigo }}</th>
                             {% endif %}
                             <td style="text-align: center;">{{ item.haber.movimiento.funcion }}</td>
                             <td style="text-align: center;">{{ item.haber.movimiento.division }}</td>

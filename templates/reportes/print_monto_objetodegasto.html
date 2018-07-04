@@ -72,7 +72,7 @@
              </div>
              <div class="row">
                  <div class="col-12">
-                     <h5 style="text-align: center;">Resumen de monto gastado por Objeto de Gasto</h5>
+                     <h5 style="text-align: center;">Resumen de monto gastado por Objeto de Gasto del año {{ anho|unlocalize }}</h5>
                  </div>
              </div>
          </div>
@@ -81,7 +81,7 @@
          {% if mes %}
              <div class="row">
                 <div class="col-12">
-                    <p style="text-align: center;font-weight: bold">{{ mes.nombre }} {{ mes.year }}</p>
+                    <p style="text-align: center;font-weight: bold">Mes de {{ mes.nombre }}</p>
                 </div>
              </div>
          {% endif %}
@@ -90,7 +90,7 @@
              <tr style="font-size: 13px;padding-top: 2px;border-bottom: 1px solid #000000;align-content: flex-end;">
                 <th style="text-align: center;">Objeto de Gasto</th>
                  {% if mes %}
-                     <th style="text-align: center;">{{ mes.nombre }}</th>
+                     <th style="text-align: center;">Monto del mes</th>
                  {% else %}
                      <th style="text-align: center;">Enero</th>
                     <th style="text-align: center;">Febrero</th>

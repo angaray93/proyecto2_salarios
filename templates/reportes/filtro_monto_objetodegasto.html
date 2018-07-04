@@ -3,6 +3,13 @@
 {% load django_bootstrap_breadcrumbs %}
 {% load l10n %}
 
+{% block navbar %}
+    <li class="nav-item">
+    <a id="" data-toggle="modal" data-target="#help_modal" class="nav-link text-center">
+        <i class="fa fa-question-circle"></i> Ayuda</a>
+    </li>
+{% endblock %}
+
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb " Seleccion de mes " 'liquidacion:monto_objetodegasto' %}
@@ -70,6 +77,30 @@
                 </button>
             </div>
         {% endif %}
+</div>
+
+<div id="help_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: #b9bbbe">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold" style="color: #007bff">Información de ayuda al usuario</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>En esta pantalla podrá generar un informe de los montos gastados por cada Objeto de Gasto durante el año.</p>
+                <p>Para generar el informe seleccione un mes o la opción "Todos" para realizar un informe
+                    de todo el año y luego presione el botón
+                    <button class="btn btn-light" style="background-color: #3B598D;color: white;">
+                        Generar informe
+                    </button>.</p>
+            </div>
+            <div id="modal-body" class="modal-footer">
+                <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">Entendido</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

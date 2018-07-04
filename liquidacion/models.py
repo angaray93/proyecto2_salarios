@@ -459,6 +459,7 @@ class Liquidacionhaber(models.Model):
         unique_together = (('haber', 'liquidacion'),)
 
     def calculo_salario_proporcional(self):
+
         if self.haber.movimiento.motivo.nombre != 'Contrato':
             resultado = (self.haber.movimiento.categoria_salarial.asignacion / 30) * self.liquidacion.dias_trabajados
         else:

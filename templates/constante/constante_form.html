@@ -50,7 +50,6 @@
             </li>
         </ul>
 
-
         <div class="row text-center">
             <div class="col-12 text-center">
                 <h4>Alta de Funcionario</h4>
@@ -121,6 +120,15 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-10">
+                {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    </div>
+                {% endfor %}
             </div>
         </div>
 </form>

@@ -309,6 +309,9 @@ class Constante(models.Model):
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_constante_movimiento')
     tipo = models.ForeignKey('ConstanteType', on_delete=models.CASCADE, related_name='fk_constante_tipo')
 
+    class Meta:
+        unique_together = (('movimiento', 'tipo'),)
+
     '''def calcular_monto(self):
         if self.tipo.porcentaje != 0 and self.tipo.porcentaje is not None:
             return ((self.movimiento.categoria_salarial.asignacion * self.tipo.porcentaje) / Decimal(100))

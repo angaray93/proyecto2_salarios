@@ -633,22 +633,18 @@ def confirmar_liquidaciones(request):
 
     tipos_estado = ['Inicio', 'Pendiente', 'Normal']
     estados_pendientes = State.objects.filter(stateType__name__in=tipos_estado)
-    print(estados_pendientes)
     #liquidaciones_list = Liquidacion.objects.filter(tipo__nombre='Mensual', mes__numero=datetime.datetime.now().month,
     #                                                mes__year=datetime.datetime.now().year,
     #                                                estado_actual__in=estados_pendientes)
     liquidaciones_list = Liquidacion.objects.filter(tipo__nombre='Mensual',
                                                     estado_actual__in=estados_pendientes)
-    print(liquidaciones_list)
     transicion_nuevo = Transition.objects.get(process__name='Liquidacion Mensual', currentState__name='Nuevo')
     for item in liquidaciones_list:
         if item.estado_actual.name == 'Nuevo':
             item.estado_actual = transicion_nuevo.nextState
             item.save()
         transicion = State.objects.get(process__name='Liquidacion Mensual', stateType__name='Completado')
-        print('transicion', transicion)
         item.estado_actual = transicion
-        print('estado nuevo', item.estado_actual)
         item.save()
         # -------------------------------AGUINALDO----------------------------------------------#
 
@@ -686,6 +682,21 @@ def confirmar_liquidaciones(request):
                     aguinaldo.save()
                     aguinaldo.total = aguinaldo.calculo_total()
                     aguinaldo.save()
+
+                if liq.haber.movimiento.fechafin:
+                    fin_fecha = date(liq.haber.movimiento.fechafin.year, liq.haber.movimiento.fechafin.month,
+                                     liq.haber.movimiento.fechafin.day)
+                    fin_hora = time(23, 59)
+                    fechafin = datetime.datetime.combine(fin_fecha, fin_hora)
+                    fin_periodo = item.fin_periodo + timedelta(days=1)
+                    if ((fin_periodo.replace(tzinfo=None)) >= fechafin.replace(
+                            tzinfo=None) >= item.inicio_periodo.replace(tzinfo=None)):
+                        estado_inactivo = State.objects.get(process__name='Alta de Movimiento',
+                                                            stateType__name='Caducado')
+                        liq.haber.movimiento.estado = estado_inactivo
+                        liq.haber.movimiento.save()
+                        liq.haber.estado = liq.haber.movimiento.estado
+                        liq.haber.save()
 
         # -------------------------------VACACIONES---------------------------------------------#
 
@@ -1681,7 +1692,7 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                         haber.save()
                         # ---------------------------Vacaciones-------------------------------#
                         try:
-                            vacaciones_padre = Vacaciones.objects.get(movimiento=movimiento_padre)
+                            vacaciones_padre = Vacaciones.objects.filter(movimiento=movimiento_padre).order_by('-inicio').first()
                         except Vacaciones.DoesNotExist:
                             vacaciones_padre = None
 
@@ -1953,9 +1964,12 @@ def constante_vista(request, idmovimiento=None, idconstante=None):
             )
         form = ConstanteForm(request.POST, instance=constante)
         if form.is_valid():
-            constante = form.save()
-            #constante.monto = constante.calcular_monto()
-            #constante.save()
+            try:
+                constante = form.save()
+            except IntegrityError:
+                messages.error(request, "Ya ha agregado una referencia con la misma descripcion")
+                return redirect(reverse('liquidacion:nueva_constante', args=[constante.movimiento.pk]))
+
             return redirect(reverse('liquidacion:nueva_constante', args=[constante.movimiento.pk]))
         else:
             # TODO Implementar sistema de errores

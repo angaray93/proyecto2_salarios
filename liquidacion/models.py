@@ -1,7 +1,7 @@
 import datetime
 from django.db.models import Sum, Max, Q
 from decimal import Decimal, ROUND_HALF_UP
-from django.db import models
+from django.db import models, utils
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models.functions import Coalesce
@@ -74,11 +74,11 @@ class Movimiento(models.Model):
     tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo')
     motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo')
     formapago = models.CharField(max_length=1, default='M',choices=Modalidad_OPTIONS, blank=True)
-    fechainicio = models.DateField()
+    fechainicio = models.DateField(("Date"), default=datetime.date.today)
     fechafin = models.DateField(blank=True, null=True)
     esPrimero = models.BooleanField(default=True)
-    horaEntrada = models.TimeField()
-    horaSalida = models.TimeField()
+    horaEntrada = models.TimeField(blank=True, null=True)
+    horaSalida = models.TimeField(blank=True, null=True)
     tieneAguinaldo = models.BooleanField(default=False)
     tieneVacaciones = models.BooleanField(default=False)
     funcion = models.CharField(max_length=99, default='')
@@ -203,8 +203,8 @@ class Ciudad(models.Model):
         ordering = ["nombreciudad"]
         verbose_name_plural = "Ciudades"
 
-    #def __str__(self):
-    #    return '%s %s %s' % (self.nombreciudad, ' - ', self.pais)
+    def __str__(self):
+        return '%s %s %s' % (self.nombreciudad, ' - ', self.pais)
 
 
 class CategoriaSalarial(models.Model):

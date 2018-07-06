@@ -109,16 +109,18 @@
                         <tbody>
                             {% for det in detalles %}
                                 {% if det.liquidacion_haber == item %}
-                                    <tr style="font-size: 13px;" class="contenido">
-                                        <td>{{ det.variable.motivo }}</td>
-                                        {% if det.variable.tipo == 'C' %}
-                                            <td style="text-align: center;">Gs. {{ det.total_detalle|floatformat }}</td>
-                                            <td style="text-align: center;"> - </td>
-                                        {% else %}
-                                            <td style="text-align: center;"> - </td>
-                                            <td style="text-align: center;">Gs. {{ det.total_detalle|floatformat }}</td>
-                                        {% endif %}
-                                    </tr>
+                                    {% if det.total_detalle > 0 %}
+                                        <tr style="font-size: 13px;" class="contenido">
+                                            <td>{{ det.variable.motivo }}</td>
+                                            {% if det.variable.tipo == 'C' %}
+                                                <td style="text-align: center;">Gs. {{ det.total_detalle|floatformat }}</td>
+                                                <td style="text-align: center;"> - </td>
+                                            {% else %}
+                                                <td style="text-align: center;"> - </td>
+                                                <td style="text-align: center;">Gs. {{ det.total_detalle|floatformat }}</td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endif %}
                                 {% endif %}
                             {% endfor %}
                         </tbody>

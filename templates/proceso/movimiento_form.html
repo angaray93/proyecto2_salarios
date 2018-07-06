@@ -29,6 +29,14 @@
 
 <div class="col-12 col-sm-10 recuadro">
 
+
+{% if form.errors %}
+    <p>NOT VALID</p>
+    {% for errors in form.errors %}
+        {{ errors }}
+    {% endfor %}
+{% endif %}
+
 <form method="post" id="movimiento_form">
         {% csrf_token %}
         {{ form.media }}
@@ -38,6 +46,8 @@
             {{ hidden_field.errors }}
             {{ hidden_field }}
         {% endfor %}
+
+
 
     {% if movimiento %}
         <ul class="nav nav-tabs">
@@ -377,11 +387,11 @@
                 <label for="id_fechainicio">Fecha de Inicio:</label>
                 <div class="input-group">
                     {% if form.fechainicio.errors %}
-                    <ol>
-                    {% for error in form.fechainicio.errors %}
-                        <li><strong>{{ error|escape }}</strong></li>
-                    {% endfor %}
-                    </ol>
+                        {% for error in form.fechainicio.errors %}
+                            <div class="errorlist">
+                                <strong style="color: red">{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
                     {% endif %}
                     {% if movimiento %}
                         <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
@@ -410,6 +420,13 @@
             <div class="form-group">
                 <label for="id_fechafin">Fecha de Fin:</label>
                 <div class="input-group">
+                    {% if form.fechafin.errors %}
+                        {% for error in form.fechafin.errors %}
+                            <div class="errorlist">
+                                <strong style="color: red">{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     {% if form.fechafin.errors %}
                     <ol>
                     {% for error in form.fechafin.errors %}
@@ -448,6 +465,13 @@
                 <label for="horaEntrada">Hora de Entrada:</label>
                 <div class="input-group">
                     {% if form.horaEntrada.errors %}
+                        {% for error in form.horaEntrada.errors %}
+                            <div class="errorlist">
+                                <strong style="color: red">{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.horaEntrada.errors %}
                         <ol>
                         {% for error in form.horaEntrada.errors %}
                             <li><strong style="color: red">{{ error|escape }}</strong></li>
@@ -482,6 +506,13 @@
             <div class="form-group">
                 <label for="horaSalida">Hora de Salida:</label>
                     <div class="input-group">
+                    {% if form.horaSalida.errors %}
+                        {% for error in form.horaSalida.errors %}
+                            <div class="errorlist">
+                                <strong style="color: red">{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                      {% if form.horaSalida.errors %}
                         <ol>
                         {% for error in form.horaSalida.errors %}

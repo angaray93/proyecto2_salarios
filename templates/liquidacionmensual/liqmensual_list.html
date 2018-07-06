@@ -67,7 +67,7 @@
                         {% endif %}
                         <td class="centrartexto">
                             <button title="Editar" class="btn btn-secondary" type="button"
-                               name="go" value="Ir" onclick="location.href=('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">
+                               name="go" value="Ir" onclick="window.open('{% url 'liquidacion:editar_liquidacionhaber' item.pk %}')">
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                         </td>
                     </tr>

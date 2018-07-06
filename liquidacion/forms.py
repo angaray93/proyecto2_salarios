@@ -26,6 +26,21 @@ MES_OPTIONS = (
     (12 , 'Diciembre'),
 )
 
+MES2_OPTIONS = (
+    (1 , 'Enero'),
+    (2 , 'Febrero'),
+    (3 , 'Marzo'),
+    (4 , 'Abril'),
+    (5 , 'Mayo'),
+    (6 , 'Junio'),
+    (7 , 'Julio'),
+    (8 , 'Agosto'),
+    (9 , 'Septiembre'),
+    (10 , 'Octubre'),
+    (11 , 'Noviembre'),
+    (12 , 'Diciembre'),
+)
+
 MOTIVO_OPTIONS = (
     ('Contrato', 'Contrato'),
     ('Permanente' , 'Permanente'),
@@ -97,7 +112,7 @@ class LiqPendientesForm(forms.Form):
                                                               'name': 'funcionario',
                                                               }))
 
-    mes = forms.ChoiceField(label='Mes', required=True, choices=MES_OPTIONS, widget=forms.Select(attrs={'class': 'form-control',
+    mes = forms.ChoiceField(label='Mes', required=True, choices=MES2_OPTIONS, widget=forms.Select(attrs={'class': 'form-control',
                                                                                           'name': 'mes',
                                                                                           'id': 'mes-select',
                                                                                           }))

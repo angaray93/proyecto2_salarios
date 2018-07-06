@@ -11,7 +11,7 @@
     </li>
     {% if liquidacion.estado_actual.name == 'Confirmado' %}
     <li class="nav-item">
-      <a class="nav-link text-center" id="sidenavToggler" href="{% url 'liquidacion:print_liquidacion' liquidacion.pk %}">
+      <a class="nav-link text-center" id="sidenavToggler" onclick="window.open('{% url 'liquidacion:print_liquidacion' liquidacion.pk %}')">
         <i class="fa fa-fw fa-print"></i>Imprimir</a>
     </li>
     {% endif %}
@@ -181,7 +181,7 @@
                                 {% if item.haber.movimiento.motivo.nombre != 'Contrato' %}
                                     <th class="text-center">Categoria Salarial: {{ item.haber.movimiento.categoria_salarial }}</th>
                                 {% else %}
-                                    <th class="text-center">Contrato N° : </th>
+                                    <th class="text-center">Contrato N° : {{ item.haber.movimiento.codigo }}</th>
                                 {% endif %}
                                 <th class="text-center">Creditos: Gs.{{ item.monto_credito|floatformat }}</th>
                                 <th class="text-center">Debitos: Gs.{{ item.monto_debito|floatformat }}</th>
@@ -205,16 +205,31 @@
                 <tbody>
                     {% for det in detalles %}
                         {% if det.liquidacion_haber == item %}
-                            <tr style="font-size: 13px">
-                                <td colspan="1">{{ det.variable.motivo }}</td>
-                                {% if det.variable.tipo == 'C' %}
-                                    <td colspan="2" class="text-center">Gs. {{ det.total_detalle|floatformat }}</td>
-                                    <td colspan="2" class="text-center"> - </td>
-                                {% else %}
-                                    <td colspan="2" class="text-center"> - </td>
-                                    <td colspan="2" class="text-center">Gs. {{ det.total_detalle|floatformat }}</td>
+                            {% if det.liquidacion_haber.liquidacion.tipo.nombre == 'Mensual' %}
+                                {% if det.variable.motivo != 'Vacaciones' %}
+                                    <tr style="font-size: 13px">
+                                        <td colspan="1">{{ det.variable.motivo }}</td>
+                                        {% if det.variable.tipo == 'C' %}
+                                            <td colspan="2" class="text-center">Gs. {{ det.total_detalle|floatformat }}</td>
+                                            <td colspan="2" class="text-center"> - </td>
+                                        {% else %}
+                                            <td colspan="2" class="text-center"> - </td>
+                                            <td colspan="2" class="text-center">Gs. {{ det.total_detalle|floatformat }}</td>
+                                        {% endif %}
+                                    </tr>
                                 {% endif %}
-                            </tr>
+                            {% else %}
+                                <tr style="font-size: 13px">
+                                    <td colspan="1">{{ det.variable.motivo }}</td>
+                                    {% if det.variable.tipo == 'C' %}
+                                        <td colspan="2" class="text-center">Gs. {{ det.total_detalle|floatformat }}</td>
+                                        <td colspan="2" class="text-center"> - </td>
+                                    {% else %}
+                                        <td colspan="2" class="text-center"> - </td>
+                                        <td colspan="2" class="text-center">Gs. {{ det.total_detalle|floatformat }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 </tbody>

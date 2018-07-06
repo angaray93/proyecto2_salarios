@@ -85,7 +85,7 @@
                 }
             });
 
-            $('#id_variable').click(function () {
+            $(document).ready(function () {
             var var_select = $('#id_variable');
             $.ajax({
                 url: '{% url 'liquidacion:traer_variables' %}',
@@ -97,11 +97,11 @@
                             var_select.append('<option value=' + value.id + '>' + value.value + '</option>')
                         });
                     } else {
-                        var_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                        var_select.empty().append('<option value=' + 0 + ' selected>' + 'Seleccione una opcion' + '</option>');
                     }
                 },
                 error: function (data) {
-                    var_select.empty().append('<option value=' + 0 + ' selected>' + 'Todos' + '</option>');
+                    var_select.empty().append('<option value=' + 0 + ' selected>' + 'Seleccione una opcion' + '</option>');
                 }
             });
         });

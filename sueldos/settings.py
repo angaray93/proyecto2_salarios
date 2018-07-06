@@ -28,7 +28,7 @@ SECRET_KEY = 'o*e41!2kv$izlh^pqi@+#w)a&)enc(g$=v$n@mw()uy_^4&9l@'
 DEBUG = True
 
 if DEBUG is False:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = ['*','127.0.0.1', 'localhost']
 
 if DEBUG is True:
     ALLOWED_HOSTS = []
@@ -88,9 +88,9 @@ WSGI_APPLICATION = 'sueldos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'proyecto2-bk',
+        'NAME': 'proyecto2-repo',
         'USER': 'postgres',
-        'PASSWORD': 'agaray',
+        'PASSWORD': 'postgres',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

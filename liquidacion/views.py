@@ -703,12 +703,9 @@ def confirmar_liquidaciones(request):
             detalles = DetalleLiquidacion.objects.filter(liquidacion_haber=liq)
             for detalleliquidacion in detalles:
                 if not detalleliquidacion.constante:
-                    #print('Nombre del detalle: ', detalleliquidacion.variable.motivo)
                     detalleliquidacion.monto = detalleliquidacion.calcular_monto()
-                    #print('Monto del detalle: ', detalleliquidacion.monto)
                     detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
                     detalleliquidacion.save()
-
                     if detalleliquidacion.variable.tipo == 'D':
                         detalleliquidacion.liquidacion_haber.monto_debito += detalleliquidacion.total_detalle
                     else:
@@ -717,12 +714,9 @@ def confirmar_liquidaciones(request):
                     detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
                     detalleliquidacion.liquidacion_haber.save()
 
-
             for detalleliquidacion in detalles:
                 if detalleliquidacion.constante and detalleliquidacion.constante.tipo.porcentaje:
-                    #print('Nombre del detalle: ', detalleliquidacion.variable.motivo)
                     detalleliquidacion.monto = detalleliquidacion.calcular_monto_constante()
-                    #print('Monto del detalle: ', detalleliquidacion.monto)
                     detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
                     detalleliquidacion.save()
                 if detalleliquidacion.variable.motivo == 'Aguinaldo':
@@ -735,7 +729,6 @@ def confirmar_liquidaciones(request):
             liq.save()
             liq.subTotal = liq.calcular_total()
             liq.save()
-
             liq.liquidacion.total_credito = liq.liquidacion.calculo_total_credito()
             liq.liquidacion.total_debito = liq.liquidacion.calculo_total_debito()
             liq.liquidacion.total_liquidacion = liq.liquidacion.calcular_total_liquidacion()
@@ -743,13 +736,10 @@ def confirmar_liquidaciones(request):
 
         # -------------------------------VACACIONES---------------------------------------------#
 
-            try:
-                vacacion_periodo = Vacaciones.objects.filter(
-                    movimiento__funcionario=liq.liquidacion.funcionario).order_by('-inicio')
-            except Vacaciones.DoesNotExist:
-                vacacion_periodo = None
+            vacacion_periodo = Vacaciones.objects.filter(
+                movimiento__funcionario=liq.liquidacion.funcionario).order_by('-inicio')
 
-            if vacacion_periodo is not None or vacacion_periodo.count() > 0:
+            if vacacion_periodo.count() > 0:
                 f = ~Q(movimiento__motivo__nombre='Contrato') \
                     & Q(tieneVacaciones=True) \
                     & Q(funcionario=liq.liquidacion.funcionario)
@@ -1132,13 +1122,10 @@ def vista_liq_mensual(request, idliquidacion):
                         liquidacion.save()
 
                     # -------------------------------VACACIONES---------------------------------------------#
-                    try:
-                        vacacion_periodo = Vacaciones.objects.filter(
-                            movimiento__funcionario=liquidacion.funcionario).order_by('-inicio')
-                    except Vacaciones.DoesNotExist:
-                        vacacion_periodo = None
+                    vacacion_periodo = Vacaciones.objects.filter(
+                        movimiento__funcionario=liquidacion.funcionario).order_by('-inicio')
 
-                    if vacacion_periodo is not None:
+                    if vacacion_periodo.count() > 0:
                         f = ~Q(movimiento__motivo__nombre = 'Contrato') \
                             & Q(tieneVacaciones = True) \
                             & Q(funcionario = liquidacion.funcionario)
@@ -1314,11 +1301,11 @@ def parametros_liq_mensual(request):
                 print(funcionarios)
                 if funcionarios.count() > 0 :
                     for mov in funcionarios:
+                        pago = None
                         existe_pago = True
                         try:
                             liquidacion = Liquidacion.objects.get(funcionario__idFuncionario=mov['funcionario__idFuncionario'],
                                                                   mes=mes, tipo__nombre='Mensual')
-
                         except Liquidacion.DoesNotExist:
                             liquidacion = None
                         if liquidacion == None:
@@ -1329,14 +1316,12 @@ def parametros_liq_mensual(request):
                             funcionario = Funcionario.objects.get(pk = mov['funcionario__idFuncionario'])
                             print(mov['idmovimiento'])
                             if mov['motivo__nombre'] == 'Contrato':
-                                try:
+                                if Pago.objects.filter(mes=mes, movimiento__pk=mov['idmovimiento']).exists():
                                     pago = Pago.objects.get(mes=mes, movimiento__pk=mov['idmovimiento'])
                                     existe_pago = True
-                                except Pago.DoesNotExist:
+                                else:
                                     pago = None
                                     existe_pago = False
-                                    messages.warning(request, "No existe pagos asociados a este periodo")
-                                    return redirect(reverse('liquidacion:parametros_liq_mensual'))
                             if existe_pago is True:
                                 liquidacion = Liquidacion(
                                     fechacreacion=datetime.datetime.now(),
@@ -1351,117 +1336,111 @@ def parametros_liq_mensual(request):
                                     motivo = LiquidacionMotivo.objects.get(nombre='Mensual')
                                 )
                                 liquidacion.save()
-                        haberes = Haber.objects.filter(movimiento__funcionario=liquidacion.funcionario,
-                                                   movimiento__division__departamento__pk=depto, estado__name='Activo')
-                        for haber in haberes:
-                            if haber.movimiento.motivo.nombre == 'Contrato':
-                                liq_haber = None
-                                try:
-                                    pago = Pago.objects.get(movimiento=haber.movimiento, mes=liquidacion.mes)
-                                    print(pago)
-                                except Pago.DoesNotExist:
-                                    pago = None
-                                print(pago)
-
-                                if pago is not None:
+                        if existe_pago is True:
+                            haberes = Haber.objects.filter(movimiento__funcionario=liquidacion.funcionario,
+                                                       movimiento__division__departamento__pk=depto, estado__name='Activo')
+                            for haber in haberes:
+                                if haber.movimiento.motivo.nombre == 'Contrato':
+                                    liq_haber = None
+                                    if pago is not None:
+                                        liq_haber = Liquidacionhaber(
+                                            haber=haber,
+                                            liquidacion=liquidacion,
+                                            pago=pago,
+                                        )
+                                else:
                                     liq_haber = Liquidacionhaber(
                                         haber=haber,
                                         liquidacion=liquidacion,
-                                        pago=pago,
                                     )
-                            else:
-                                liq_haber = Liquidacionhaber(
-                                    haber=haber,
-                                    liquidacion=liquidacion,
-                                )
-                            liq_haber.monto_debito = liq_haber.suma_detalles_debito()
-                            liq_haber.monto_credito = liq_haber.suma_detalles_credito()
-                            liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
-                            try:
-                                liq_haber.save()
-                            except IntegrityError:
-                                messages.error(request, "Ya se ha creado las liquidaciones salariales de este departamento "
-                                                        "para el mes")
-                                return redirect(reverse('liquidacion:parametros_liq_mensual'))
+                                liq_haber.monto_debito = liq_haber.suma_detalles_debito()
+                                liq_haber.monto_credito = liq_haber.suma_detalles_credito()
+                                liq_haber.subTotal = round(liq_haber.monto_credito - liq_haber.monto_debito, 0)
+                                try:
+                                    liq_haber.save()
+                                except IntegrityError:
+                                    messages.error(request, "Ya se ha creado las liquidaciones salariales de este departamento "
+                                                            "para el mes")
+                                    return redirect(reverse('liquidacion:parametros_liq_mensual'))
 
-                            if liq_haber.haber.movimiento.motivo.nombre == 'Contrato':
-                                if liq_haber.pago:
+                                if liq_haber.haber.movimiento.motivo.nombre == 'Contrato':
+                                    if liq_haber.pago:
+                                        salario_mes = DetalleLiquidacion(
+                                            cantidad=1,
+                                            monto=Decimal(liq_haber.pago.monto),
+                                            total_detalle=Decimal(liq_haber.pago.monto),
+                                            parametro=Parametro.objects.get(descripcion='Monto'),
+                                            variable=Variable.objects.get(motivo='Asignacion Salarial'),
+                                            liquidacion_haber=liq_haber,
+                                            constante= Constante.objects.get(tipo__nombre='Asignacion Salarial', movimiento= liq_haber.haber.movimiento)
+                                        )
+                                else:
                                     salario_mes = DetalleLiquidacion(
                                         cantidad=1,
-                                        monto=Decimal(liq_haber.pago.monto),
-                                        total_detalle=Decimal(liq_haber.pago.monto),
+                                        monto=liq_haber.haber.movimiento.categoria_salarial.asignacion,
+                                        total_detalle=liq_haber.haber.movimiento.categoria_salarial.asignacion,
                                         parametro=Parametro.objects.get(descripcion='Monto'),
                                         variable=Variable.objects.get(motivo='Asignacion Salarial'),
                                         liquidacion_haber=liq_haber,
-                                        constante= Constante.objects.get(tipo__nombre='Asignacion Salarial', movimiento= liq_haber.haber.movimiento)
+                                        constante=Constante.objects.get(tipo__nombre='Asignacion Salarial', movimiento= liq_haber.haber.movimiento)
                                     )
-                            else:
-                                salario_mes = DetalleLiquidacion(
-                                    cantidad=1,
-                                    monto=liq_haber.haber.movimiento.categoria_salarial.asignacion,
-                                    total_detalle=liq_haber.haber.movimiento.categoria_salarial.asignacion,
-                                    parametro=Parametro.objects.get(descripcion='Monto'),
-                                    variable=Variable.objects.get(motivo='Asignacion Salarial'),
-                                    liquidacion_haber=liq_haber,
-                                    constante=Constante.objects.get(tipo__nombre='Asignacion Salarial', movimiento= liq_haber.haber.movimiento)
-                                )
-                            salario_mes.save()
-                            salario_mes.liquidacion_haber.monto_credito = salario_mes.liquidacion_haber.suma_detalles_credito()
-                            salario_mes.liquidacion_haber.monto_debito = salario_mes.liquidacion_haber.suma_detalles_debito()
-                            salario_mes.liquidacion_haber.save()
-                            salario_mes.liquidacion_haber.subTotal = salario_mes.liquidacion_haber.calcular_total()
-                            salario_mes.liquidacion_haber.save()
+                                salario_mes.save()
+                                salario_mes.liquidacion_haber.monto_credito = salario_mes.liquidacion_haber.suma_detalles_credito()
+                                salario_mes.liquidacion_haber.monto_debito = salario_mes.liquidacion_haber.suma_detalles_debito()
+                                salario_mes.liquidacion_haber.save()
+                                salario_mes.liquidacion_haber.subTotal = salario_mes.liquidacion_haber.calcular_total()
+                                salario_mes.liquidacion_haber.save()
 
-                            salario_mes.liquidacion_haber.liquidacion.total_credito = salario_mes.liquidacion_haber.liquidacion.calculo_total_credito()
-                            salario_mes.liquidacion_haber.liquidacion.total_debito = salario_mes.liquidacion_haber.liquidacion.calculo_total_debito()
-                            salario_mes.liquidacion_haber.liquidacion.total_liquidacion = salario_mes.liquidacion_haber.liquidacion.calcular_total_liquidacion()
-                            salario_mes.liquidacion_haber.liquidacion.save()
+                                salario_mes.liquidacion_haber.liquidacion.total_credito = salario_mes.liquidacion_haber.liquidacion.calculo_total_credito()
+                                salario_mes.liquidacion_haber.liquidacion.total_debito = salario_mes.liquidacion_haber.liquidacion.calculo_total_debito()
+                                salario_mes.liquidacion_haber.liquidacion.total_liquidacion = salario_mes.liquidacion_haber.liquidacion.calcular_total_liquidacion()
+                                salario_mes.liquidacion_haber.liquidacion.save()
 
-                            if liquidacion.mes.numero == 12:
-                                aguinaldo_anho = DetalleLiquidacion(
-                                    cantidad=1,
-                                    monto=0,
-                                    parametro=Parametro.objects.get(descripcion='Monto'),
-                                    variable=Variable.objects.get(motivo='Aguinaldo'),
-                                    liquidacion_haber=liq_haber,
-                                    constante=Constante.objects.get(tipo__nombre='Aguinaldo', movimiento= liq_haber.haber.movimiento)
-                                )
-                                aguinaldo_anho.save()
+                                if liquidacion.mes.numero == 12:
+                                    aguinaldo_anho = DetalleLiquidacion(
+                                        cantidad=1,
+                                        monto=0,
+                                        parametro=Parametro.objects.get(descripcion='Monto'),
+                                        variable=Variable.objects.get(motivo='Aguinaldo'),
+                                        liquidacion_haber=liq_haber,
+                                        constante=Constante.objects.get(tipo__nombre='Aguinaldo', movimiento= liq_haber.haber.movimiento)
+                                    )
+                                    aguinaldo_anho.save()
 
-                            constantes_movimiento = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
-                            for constante in constantes_movimiento:
-                                if constante.tipo.nombre != 'Asignacion Salarial' and constante.tipo.nombre != 'Aguinaldo':
-                                    if constante.tipo.porcentaje:
-                                        detalleliquidacion = DetalleLiquidacion(
-                                            cantidad = 1,
-                                            monto = 0,
-                                            parametro = Parametro.objects.get(descripcion='Monto'),
-                                            variable = Variable.objects.get(motivo=constante.tipo.nombre),
-                                            liquidacion_haber = liq_haber,
-                                            constante=constante,
-                                        )
-                                    else:
-                                        detalleliquidacion = DetalleLiquidacion(
-                                            cantidad=1,
-                                            monto=constante.monto,
-                                            parametro=Parametro.objects.get(descripcion='Monto'),
-                                            variable=Variable.objects.get(motivo=constante.tipo.nombre),
-                                            liquidacion_haber=liq_haber,
-                                            constante=constante,
-                                        )
-                                    detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
-                                    detalleliquidacion.save()
-                                    if detalleliquidacion.variable.tipo == 'D':
-                                        detalleliquidacion.liquidacion_haber.monto_debito = detalleliquidacion.liquidacion_haber.suma_detalles_debito()
-                                    else:
-                                        detalleliquidacion.liquidacion_haber.monto_credito = detalleliquidacion.liquidacion_haber.suma_detalles_credito()
-                                    detalleliquidacion.liquidacion_haber.save()
-                                    detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
-                                    detalleliquidacion.liquidacion_haber.save()
-                                    detalleliquidacion.liquidacion_haber.liquidacion.total_credito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_credito()
-                                    detalleliquidacion.liquidacion_haber.liquidacion.total_debito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_debito()
-                                    detalleliquidacion.liquidacion_haber.liquidacion.total_liquidacion = detalleliquidacion.liquidacion_haber.liquidacion.calcular_total_liquidacion()
-                                    detalleliquidacion.liquidacion_haber.liquidacion.save()
+                                constantes_movimiento = Constante.objects.filter(movimiento=liq_haber.haber.movimiento)
+                                for constante in constantes_movimiento:
+                                    if constante.tipo.nombre != 'Asignacion Salarial' and constante.tipo.nombre != 'Aguinaldo':
+                                        if constante.tipo.porcentaje:
+                                            detalleliquidacion = DetalleLiquidacion(
+                                                cantidad = 1,
+                                                monto = 0,
+                                                parametro = Parametro.objects.get(descripcion='Monto'),
+                                                variable = Variable.objects.get(motivo=constante.tipo.nombre),
+                                                liquidacion_haber = liq_haber,
+                                                constante=constante,
+                                            )
+                                        else:
+                                            detalleliquidacion = DetalleLiquidacion(
+                                                cantidad=1,
+                                                monto=constante.monto,
+                                                parametro=Parametro.objects.get(descripcion='Monto'),
+                                                variable=Variable.objects.get(motivo=constante.tipo.nombre),
+                                                liquidacion_haber=liq_haber,
+                                                constante=constante,
+                                            )
+                                        detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                                        detalleliquidacion.save()
+                                        if detalleliquidacion.variable.tipo == 'D':
+                                            detalleliquidacion.liquidacion_haber.monto_debito = detalleliquidacion.liquidacion_haber.suma_detalles_debito()
+                                        else:
+                                            detalleliquidacion.liquidacion_haber.monto_credito = detalleliquidacion.liquidacion_haber.suma_detalles_credito()
+                                        detalleliquidacion.liquidacion_haber.save()
+                                        detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
+                                        detalleliquidacion.liquidacion_haber.save()
+                                        detalleliquidacion.liquidacion_haber.liquidacion.total_credito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_credito()
+                                        detalleliquidacion.liquidacion_haber.liquidacion.total_debito = detalleliquidacion.liquidacion_haber.liquidacion.calculo_total_debito()
+                                        detalleliquidacion.liquidacion_haber.liquidacion.total_liquidacion = detalleliquidacion.liquidacion_haber.liquidacion.calcular_total_liquidacion()
+                                        detalleliquidacion.liquidacion_haber.liquidacion.save()
 
                     #    else:
                     #        messages.warning(request,
@@ -1498,7 +1477,6 @@ def liq_pendientes_list(request, iddpto, mes, anho):
     liquidaciones = Liquidacion.objects.filter(mes=imes, tipo__nombre='Mensual', estado_actual__in= estado)
     liquidacion_haberes = Liquidacionhaber.objects.filter(liquidacion__in = liquidaciones,
                                                           editable=True, haber__movimiento__in=movimientos)
-    print(liquidacion_haberes)
     return render(request, 'liquidacionmensual/liqmensual_list.html', {'lista': liquidacion_haberes,
                                                                        'dpto': departamento,
                                                                        'mes': imes })

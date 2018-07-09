@@ -88,54 +88,54 @@
     <input type="hidden" name="estado_actual" value="{{ liquidacion.estado_actual.pk }}">
 {% endif %}
 
-    <div class="row"> <!-- cuerpo del formulario-->
-        <div class="col-12" style="font-size: 12px">
-            <div class="row">
-                <div class="col-4 d-flex align-items-center">
-                    <ul class="list-inline">
-                        <li class="list-inline-item"><strong>Funcionario: </strong></li>
-                        <br/>
-                        <li class="list-inline-item">{{ liquidacion.funcionario }}</li>
-                        <input type="hidden" name="funcionario" value="{{ liquidacion.funcionario.pk }}">
-                    </ul>
-                </div>
-                <div class="col-4 d-flex">
-                    <ul class="list-inline">
-                        <li class="list-inline-item"><strong>Creada el: </strong>
-                            {{ liquidacion.fechacreacion|date:"d/m/Y H:i" }}</li>
-                            <input type="hidden" name="fechacreacion" value="{{ liquidacion.fechacreacion|date:"Y-m-d H:i" }}">
-                        <br/>
-                        <li class="list-inline-item"><strong>Mes: </strong>{{ liquidacion.mes.nombre }}</li>
-                            <input type="hidden" name="mes" value="{{ liquidacion.mes.pk }}">
-                        <br/>
-                        <li class="list-inline-item">
-                            <strong>Periodo: Del </strong>{{ liquidacion.inicio_periodo|date:"d/m/Y" }}
-                            <strong>hasta el </strong>{{ liquidacion.fin_periodo|date:"d/m/Y" }}</li>
-                            <input type="hidden" name="inicio_periodo" value="{{ liquidacion.inicio_periodo|date:"Y-m-d H:i" }}">
-                            <input type="hidden" name="fin_periodo" value="{{ liquidacion.fin_periodo|date:"Y-m-d H:i" }}">
-                        <br/>
-                    </ul>
-                </div>
-                <div class="col-4 d-flex">
-                     <ul class="list-inline">
-                        <li class="list-inline-item"><strong>Total Débitos: Gs. </strong>
-                            {{ liquidacion.total_debito|floatformat }}</li>
-                            <input type="hidden" name="total_debito" value="{{ liquidacion.total_debito|unlocalize }}">
-                        <br/>
-                        <li class="list-inline-item"><strong>Total Créditos: Gs. </strong>
-                            {{ liquidacion.total_credito|floatformat }}</li>
-                            <input type="hidden" name="total_credito" value="{{ liquidacion.total_credito|unlocalize }}">
-                        <br/>
-                        <li class="list-inline-item"><strong>Monto Líquido: Gs. </strong>
-                            {{ liquidacion.total_liquidacion|floatformat }}</li>
-                            <input type="hidden" name="total_liquidacion" value="{{ liquidacion.total_liquidacion|unlocalize }}">
-                        <br/>
-                    </ul>
-                </div>
+<div class="row"> <!-- cuerpo del formulario-->
+    <div class="col-12" style="font-size: 12px">
+        <div class="row">
+            <div class="col-4 d-flex align-items-center">
+                <ul class="list-inline">
+                    <li class="list-inline-item"><strong>Funcionario: </strong></li>
+                    <br/>
+                    <li class="list-inline-item">{{ liquidacion.funcionario }}</li>
+                    <input type="hidden" name="funcionario" value="{{ liquidacion.funcionario.pk }}">
+                </ul>
             </div>
-            <hr>
+            <div class="col-4 d-flex">
+                <ul class="list-inline">
+                    <li class="list-inline-item"><strong>Creada el: </strong>
+                        {{ liquidacion.fechacreacion|date:"d/m/Y H:i" }}</li>
+                        <input type="hidden" name="fechacreacion" value="{{ liquidacion.fechacreacion|date:"Y-m-d H:i" }}">
+                    <br/>
+                    <li class="list-inline-item"><strong>Mes: </strong>{{ liquidacion.mes.nombre }}</li>
+                        <input type="hidden" name="mes" value="{{ liquidacion.mes.pk }}">
+                    <br/>
+                    <li class="list-inline-item">
+                        <strong>Periodo: Del </strong>{{ liquidacion.inicio_periodo|date:"d/m/Y" }}
+                        <strong>hasta el </strong>{{ liquidacion.fin_periodo|date:"d/m/Y" }}</li>
+                        <input type="hidden" name="inicio_periodo" value="{{ liquidacion.inicio_periodo|date:"Y-m-d H:i" }}">
+                        <input type="hidden" name="fin_periodo" value="{{ liquidacion.fin_periodo|date:"Y-m-d H:i" }}">
+                    <br/>
+                </ul>
+            </div>
+            <div class="col-4 d-flex">
+                 <ul class="list-inline">
+                    <li class="list-inline-item"><strong>Total Débitos: Gs. </strong>
+                        {{ liquidacion.total_debito|floatformat }}</li>
+                        <input type="hidden" name="total_debito" value="{{ liquidacion.total_debito|unlocalize }}">
+                    <br/>
+                    <li class="list-inline-item"><strong>Total Créditos: Gs. </strong>
+                        {{ liquidacion.total_credito|floatformat }}</li>
+                        <input type="hidden" name="total_credito" value="{{ liquidacion.total_credito|unlocalize }}">
+                    <br/>
+                    <li class="list-inline-item"><strong>Monto Líquido: Gs. </strong>
+                        {{ liquidacion.total_liquidacion|floatformat }}</li>
+                        <input type="hidden" name="total_liquidacion" value="{{ liquidacion.total_liquidacion|unlocalize }}">
+                    <br/>
+                </ul>
+            </div>
         </div>
-    </div> <!-- Fin cuerpo -->
+        <hr>
+    </div>
+</div> <!-- Fin cuerpo -->
 
 
 <div class="row">

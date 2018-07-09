@@ -649,8 +649,8 @@ def confirmar_liquidaciones(request):
         # -------------------------------AGUINALDO----------------------------------------------#
 
         liq_haberes = Liquidacionhaber.objects.filter(liquidacion=item)
-        if item.mes.numero == 1:
-            for liq in liq_haberes:
+        for liq in liq_haberes:
+            if item.mes.numero == 1:
                 try:
                     aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
                                                       anho=datetime.datetime.today().year)
@@ -666,8 +666,7 @@ def confirmar_liquidaciones(request):
                     nuevo_aguinaldo.save()
                     nuevo_aguinaldo.total = nuevo_aguinaldo.calculo_total()
                     nuevo_aguinaldo.save()
-        else:
-            for liq in liq_haberes:
+            else:
                 try:
                     aguinaldo = Aguinaldo.objects.get(movimiento=liq.haber.movimiento,
                                                       anho=datetime.datetime.today().year)
@@ -698,77 +697,126 @@ def confirmar_liquidaciones(request):
                         liq.haber.estado = liq.haber.movimiento.estado
                         liq.haber.save()
 
+            liq.editable = False
+            liq.save()
+
+            detalles = DetalleLiquidacion.objects.filter(liquidacion_haber=liq)
+            for detalleliquidacion in detalles:
+                if not detalleliquidacion.constante:
+                    #print('Nombre del detalle: ', detalleliquidacion.variable.motivo)
+                    detalleliquidacion.monto = detalleliquidacion.calcular_monto()
+                    #print('Monto del detalle: ', detalleliquidacion.monto)
+                    detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                    detalleliquidacion.save()
+
+                    if detalleliquidacion.variable.tipo == 'D':
+                        detalleliquidacion.liquidacion_haber.monto_debito += detalleliquidacion.total_detalle
+                    else:
+                        detalleliquidacion.liquidacion_haber.monto_credito += detalleliquidacion.total_detalle
+                    detalleliquidacion.liquidacion_haber.save()
+                    detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
+                    detalleliquidacion.liquidacion_haber.save()
+
+
+            for detalleliquidacion in detalles:
+                if detalleliquidacion.constante and detalleliquidacion.constante.tipo.porcentaje:
+                    #print('Nombre del detalle: ', detalleliquidacion.variable.motivo)
+                    detalleliquidacion.monto = detalleliquidacion.calcular_monto_constante()
+                    #print('Monto del detalle: ', detalleliquidacion.monto)
+                    detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                    detalleliquidacion.save()
+                if detalleliquidacion.variable.motivo == 'Aguinaldo':
+                    detalleliquidacion.monto = aguinaldo.calculo_total()
+                    detalleliquidacion.total_detalle = detalleliquidacion.calculo_totaldetalle()
+                    detalleliquidacion.save()
+
+            liq.monto_credito = liq.suma_detalles_credito()
+            liq.monto_debito = liq.suma_detalles_debito()
+            liq.save()
+            liq.subTotal = liq.calcular_total()
+            liq.save()
+
+            liq.liquidacion.total_credito = liq.liquidacion.calculo_total_credito()
+            liq.liquidacion.total_debito = liq.liquidacion.calculo_total_debito()
+            liq.liquidacion.total_liquidacion = liq.liquidacion.calcular_total_liquidacion()
+            liq.liquidacion.save()
+
         # -------------------------------VACACIONES---------------------------------------------#
 
-        f = ~Q(movimiento__motivo__nombre='Contrato') \
-            & Q(tieneVacaciones=True) \
-            & Q(funcionario=item.funcionario)
+            try:
+                vacacion_periodo = Vacaciones.objects.filter(
+                    movimiento__funcionario=liq.liquidacion.funcionario).order_by('-inicio')
+            except Vacaciones.DoesNotExist:
+                vacacion_periodo = None
 
-        lista_movimientos = Movimiento.objects.filter(f).order_by('fechainicio')
+            if vacacion_periodo is not None or vacacion_periodo.count() > 0:
+                f = ~Q(movimiento__motivo__nombre='Contrato') \
+                    & Q(tieneVacaciones=True) \
+                    & Q(funcionario=liq.liquidacion.funcionario)
 
-        if lista_movimientos.count() > 0:
-            primera_fecha = lista_movimientos.first().fechainicio
-            past_year = datetime.datetime.today().year - 1
-            f = date(past_year, primera_fecha.month, primera_fecha.day)
-            h = time(23, 59)
-            fechainicio = datetime.datetime.combine(f, h)
+                lista_movimientos = Movimiento.objects.filter(f).order_by('fechainicio')
 
-            if primera_fecha.month == item.mes.numero:
-                nueva_vacacion = Vacaciones(
-                    anho=past_year,
-                    inicio=fechainicio,
-                    movimiento=lista_movimientos.first()
-                )
-                nueva_vacacion.save()
+                if lista_movimientos.count() > 0:
+                    primera_fecha = lista_movimientos.first().fechainicio
+                    past_year = datetime.datetime.today().year - 1
+                    f = date(past_year, primera_fecha.month, primera_fecha.day)
+                    h = time(23, 59)
+                    fechainicio = datetime.datetime.combine(f, h)
 
-            vacacion_periodo = Vacaciones.objects.filter(movimiento__funcionario=item.funcionario).order_by(
-                '-inicio')
-            newest = vacacion_periodo.first()
-            newest.diasobtenidos = newest.calculo_diasobtenidos()
-            newest.dias_restantes = newest.calculo_diasrestantes()
-            newest.save()
+                    if (primera_fecha.month == liq.liquidacion.mes.numero) and (primera_fecha.year != liq.liquidacion.mes.year):
+                        nueva_vacacion = Vacaciones(
+                            anho=datetime.datetime.today().year,
+                            inicio=fechainicio,
+                            movimiento=lista_movimientos.first()
+                        )
+                        nueva_vacacion.save()
 
-        if item.vacaciones_usadas != 0:
-            vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=item.funcionario,
-                                                               dias_restantes__gt=0).order_by('inicio')[:2]
-            first = vacaciones_funcionario.first()
-            if first.dias_restantes > item.vacaciones_usadas:
-                first.diasusados += item.vacaciones_usadas
-                first.save()
-                first.dias_restantes = first.calculo_diasrestantes()
-                first.save()
-                vacacion_liquidacion = Vacacionesusadas(
-                    diasusados=item.vacaciones_usadas,
-                    vacaciones=first,
-                    mes=item.mes
-                )
-                vacacion_liquidacion.save()
-            else:
-                if vacaciones_funcionario.count() > 1:
-                    first = vacaciones_funcionario[0]
-                    second = vacaciones_funcionario[1]
-                    aux1 = item.vacaciones_usadas
-                    first.diasusados += first.dias_restantes
-                    first.save()
-                    vacacion_liquidacion = Vacacionesusadas(
-                        diasusados=first.dias_restantes,
-                        vacaciones=first,
-                        mes=item.mes
-                    )
-                    vacacion_liquidacion.save()
-                    aux2 = aux1 - first.dias_restantes
-                    first.dias_restantes = first.calculo_diasrestantes()
-                    first.save()
-                    second.diasusados += aux2
-                    second.save()
-                    vacacion_liquidacion2 = Vacacionesusadas(
-                        diasusados=aux2,
-                        vacaciones=second,
-                        mes=item.mes
-                    )
-                    vacacion_liquidacion2.save()
-                    second.dias_restantes = second.calculo_diasrestantes()
-                    second.save()
+                newest = vacacion_periodo.first()
+                newest.diasobtenidos = newest.calculo_diasobtenidos()
+                newest.dias_restantes = newest.calculo_diasrestantes()
+                newest.save()
+                if liq.liquidacion.vacaciones_usadas > 0:
+                    vacaciones_funcionario = Vacaciones.objects.filter(movimiento__funcionario=liq.liquidacion.funcionario,
+                                                                       dias_restantes__gt=0).order_by('inicio')[:2]
+                    first = vacaciones_funcionario.first()
+                    if first.dias_restantes > liq.liquidacion.vacaciones_usadas:
+                        first.diasusados += liq.liquidacion.vacaciones_usadas
+                        first.save()
+                        first.dias_restantes = first.calculo_diasrestantes()
+                        first.save()
+                        vacacion_liquidacion = Vacacionesusadas(
+                            diasusados=liq.liquidacion.vacaciones_usadas,
+                            vacaciones=first,
+                            mes=liq.liquidacion.mes
+                        )
+                        vacacion_liquidacion.save()
+                    else:
+                        if vacaciones_funcionario.count() > 1:
+                            first = vacaciones_funcionario[0]
+                            second = vacaciones_funcionario[1]
+                            aux1 = liq.liquidacion.vacaciones_usadas
+                            first.diasusados += first.dias_restantes
+                            first.save()
+                            vacacion_liquidacion = Vacacionesusadas(
+                                diasusados=first.dias_restantes,
+                                vacaciones=first,
+                                mes=liq.liquidacion.mes
+                            )
+                            vacacion_liquidacion.save()
+                            aux2 = aux1 - first.dias_restantes
+                            first.dias_restantes = first.calculo_diasrestantes()
+                            first.save()
+                            second.diasusados += aux2
+                            second.save()
+                            vacacion_liquidacion2 = Vacacionesusadas(
+                                diasusados=aux2,
+                                vacaciones=second,
+                                mes=liq.liquidacion.mes
+                            )
+                            vacacion_liquidacion2.save()
+                            second.dias_restantes = second.calculo_diasrestantes()
+                            second.save()
+
     return render(request, 'liquidacionmensual/liquidaciones_periodo.html', context)
 
 
@@ -1104,7 +1152,7 @@ def vista_liq_mensual(request, idliquidacion):
                             h = time(23, 59)
                             fechainicio = datetime.datetime.combine(f, h)
 
-                            if (primera_fecha.month == liquidacion.mes.numero) and  (primera_fecha.year != liquidacion.mes.year):
+                            if (primera_fecha.month == liquidacion.mes.numero) and (primera_fecha.year != liquidacion.mes.year):
                                 nueva_vacacion = Vacaciones(
                                     anho = datetime.datetime.today().year,
                                     inicio = fechainicio,
@@ -1254,6 +1302,7 @@ def parametros_liq_mensual(request):
             fechainicio = form.cleaned_data['desde']
             try:
                 mes = Mes.objects.get(numero=fechafin.month, year=fechafin.year)
+                print(mes)
             except Mes.DoesNotExist:
                 mes = None
                 messages.warning(request, "El mes correspondiente al periodo aun no fue creado, favor contacte con el administrador del sistema")
@@ -1262,6 +1311,7 @@ def parametros_liq_mensual(request):
                 funcionarios = Movimiento.objects\
                     .filter(division__departamento=depto, estado__name='Activo')\
                     .values('funcionario__idFuncionario', 'motivo__nombre', 'idmovimiento').distinct('funcionario__idFuncionario')
+                print(funcionarios)
                 if funcionarios.count() > 0 :
                     for mov in funcionarios:
                         existe_pago = True
@@ -1271,13 +1321,13 @@ def parametros_liq_mensual(request):
 
                         except Liquidacion.DoesNotExist:
                             liquidacion = None
-                        print(liquidacion)
                         if liquidacion == None:
                             tipo = LiquidacionType.objects.get(nombre='Mensual')
                             proceso = Process.objects.get(name='Liquidacion Mensual')
                             initial_state_type = StateType.objects.get(name='Inicio')
                             initial_state = State.objects.get(process=proceso, stateType=initial_state_type)
                             funcionario = Funcionario.objects.get(pk = mov['funcionario__idFuncionario'])
+                            print(mov['idmovimiento'])
                             if mov['motivo__nombre'] == 'Contrato':
                                 try:
                                     pago = Pago.objects.get(mes=mes, movimiento__pk=mov['idmovimiento'])
@@ -1308,8 +1358,11 @@ def parametros_liq_mensual(request):
                                 liq_haber = None
                                 try:
                                     pago = Pago.objects.get(movimiento=haber.movimiento, mes=liquidacion.mes)
+                                    print(pago)
                                 except Pago.DoesNotExist:
                                     pago = None
+                                print(pago)
+
                                 if pago is not None:
                                     liq_haber = Liquidacionhaber(
                                         haber=haber,
@@ -1470,7 +1523,7 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
                             movimiento=liq.haber.movimiento
                         )
                         aguinaldo.save()
-                        aguinaldo.acumulado += aguinaldo.calculo_acumulado(liq.liquidacion.mes.pk)
+                        aguinaldo.acumulado += aguinaldo.calculo_acumulado(liq.pk)
                         aguinaldo.save()
                         aguinaldo.total = aguinaldo.calculo_total()
                         aguinaldo.save()
@@ -1754,10 +1807,11 @@ def movimiento_vista(request, idmovimiento=None, idpadre=None, idfuncionario=Non
                     return redirect(reverse('liquidacion:nuevo_pago', args=[movimiento.pk]))
                 #-------------------------------------------------------------------------#
             else:
-                # TODO Implementar sistema de errores
                 context.update({
                     'errors': form.errors,
-                    'form': form
+                    'form': form,
+                    'movimiento_padre': movimiento_padre,
+                    'funcionario': funcionario,
                 })
             return render(request, 'proceso/movimiento_form.html', context)
     else:
@@ -2013,7 +2067,11 @@ def pago_vista(request, idmovimiento=None, idpago=None):
             )
         form = PagoForm(request.POST, instance=pago)
         if form.is_valid():
-            pago = form.save()
+            try:
+                pago = form.save()
+            except IntegrityError:
+                messages.error(request, "Ya ha agregado un pago para el mes")
+                return redirect(reverse('liquidacion:nuevo_pago', args=[pago.movimiento.pk]))
             return redirect(reverse('liquidacion:nuevo_pago', args=[pago.movimiento.pk]))
         else:
             # TODO Implementar sistema de errores
@@ -2097,6 +2155,30 @@ def traer_variables(request):
             if ok is False:
                 var_json = {'id': v.pk, 'value': v.motivo}
                 res.append(var_json)
+        data = json.dumps(res)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+@require_GET
+def traer_constantes(request):
+    if request.is_ajax():
+        idmovimiento = request.GET['idmovimiento']
+        movimiento = Movimiento.objects.get(pk=idmovimiento)
+        tipos = ConstanteType.objects.all()
+        con = Constante.objects.filter(movimiento=movimiento)
+        res = []
+        for t in tipos:
+            ok = False
+            for c in con:
+                if t.nombre == c.tipo.nombre :
+                    ok = True
+            if ok is False:
+                con_json = {'id': t.pk, 'value': t.nombre, 'value2' : Decimal(t.porcentaje)}
+                print(con_json)
+                res.append(con_json)
         data = json.dumps(res)
     else:
         data = 'fail'

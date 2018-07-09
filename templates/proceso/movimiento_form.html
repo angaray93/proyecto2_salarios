@@ -29,25 +29,10 @@
 
 <div class="col-12 col-sm-10 recuadro">
 
-
-{% if form.errors %}
-    <p>NOT VALID</p>
-    {% for errors in form.errors %}
-        {{ errors }}
-    {% endfor %}
-{% endif %}
-
 <form method="post" id="movimiento_form">
         {% csrf_token %}
         {{ form.media }}
         {{ form.non_field_errors }}
-
-        {% for hidden_field in form.hidden_fields %}
-            {{ hidden_field.errors }}
-            {{ hidden_field }}
-        {% endfor %}
-
-
 
     {% if movimiento %}
         <ul class="nav nav-tabs">
@@ -253,8 +238,8 @@
                             <input id="categoria_salarial" class="form-control" value="{{ movimiento.categoria_salarial }}" readonly>
                         {% endif %}
                     {% else %}
-                        <input type="hidden" name="categoria_salarial" id="id_categoria_salarial">
-                        <input id="categoria_salarial" class="form-control" readonly>
+                        {{ form.categoria_salarial }}
+                        <input id="categoria_salarial" class="form-control" readonly required>
                     {% endif %}
                         <span class="input-group-btn">
                             <a>
@@ -263,6 +248,13 @@
                             </a>
                         </span>
                 </div>
+            {% if form.categoria_salarial.errors %}
+                {% for error in form.categoria_salarial.errors %}
+                    <div class="errorlist">
+                        <p style="color: red">{{ error|escape }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
             </div>
         </div>
         <div class="col-lg-6">
@@ -308,6 +300,13 @@
                         {{ form.formapago }}
                     {% endif %}
                 </div>
+            {% if form.formapago.errors %}
+                    {% for error in form.formapago.errors %}
+                        <div class="errorlist">
+                            <p style="color: red">{{ error|escape }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="col-lg-6">
@@ -331,204 +330,188 @@
     </div>
     <hr>
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="form-group">
-                <label for="division">Dependencia:</label>
-                 <div class="input-group">
-                    {% if movimiento %}
-                        {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="division" class="form-control"
-                               value="{{ movimiento.division }}" disabled/>
-                            <input type="hidden" name="division" value="{{ movimiento.division }}">
-                        {% else %}
-                           {{ form.division }}
-                        {% endif %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label for="division">Dependencia:</label>
+             <div class="input-group">
+                {% if movimiento %}
+                    {% if not perms.liquidacion.change_movimiento %}
+                        <input type="text" id="division" class="form-control"
+                           value="{{ movimiento.division }}" disabled/>
+                        <input type="hidden" name="division" value="{{ movimiento.division }}">
                     {% else %}
-                        {{ form.division }}
+                       {{ form.division }}
                     {% endif %}
-                 </div>
-            </div>
-
+                {% else %}
+                    {{ form.division }}
+                {% endif %}
+             </div>
         </div>
-      </div>
-    <hr>
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="form-group">
-                <label for="funcion">Funcion:</label>
-                 <div class="input-group">
-                    {% if movimiento %}
-                        {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="funcion" class="form-control"
-                               value="{{ movimiento.funcion }}" disabled/>
-                            <input type="hidden" name="funcion" value="{{ movimiento.funcion }}">
-                        {% else %}
-                           {{ form.funcion }}
-                        {% endif %}
+    </div>
+  </div>
+<hr>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label for="funcion">Funcion:</label>
+             <div class="input-group">
+                {% if movimiento %}
+                    {% if not perms.liquidacion.change_movimiento %}
+                        <input type="text" id="funcion" class="form-control"
+                           value="{{ movimiento.funcion }}" disabled/>
+                        <input type="hidden" name="funcion" value="{{ movimiento.funcion }}">
                     {% else %}
-                        {{ form.funcion }}
+                       {{ form.funcion }}
                     {% endif %}
-                 </div>
-            </div>
-
+                {% else %}
+                    {{ form.funcion }}
+                {% endif %}
+             </div>
+            {% if form.funcion.errors %}
+                {% for error in form.funcion.errors %}
+                    <div class="errorlist">
+                        <p style="color: red">{{ error|escape }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
-      </div>
-    <hr>
+    </div>
+  </div>
+<hr>
 
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="form-group">
-                <label for="id_fechainicio">Fecha de Inicio:</label>
-                <div class="input-group">
-                    {% if form.fechainicio.errors %}
-                        {% for error in form.fechainicio.errors %}
-                            <div class="errorlist">
-                                <strong style="color: red">{{ error|escape }}</strong>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    {% if movimiento %}
-                        <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
-                                   value="{{ movimiento.fechainicio|unlocalize }}" placeholder="{{ movimiento.fechainicio|unlocalize }}"
-                           {% if not perms.liquidacion.change_movimiento %}
-                               disabled
-                           {% endif %}
-                        />
-                        <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" disabled>
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                            </button>
-                        </span>
-                    {% else %}
-                        <input type="date" id="id_fechainicio" name="fechainicio" class="form-control">
-                        <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" disabled>
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                            </button>
-                        </span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="form-group">
-                <label for="id_fechafin">Fecha de Fin:</label>
-                <div class="input-group">
-                    {% if form.fechafin.errors %}
-                        {% for error in form.fechafin.errors %}
-                            <div class="errorlist">
-                                <strong style="color: red">{{ error|escape }}</strong>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    {% if form.fechafin.errors %}
-                    <ol>
-                    {% for error in form.fechafin.errors %}
-                        <li><strong>{{ error|escape }}</strong></li>
-                    {% endfor %}
-                    </ol>
-                    {% endif %}
-                    {% if movimiento %}
-                        <input type="date" id="id_fechafin" name="fechafin" class="form-control"
-                                   value="{{ movimiento.fechafin|unlocalize }}" placeholder="{{ movimiento.fechafin|unlocalize }}"
-                           {% if not perms.liquidacion.change_movimiento %}
-                               disabled
-                           {% endif %}
-                        />
-                        <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" disabled>
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                            </button>
-                        </span>
-                    {% else %}
-                        <input type="date" id="id_fechafin" name="fechafin" class="form-control">
-                        <span class="input-group-btn">
+<div class="row">
+    <div class="col-lg-6">
+        <div class="form-group">
+            <label for="id_fechainicio">Fecha de Inicio:</label>
+            <div class="input-group">
+                {% if movimiento %}
+                    <input type="date" id="id_fechainicio" name="fechainicio" class="form-control"
+                               value="{{ movimiento.fechainicio|unlocalize }}" placeholder="{{ movimiento.fechainicio|unlocalize }}"
+                       {% if not perms.liquidacion.change_movimiento %}
+                           disabled
+                       {% endif %}
+                    />
+                    <span class="input-group-btn">
                         <button class="btn btn-secondary" type="button" disabled>
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                         </button>
-                        </span>
-                    {% endif %}
-                </div>
+                    </span>
+                {% else %}
+                    {{ form.fechainicio }}
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                {% endif %}
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="form-group">
-                <label for="horaEntrada">Hora de Entrada:</label>
-                <div class="input-group">
-                    {% if form.horaEntrada.errors %}
-                        {% for error in form.horaEntrada.errors %}
-                            <div class="errorlist">
-                                <strong style="color: red">{{ error|escape }}</strong>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    {% if form.horaEntrada.errors %}
-                        <ol>
-                        {% for error in form.horaEntrada.errors %}
-                            <li><strong style="color: red">{{ error|escape }}</strong></li>
-                        {% endfor %}
-                        </ol>
-                    {% endif %}
-                    {% if movimiento %}
-                        {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="id_horaEntrada" name="horaEntrada"
-                                  value="{{ movimiento.horaEntrada }}" disabled/>
-                        {% else %}
-                           {{ form.horaEntrada }}
-                        {% endif %}
-                        <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" disabled>
-                                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                            </button>
-                        </span>
-                    {% else %}
-                        {{ form.horaEntrada }}
-                        <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" disabled>
-                                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                            </button>
-                        </span>
-                    {% endif %}
-
-                </div>
-                </div>
+    <div class="col-lg-6">
+        <div class="form-group">
+            <label for="id_fechafin">Fecha de Fin:</label>
+            <div class="input-group">
+                {% if form.fechafin.errors %}
+                    {% for error in form.fechafin.errors %}
+                        <div class="errorlist">
+                            <strong style="color: red">{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% if movimiento %}
+                    <input type="date" id="id_fechafin" name="fechafin" class="form-control"
+                               value="{{ movimiento.fechafin|unlocalize }}" placeholder="{{ movimiento.fechafin|unlocalize }}"
+                       {% if not perms.liquidacion.change_movimiento %}
+                           disabled
+                       {% endif %}
+                    />
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                {% else %}
+                    <input type="date" id="id_fechafin" name="fechafin" class="form-control">
+                    <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="button" disabled>
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                    </button>
+                    </span>
+                {% endif %}
             </div>
-        <div class="col-lg-6">
-            <div class="form-group">
-                <label for="horaSalida">Hora de Salida:</label>
-                    <div class="input-group">
-                    {% if form.horaSalida.errors %}
-                        {% for error in form.horaSalida.errors %}
-                            <div class="errorlist">
-                                <strong style="color: red">{{ error|escape }}</strong>
-                            </div>
-                        {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="form-group">
+            <label for="horaEntrada">Hora de Entrada:</label>
+            <div class="input-group">
+                {% if form.horaEntrada.errors %}
+                    {% for error in form.horaEntrada.errors %}
+                        <div class="errorlist">
+                            <strong style="color: red">{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% if form.horaEntrada.errors %}
+                    <ol>
+                    {% for error in form.horaEntrada.errors %}
+                        <li><strong style="color: red">{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+                {% if movimiento %}
+                    {% if not perms.liquidacion.change_movimiento %}
+                        <input type="text" id="id_horaEntrada" name="horaEntrada"
+                              value="{{ movimiento.horaEntrada }}" disabled/>
+                    {% else %}
+                       {{ form.horaEntrada }}
                     {% endif %}
-                     {% if form.horaSalida.errors %}
-                        <ol>
-                        {% for error in form.horaSalida.errors %}
-                            <li><strong style="color: red">{{ error|escape }}</strong></li>
-                        {% endfor %}
-                        </ol>
-                    {% endif %}
-                    {% if movimiento %}
-                        {% if not perms.liquidacion.change_movimiento %}
-                            <input type="text" id="horaSalida" class="form-control"
-                               value="{{ movimiento.horaSalida }}" disabled/>
-                            <input type="hidden" name="horaSalida" value="{{ movimiento.horaSalida }}">
-                        {% else %}
-                            {{ form.horaSalida }}
-                            <span class="input-group-btn">
-                                <button class="btn btn-secondary" type="button" disabled>
-                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                </button>
-                            </span>
-                        {% endif %}
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                {% else %}
+                    {{ form.horaEntrada }}
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                {% endif %}
+
+            </div>
+            </div>
+        </div>
+    <div class="col-lg-6">
+        <div class="form-group">
+            <label for="horaSalida">Hora de Salida:</label>
+                <div class="input-group">
+                {% if form.horaSalida.errors %}
+                    {% for error in form.horaSalida.errors %}
+                        <div class="errorlist">
+                            <strong style="color: red">{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                 {% if form.horaSalida.errors %}
+                    <ol>
+                    {% for error in form.horaSalida.errors %}
+                        <li><strong style="color: red">{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+                {% if movimiento %}
+                    {% if not perms.liquidacion.change_movimiento %}
+                        <input type="text" id="horaSalida" class="form-control"
+                           value="{{ movimiento.horaSalida }}" disabled/>
+                        <input type="hidden" name="horaSalida" value="{{ movimiento.horaSalida }}">
                     {% else %}
                         {{ form.horaSalida }}
                         <span class="input-group-btn">
@@ -537,10 +520,18 @@
                             </button>
                         </span>
                     {% endif %}
-                    </div>
-            </div>
+                {% else %}
+                    {{ form.horaSalida }}
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                {% endif %}
+                </div>
         </div>
     </div>
+</div>
 
 <div class="row">
         <div class="col-lg-6">
@@ -600,9 +591,7 @@
     </form>
     <hr>
 
-<div id="popup" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-
-</div>
+<div id="popup" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
 <div id="og_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -700,14 +689,13 @@
 
 
 <footer>
-
     <script>
         $(document).ready(function () {
             var opcion = $.trim($("#categoria_salarial").val());
             if ( opcion == 'None') {
                 $('#categoria_salarial').val('---');
             }
-            $("#btnCategoria").prop("disabled", true );
+            //$("#btnCategoria").prop("disabled", true );
             $("#tieneVacaciones").prop("disabled", true );
             $("#fila_codigo").hide();
         });
@@ -717,15 +705,31 @@
             var opcion = $.trim($('#id_motivo').find('option:selected').text());
 
             if ( opcion == valor) {
-                $("#btnCategoria").prop("disabled", true );
+            //    $("#btnCategoria").prop("disabled", true );
                 $("#tieneVacaciones").prop("disabled", true );
-                $("#id_formapago").prop("disabled", false );
+            //    $("#id_formapago").prop("disabled", false );
                 $("#fila_codigo").show();
             } else {
-                $("#id_formapago").prop("disabled", true );
-                $("#btnCategoria").prop("disabled", false );
+            //    $("#id_formapago").prop("disabled", true );
+            //    $("#btnCategoria").prop("disabled", false );
                 $("#tieneVacaciones").prop("disabled", false );
                 $("#fila_codigo").hide();
+            }
+        });
+
+        $('#id_formapago').on('change', function() {
+            var valor = "Contrato";
+            var opcion = $.trim($('#id_motivo').find('option:selected').text());
+            var id_formapago = $.trim($('#id_formapago').val());
+            console.log(id_formapago);
+            if (opcion == valor){
+                if ( id_formapago == 'M') {
+                    $("#tieneAguinaldo").prop("disabled", false );
+                } else {
+                    $("#tieneAguinaldo").prop("disabled", true );
+                }
+            } else {
+                $("#tieneAguinaldo").prop("disabled", false );
             }
         });
 

@@ -35,6 +35,14 @@ MES_OPTIONS = (
 
 )
 
+def validar_vacio(value):
+    convertido = value.replace(" ", "")
+    if not value:
+        raise ValidationError(
+            ('Debe completar este campo'),
+        )
+    return value
+
 
 def validar_nombre(value):
     convertido = value.replace(" ", "")
@@ -71,24 +79,24 @@ class Funcionario(models.Model):
 class Movimiento(models.Model):
     idmovimiento = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=20, default='', blank=True, null=True)
-    tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo')
-    motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo')
-    formapago = models.CharField(max_length=1, default='M',choices=Modalidad_OPTIONS, blank=True)
-    fechainicio = models.DateField(("Date"), default=datetime.date.today)
+    tipo = models.ForeignKey('MovimientoType', on_delete=models.DO_NOTHING, related_name='fk_movimiento_tipo', blank=False)
+    motivo = models.ForeignKey('MovimientoMotivo', on_delete=models.DO_NOTHING, related_name='fk_movimiento_motivo', blank=False)
+    formapago = models.CharField(max_length=1,choices=Modalidad_OPTIONS, default='M', blank=False)
+    fechainicio = models.DateField(blank=False)
     fechafin = models.DateField(blank=True, null=True)
     esPrimero = models.BooleanField(default=True)
     horaEntrada = models.TimeField(blank=True, null=True)
     horaSalida = models.TimeField(blank=True, null=True)
     tieneAguinaldo = models.BooleanField(default=False)
     tieneVacaciones = models.BooleanField(default=False)
-    funcion = models.CharField(max_length=99, default='')
+    funcion = models.CharField(max_length=99, default='', validators=[validar_nombre], blank=False)
     familia = models.IntegerField(blank=True, null=True, default=1)
     #------------------------------------Relationships-----------------------------------------#
     ffinanciamiento = models.ForeignKey('FuenteFinanciamiento', on_delete=models.DO_NOTHING, default=1)
     funcionario = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING, related_name='fk_movimiento_funcionario')
     categoria_salarial = models.ForeignKey('CategoriaSalarial', on_delete=models.DO_NOTHING,
-                                           related_name='fk_movimiento_categoriasalarial', blank=True, null=True)
-    division = models.ForeignKey('Division', on_delete=models.DO_NOTHING, related_name='fk_movimiento_division')
+                                           related_name='fk_movimiento_categoriasalarial', blank=False)
+    division = models.ForeignKey('Division', on_delete=models.DO_NOTHING, related_name='fk_movimiento_division', blank=False)
     og = models.ForeignKey('Objeto_De_Gasto', on_delete=models.DO_NOTHING, related_name='fk_movimiento_og')
     movimiento_padre = models.ForeignKey('self', on_delete=models.DO_NOTHING, blank=True, null=True)
     estado = models.ForeignKey('State', on_delete=models.DO_NOTHING, related_name='fk_movimiento_estado')
@@ -101,6 +109,10 @@ class Pago(models.Model):
     # -----------------------------------Relationships-----------------------------------------#
     mes = models.ForeignKey('Mes', on_delete=models.DO_NOTHING, default=1)
     movimiento = models.ForeignKey('Movimiento', on_delete=models.CASCADE, related_name='fk_pago_movimiento')
+
+    class Meta:
+        verbose_name_plural = "Pagos"
+        unique_together = (('mes', 'movimiento'),)
 
 
 class FuenteFinanciamiento(models.Model):

@@ -200,7 +200,6 @@ class FuncionarioForm(forms.ModelForm):
 
 
 class MovimientoForm(forms.ModelForm):
-
     class Meta:
         model = Movimiento
         exclude = ['movimiento_padre','funcionario','estado','esPrimero', 'familia']
@@ -208,7 +207,8 @@ class MovimientoForm(forms.ModelForm):
             'codigo': forms.TextInput(attrs={
                 'class': 'form-control'
             }),
-            'categoria_salarial': forms.Select(attrs={
+            'categoria_salarial': forms.TextInput(attrs={
+                'type': 'hidden',
                 'class': 'form-control'
             }),
             'og': forms.Select(attrs={
@@ -233,10 +233,11 @@ class MovimientoForm(forms.ModelForm):
                 'class': 'form-control'
             }),
             'fechainicio': forms.DateInput(attrs={
+                'type': 'date',
                 'class': 'form-control',
-                'readonly': True
             }),
             'fechafin': forms.DateInput(attrs={
+                'type' : 'date',
                 'class': 'form-control',
                 'readonly': True
             }),
@@ -256,16 +257,21 @@ class MovimientoForm(forms.ModelForm):
             }),
         }
 
-    """def clean_asignacion(self):
-        asignacion = self.cleaned_data.get('asignacion')
-        if asignacion < 1 :
-            raise forms.ValidationError("Ingrese un monto valido para la asignacion salarial")
-        return self.cleaned_data['asignacion']
-    def clean_tipo(self):
+    def clean_fechainicio(self):
+        fechainicio = self.cleaned_data.get('fechainicio')
+        if fechainicio is None :
+            raise forms.ValidationError("Este campo es lolo")
+        return self.cleaned_data['fechainicio']
+    def clean_categoria_salarial(self):
+        categoria_salarial = self.cleaned_data.get('categoria_salarial')
+        if categoria_salarial is None :
+            raise forms.ValidationError("lololo")
+        return self.cleaned_data['categoria_salarial']
+    '''def clean_tipo(self):
         tipo = self.cleaned_data.get('tipo')
         if tipo.isalpha() is False:
             raise forms.ValidationError("Ingrese un nombre valido para el tipo de categoria")
-        return self.cleaned_data['tipo']"""
+        return self.cleaned_data['tipo']'''
 
 
 class ConstanteForm(ModelForm):

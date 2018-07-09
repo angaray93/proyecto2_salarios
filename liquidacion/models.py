@@ -182,7 +182,9 @@ class Aguinaldo(models.Model):
     def calculo_acumulado(self, idliqhaber):
         liquidacion = Liquidacionhaber.objects.get(pk=idliqhaber)
         if self.movimiento.motivo.nombre != 'Contrato':
+            print(liquidacion.subTotal)
             resultado = liquidacion.subTotal / Decimal(12)
+            print(resultado)
         else:
             pago = liquidacion.pago
             resultado = pago.monto / 12

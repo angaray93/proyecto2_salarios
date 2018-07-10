@@ -162,6 +162,15 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-lg-12">
+        {% for message in messages %}
+            <div class="alert alert-danger">{{ message }}
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 <hr>
 
 <div class="card" style="background-color: #b9bbbe">

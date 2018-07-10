@@ -552,8 +552,9 @@ def generar_liq_definitiva(request, idmovimiento):
 
         #------------------------------VACACIONES-----------------------------------#
         if liq_haber.haber.movimiento.tieneVacaciones is True:
-            cantidad_vacaciones = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario, movimiento__estado__name='Activo',
-                                                         dias_restantes__gt=0).aggregate(dias_acumulados=Sum('dias_restantes'))
+            cantidad_vacaciones = Vacaciones.objects.filter(movimiento__funcionario=liquidacion.funcionario,
+                                                            movimiento__estado__name='Activo')\
+                .aggregate(dias_acumulados=Sum('dias_restantes'))
             monto_vacaciones = round(cantidad_vacaciones['dias_acumulados'] * (liq_haber.haber.movimiento.categoria_salarial.asignacion / 30))
             constante = Constante.objects.get(tipo__nombre='Vacaciones', movimiento=liq_haber.haber.movimiento)
             constante.monto = monto_vacaciones
@@ -1535,7 +1536,6 @@ def vista_liquidacionhaber(request, idliquidacionhaber):
                             detalleliquidacion.liquidacion_haber.save()
                             detalleliquidacion.liquidacion_haber.subTotal = detalleliquidacion.liquidacion_haber.calcular_total()
                             detalleliquidacion.liquidacion_haber.save()
-
 
                     for detalleliquidacion in detalles:
                         if detalleliquidacion.constante and detalleliquidacion.constante.tipo.porcentaje:

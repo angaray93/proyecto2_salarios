@@ -1340,13 +1340,12 @@ def parametros_liq_mensual(request):
                                                        movimiento__division__departamento__pk=depto, estado__name='Activo')
                             for haber in haberes:
                                 if haber.movimiento.motivo.nombre == 'Contrato':
-                                    liq_haber = None
-                                    if pago is not None:
-                                        liq_haber = Liquidacionhaber(
-                                            haber=haber,
-                                            liquidacion=liquidacion,
-                                            pago=pago,
-                                        )
+                                    #liq_haber = None
+                                    liq_haber = Liquidacionhaber(
+                                        haber=haber,
+                                        liquidacion=liquidacion,
+                                        pago=pago,
+                                    )
                                 else:
                                     liq_haber = Liquidacionhaber(
                                         haber=haber,
